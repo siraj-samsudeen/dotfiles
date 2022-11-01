@@ -133,3 +133,6 @@ if [ -x "$(command -v exa)" ]; then
     alias ls="exa --long --header --git"
     alias la="exa --long --all --header --git"
 fi
+
+# set pycache to use a systemwide folder
+export PYTHONPYCACHEPREFIX="$HOME/.cache/pycache/"
