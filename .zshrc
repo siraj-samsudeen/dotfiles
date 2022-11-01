@@ -125,4 +125,11 @@ eval "$(pyenv init -)"
 # -> install pyenv-virtualenv
 eval "$(pyenv virtualenv-init -)"
 
+# for storing the dotfiles using config alias in the special bare repo
 alias config='/usr/bin/git --git-dir=/Users/siraj/.cfg/ --work-tree=/Users/siraj'
+
+# alias for exa
+if [ -x "$(command -v exa)" ]; then
+    alias ls="exa --long --header --git"
+    alias la="exa --long --all --header --git"
+fi
