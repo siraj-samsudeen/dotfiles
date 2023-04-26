@@ -110,8 +110,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# -> Linux autojump to quickly switch between directories
-[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
 
 # -> iTerm2 Shell Integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
@@ -120,19 +118,19 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 alias pref="open ~/.zshrc -a \"Visual Studio Code\""
 
 # -> install pyenv
-eval "$(pyenv init -)"
-
-# -> install pyenv-virtualenv
-eval "$(pyenv virtualenv-init -)"
+# eval "$(pyenv init -)"
 
 # for storing the dotfiles using config alias in the special bare repo
 alias config='/usr/bin/git --git-dir=/Users/siraj/.cfg/ --work-tree=/Users/siraj'
 
 # alias for exa
 if [ -x "$(command -v exa)" ]; then
-    alias ls="exa --long --header --git"
-    alias la="exa --long --all --header --git"
+    alias ls="exa --long --header --git --icons --no-permissions --no-user --no-filesize -rsmod"
 fi
 
 # set pycache to use a systemwide folder
 export PYTHONPYCACHEPREFIX="$HOME/.cache/pycache/"
+
+# Add JBang to environment
+alias j!=jbang
+export PATH="$HOME/.jbang/bin:$PATH"
