@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Mix:*",
+      "mcp__serena__*",
+      "mcp__context7__*",
+      "mcp__chrome__*",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(grep:*)",
+      "Bash(sqlite3:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(mv:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git stash show:*)",
+      "Bash(git stash pop:*)",
+      "Bash(git fetch:*)",
+      "Bash(git stash push:*)",
+      "Bash(git merge:*)",
+      "Bash(git cherry-pick:*)",
+      "Bash(python:*)",
+      "Bash(python3 -m pip install:*)",
+      "Bash(npm install:*)",
+      "Bash(npx playwright test:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(yarn test:*)",
+      "Bash(tree:*)",
+      "Bash(supabase --version:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run test:*)",
+      "Bash(git pull:*)",
+      "Bash(git branch:*)",
+      "Bash(git ls-tree:*)",
+      "Bash(git fsck:*)",
+      "WebFetch(domain:labs.convex.dev)",
+      "WebFetch(domain:stack.convex.dev)",
+      "Bash(npx convex dev:*)",
+      "Bash(npm run build:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(git rev-parse:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)",
+      "Bash(git -C /Users/siraj/Desktop/NonDropBoxProjects/todo_convex log --oneline -5)",
+      "Bash(git -C /Users/siraj/Desktop/NonDropBoxProjects/todo_convex diff)",
+      "Bash(npm run type-check:*)",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_select_option",
+      "Bash(npm test:*)",
+      "Bash(git mv:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/siraj/.claude/skills"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Read",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.claude-code-docs/claude-docs-helper.sh hook-check"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/siraj/.claude/hooks/gsd-check-update.js\""
+          }
+        ]
+      }
+    ]
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "node \"/Users/siraj/.claude/hooks/gsd-statusline.js\""
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": false
+  },
+  "alwaysThinkingEnabled": true,
+  "feedbackSurveyState": {
+    "lastShownTime": 1754285015216
+  }
+}
