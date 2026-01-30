@@ -1,136 +1,111 @@
-# Personal Zsh configuration file. It is strongly recommended to keep all
-# shell customization and configuration (including exported environment
-# variables such as PATH) in this file or in files sourced from it.
-#
-# Documentation: https://github.com/romkatv/zsh4humans/blob/v5/README.md.
+# ============================================
+# ZSH4HUMANS FRAMEWORK CONFIGURATION
+# ============================================
+# Modern Zsh framework with sensible defaults, fast startup
+# Documentation: https://github.com/romkatv/zsh4humans
 
-# Periodic auto-update on Zsh startup: 'ask' or 'no'.
-# You can manually run `z4h update` to update everything.
-zstyle ':z4h:' auto-update      'ask'
-# Ask whether to auto-update this often; has no effect if auto-update is 'no'.
+# Auto-update z4h framework every 28 days (ask first)
 zstyle ':z4h:' auto-update-days '28'
 
-# Don't start tmux.
-zstyle ':z4h:' start-tmux       no
+# Terminal behavior
+zstyle ':z4h:' start-tmux       no        # Don't auto-start tmux
+zstyle ':z4h:' prompt-at-bottom 'yes'     # Prompt at bottom on startup/Ctrl+L
+zstyle ':z4h:bindkey' keyboard  'mac'     # Mac keyboard shortcuts
 
-# Move prompt to the bottom when zsh starts and on Ctrl+L.
-zstyle ':z4h:' prompt-at-bottom 'yes'
+# Shell enhancements  
+zstyle ':z4h:' term-shell-integration 'yes'           # Semantic markup for output
+zstyle ':z4h:autosuggestions' forward-char 'accept'   # Right arrow accepts full suggestion
+zstyle ':z4h:fzf-complete' recurse-dirs 'no'         # Deep directory completion
 
-# Keyboard type: 'mac' or 'pc'.
-zstyle ':z4h:bindkey' keyboard  'mac'
-
-# Mark up shell's output with semantic information.
-zstyle ':z4h:' term-shell-integration 'yes'
-
-# Right-arrow key accepts one character ('partial-accept') from
-# command autosuggestions or the whole thing ('accept')?
-zstyle ':z4h:autosuggestions' forward-char 'accept'
-
-# Recursively traverse directories when TAB-completing files.
-zstyle ':z4h:fzf-complete' recurse-dirs 'yes'
-
-# Enable direnv to automatically source .envrc files.
-zstyle ':z4h:direnv'         enable 'no'
-# Show "loading" and "unloading" notifications from direnv.
+# Direnv integration (disabled - auto-loads .envrc files)
+zstyle ':z4h:direnv' enable 'no'
 zstyle ':z4h:direnv:success' notify 'yes'
 
-# Enable ('yes') or disable ('no') automatic teleportation of z4h over
-# SSH when connecting to these hosts.
-zstyle ':z4h:ssh:example-hostname1'   enable 'yes'
-zstyle ':z4h:ssh:*.example-hostname2' enable 'no'
-# The default value if none of the overrides above match the hostname.
-zstyle ':z4h:ssh:*'                   enable 'no'
-
-# Send these files over to the remote host when connecting over SSH to the
-# enabled hosts.
-zstyle ':z4h:ssh:*' send-extra-files '~/.nanorc' '~/.env.zsh'
-
-# Clone additional Git repositories from GitHub.
-#
-# This doesn't do anything apart from cloning the repository and keeping it
-# up-to-date. Cloned files can be used after `z4h init`. This is just an
-# example. If you don't plan to use Oh My Zsh, delete this line.
+# ============================================
+# FRAMEWORK INITIALIZATION
+# ============================================
+# Install Oh My Zsh plugins (can be removed if unused)
 z4h install ohmyzsh/ohmyzsh || return
 
-# Install or update core components (fzf, zsh-autosuggestions, etc.) and
-# initialize Zsh. After this point console I/O is unavailable until Zsh
-# is fully initialized. Everything that requires user interaction or can
-# perform network I/O must be done above. Everything else is best done below.
+# Initialize z4h framework - everything below runs after init
 z4h init || return
+# as per suggestion of anti-gravity
+# if [[ -o interactive ]]; then
+#   z4h init || return
+# fi
 
-# Extend PATH.
-path=(~/bin $path)
+# ============================================
+# PATH AND ENVIRONMENT SETUP
+# ============================================
+path=(~/bin $path)                    # Add ~/bin to PATH
+fpath=(/opt/homebrew/share/zsh/site-functions $fpath)  # Homebrew completions (Apple Silicon)
+export GPG_TTY=$TTY                   # Fix GPG signing in terminal
+z4h source ~/.env.zsh                 # Load additional local config if exists
 
-# Export environment variables.
-export GPG_TTY=$TTY
+# ============================================
+# KEYBOARD SHORTCUTS
+# ============================================
+# Command line editing
+z4h bindkey undo Ctrl+/   Shift+Tab   # Undo last command line change
+z4h bindkey redo Option+/             # Redo last undone change
 
-# Source additional local files if they exist.
-z4h source ~/.env.zsh
+# Directory navigation with Shift+arrows
+z4h bindkey z4h-cd-back    Shift+Left    # cd to previous directory
+z4h bindkey z4h-cd-forward Shift+Right   # cd to next directory  
+z4h bindkey z4h-cd-up      Shift+Up      # cd to parent directory
+z4h bindkey z4h-cd-down    Shift+Down    # cd into child directory
 
-# Use additional Git repositories pulled in with `z4h install`.
-#
-# This is just an example that you should delete. It does nothing useful.
-z4h source ohmyzsh/ohmyzsh/lib/diagnostics.zsh  # source an individual file
-z4h load   ohmyzsh/ohmyzsh/plugins/emoji-clock  # load a plugin
+# ============================================
+# CUSTOM FUNCTIONS AND ALIASES
+# ============================================
+autoload -Uz zmv                     # Advanced file renaming tool
 
-# siraj load custom plugins
-z4h load   ohmyzsh/ohmyzsh/plugins/git
-
-# Define key bindings.
-z4h bindkey undo Ctrl+/   Shift+Tab # undo the last command line change
-z4h bindkey redo Option+/           # redo the last undone command line change
-
-z4h bindkey z4h-cd-back    Shift+Left   # cd into the previous directory
-z4h bindkey z4h-cd-forward Shift+Right  # cd into the next directory
-z4h bindkey z4h-cd-up      Shift+Up     # cd into the parent directory
-z4h bindkey z4h-cd-down    Shift+Down   # cd into a child directory
-
-# Autoload functions.
-autoload -Uz zmv
-
-# Define functions and completions.
+# Create directory and cd into it: md dirname
 function md() { [[ $# == 1 ]] && mkdir -p -- "$1" && cd -- "$1" }
 compdef _directories md
 
-# Define named directories: ~w <=> Windows home directory on WSL.
+# Named directories (Windows home on WSL)
 [[ -z $z4h_win_home ]] || hash -d w=$z4h_win_home
 
-# Define aliases.
-alias tree='tree -a -I .git'
+# Useful aliases
+alias tree='tree -a -I .git'         # Show hidden files, ignore .git
+alias ls="${aliases[ls]:-ls} -A"     # Show hidden files (except . and ..)
+alias pref="open ~/.zshrc -a \"Visual Studio Code\""  # Quick edit zshrc
 
-# Add flags to existing aliases.
-alias ls="${aliases[ls]:-ls} -A"
-
-# Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
-setopt glob_dots     # no special treatment for file names with a leading dot
-setopt no_auto_menu  # require an extra TAB press to open the completion menu
-
-# -> nvm install
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && . "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+# ============================================
+# SHELL OPTIONS
+# ============================================
+setopt glob_dots                      # Include hidden files in glob patterns
+# setopt no_auto_menu                 # DISABLED - show completion menu on first TAB
 
 
-# -> iTerm2 Shell Integration
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# alias for zshrc - pref
-alias pref="open ~/.zshrc -a \"Visual Studio Code\""
-
-# -> install pyenv
-# eval "$(pyenv init -)"
-
-# for storing the dotfiles using config alias in the special bare repo
-alias config='/usr/bin/git --git-dir=/Users/siraj/.cfg/ --work-tree=/Users/siraj'
-
-# alias for exa
-if [ -x "$(command -v exa)" ]; then
-    alias ls="exa --long --header --git --icons --no-permissions --no-user --no-filesize -rsmod"
-fi
-
-# set pycache to use a systemwide folder
+# ============================================
+# LANGUAGE-SPECIFIC SETTINGS
+# ============================================
+# Python: Use system-wide cache instead of project __pycache__
 export PYTHONPYCACHEPREFIX="$HOME/.cache/pycache/"
 
-# Add JBang to environment
-alias j!=jbang
-export PATH="$HOME/.jbang/bin:$PATH"
+# Elixir: Enable command history in IEx shell (use ↑/↓ arrows)
+export ERL_AFLAGS="-kernel shell_history enabled"
+
+# ============================================
+# TERMINAL INTEGRATION
+# ============================================
+# iTerm2 integration - enhanced terminal features
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+# demote homebrew packages after mise. 
+# export PATH="/opt/homebrew/bin:$PATH"
+export PATH="$PATH:/opt/homebrew/bin"
+
+# direnv hook
+eval "$(direnv hook zsh)"
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+# Amp CLI
+export PATH="/Users/siraj/.amp/bin:$PATH"
+
+# ============================================
+# VERSION MANAGERS AND LANGUAGE TOOLS
+# ============================================
+eval "$(mise activate zsh)"
