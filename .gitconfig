@@ -1,0 +1,26 @@
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[user]
+	name = Siraj Samsudeen
+	email = mailsiraj@gmail.com
+[color]
+	ui = auto
+[alias]
+	last = log -1 HEAD --stat -p
+[init]
+	defaultBranch = main
+[http]
+	postBuffer = 524288000
+[credential "https://github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/opt/homebrew/bin/gh auth git-credential
+[credential]
+	helper = osxkeychain
+[core]
+	editor = code --wait
