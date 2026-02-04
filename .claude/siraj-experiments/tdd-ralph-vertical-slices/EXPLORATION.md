@@ -237,6 +237,100 @@ specs/
 
 ---
 
+### 5. GSD (Get Shit Done) System
+
+**Links:**
+- GitHub: https://github.com/glittercowboy/get-shit-done
+- NPM: `npx get-shit-done-cc`
+- Local install: `~/.claude/commands/gsd/`
+
+**Note:** Created by a non-coder, so it lacks testing/code quality enforcement — which is exactly what I want to add.
+
+| Concept | Description |
+|---------|-------------|
+| **Context rot problem** | Quality degrades as Claude fills 200k context window |
+| **Fresh context per task** | Each execution task gets fresh 200k context — prevents degradation |
+| **Multi-agent orchestration** | Orchestrator (thin) spawns specialized agents: Research, Planning, Execution, Verification |
+| **XML task format** | Structured tasks with `<verify>` and `<done>` conditions |
+| **Atomic git commits** | Every task → individual commit with semantic prefix |
+| **State persistence** | Survives `/clear`, session breaks, context limits |
+| **Milestone/Phase hierarchy** | Project → Milestone → Phase → Plan → Task |
+
+**GSD's Context Engineering Strategy:**
+| File | Purpose | Lifecycle |
+|------|---------|-----------|
+| `PROJECT.md` | Vision (always loaded) | Created once, rarely updated |
+| `REQUIREMENTS.md` | Scoped deliverables with REQ-IDs | Evolves with milestones |
+| `ROADMAP.md` | Phase breakdown + progress | Updated as phases complete |
+| `STATE.md` | Cross-session memory, decisions, blockers | Living document |
+| `PLAN.md` | XML-structured atomic tasks | Per plan execution |
+
+**GSD's Multi-Agent Architecture:**
+```
+Orchestrator (thin, ~15% context)
+    ├── Research: 4 parallel investigators (stack, features, architecture, pitfalls)
+    ├── Planning: Planner → Checker → iterate until pass
+    ├── Execution: Tasks in parallel waves (fresh 200k context each)
+    └── Verification: Automated checks + debuggers for failures
+```
+
+**GSD's Core Workflow:**
+```
+/gsd:new-project      → PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md
+/gsd:discuss-phase N  → CONTEXT.md (capture decisions)
+/gsd:plan-phase N     → RESEARCH.md, PLAN.md (with plan checker loop)
+/gsd:execute-phase N  → Wave-based parallel execution
+/gsd:verify-work N    → UAT + auto-spawns debuggers on failure
+/gsd:complete-milestone → Archive, tag release
+```
+
+**GSD's Session Management:**
+| Command | Purpose |
+|---------|---------|
+| `/gsd:progress` | Check status, route to next action |
+| `/gsd:pause-work` | Create handoff file |
+| `/gsd:resume-work` | Restore session context |
+
+**What GSD Does Well (steal these):**
+- File-based state that survives context resets
+- Parallel research agents before planning
+- Plan checker loop (Planner → Checker → iterate)
+- Wave-based execution with fresh contexts
+- Progress/pause/resume commands
+- Structured XML task format with verify conditions
+
+**What GSD Lacks (my TDD additions):**
+- No TDD enforcement (tests after, not before)
+- No coverage requirements
+- No spec → test traceability
+- No feather-spec lightweight format
+- No hook-based blocking of implementation without tests
+
+**File Structure:**
+```
+.planning/
+├── PROJECT.md
+├── REQUIREMENTS.md
+├── ROADMAP.md
+├── STATE.md
+├── config.json
+├── research/
+│   ├── STACK.md, FEATURES.md, ARCHITECTURE.md, PITFALLS.md, SUMMARY.md
+├── codebase/           # Brownfield analysis
+├── todos/pending/
+├── debug/
+└── phases/
+    └── 01-foundation/
+        ├── 01-CONTEXT.md
+        ├── 01-RESEARCH.md
+        ├── 01-01-PLAN.md
+        ├── 01-01-SUMMARY.md
+        ├── 01-UAT.md
+        └── 01-VERIFICATION.md
+```
+
+---
+
 ## My Unique Advantages (Non-Negotiables)
 
 | Advantage | Why It Matters |
@@ -255,17 +349,20 @@ specs/
 
 ## Gap Analysis: What's Missing
 
-| Gap | What's Needed |
-|-----|---------------|
-| **Session initializer** | Skill that takes vague request → ordered feature list → `prd.json` equivalent |
-| **Progress file standard** | Consistent `claude-progress.md` across ALL skills |
-| **One-slice-per-session** | Skill that works ONE slice, updates status, STOPS |
-| **Resume skill** | Reads progress file, continues cleanly |
-| **Machine-readable status** | `status.json` per feature with `passes: true/false` |
-| **Rules folder** | Atomic, composable constraints (not just workflow skills) |
-| **Auto-commit on RED→GREEN** | Extend tdd-guard hook |
-| **Loopback prompt** | Standard prompt to re-issue each session |
-| **Attribution cleanup** | `debug-issue` needs Superpowers attribution + supporting files |
+| Gap | What's Needed | Borrow From |
+|-----|---------------|-------------|
+| **Session initializer** | Skill that takes vague request → ordered feature list → `prd.json` equivalent | GSD `/gsd:new-project` |
+| **Progress file standard** | Consistent `claude-progress.md` across ALL skills | GSD `STATE.md` pattern |
+| **One-slice-per-session** | Skill that works ONE slice, updates status, STOPS | Ralph loop |
+| **Resume skill** | Reads progress file, continues cleanly | GSD `/gsd:resume-work` |
+| **Pause skill** | Creates handoff before context reset | GSD `/gsd:pause-work` |
+| **Machine-readable status** | `status.json` per feature with `passes: true/false` | Ralph `prd.json` |
+| **Rules folder** | Atomic, composable constraints (not just workflow skills) | Huntley stdlib |
+| **Auto-commit on RED→GREEN** | Extend tdd-guard hook | Huntley auto-commit rule |
+| **Loopback prompt** | Standard prompt to re-issue each session | Huntley /specs |
+| **Plan checker loop** | Verify plan before execution | GSD planner → checker |
+| **Fresh context per task** | Prevent context rot during execution | GSD execution waves |
+| **Attribution cleanup** | `debug-issue` needs Superpowers attribution + supporting files | — |
 
 ---
 
@@ -312,16 +409,39 @@ LOOPBACK PROMPT (for resuming):
 
 ## Files to Read for Full Context
 
+### My Skills
 | File | Location | Purpose |
 |------|----------|---------|
-| My `dev-workflow` | `~/.claude/skills/dev-workflow/SKILL.md` | Current master workflow |
-| My `create-design` | `~/.claude/skills/create-design/SKILL.md` | Has vertical slicing |
-| My `create-spec` | `~/.claude/skills/create-spec/SKILL.md` | Feather-spec format |
-| My `derive-tests-from-spec` | `~/.claude/skills/derive-tests-from-spec/SKILL.md` | Has `claude-progress.md` |
-| My `setup-tdd-guard` | `~/.claude/skills/setup-tdd-guard/SKILL.md` | Hook-based enforcement |
-| My `setup-convex-testing` | `~/.claude/skills/setup-convex-testing/SKILL.md` | Discovery docs example |
-| Superpowers `systematic-debugging` | `~/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/skills/systematic-debugging/SKILL.md` | Has supporting technique files |
-| Superpowers `verification-before-completion` | `~/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/skills/verification-before-completion/SKILL.md` | Evidence before claims |
+| `dev-workflow` | `~/.claude/skills/dev-workflow/SKILL.md` | Current master workflow |
+| `create-design` | `~/.claude/skills/create-design/SKILL.md` | Has vertical slicing |
+| `create-spec` | `~/.claude/skills/create-spec/SKILL.md` | Feather-spec format |
+| `derive-tests-from-spec` | `~/.claude/skills/derive-tests-from-spec/SKILL.md` | Has `claude-progress.md` |
+| `setup-tdd-guard` | `~/.claude/skills/setup-tdd-guard/SKILL.md` | Hook-based enforcement |
+| `setup-convex-testing` | `~/.claude/skills/setup-convex-testing/SKILL.md` | Discovery docs example |
+
+### Superpowers
+| File | Location | Purpose |
+|------|----------|---------|
+| `systematic-debugging` | `~/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/skills/systematic-debugging/SKILL.md` | Has supporting technique files |
+| `verification-before-completion` | `~/.claude/plugins/cache/superpowers-marketplace/superpowers/4.1.1/skills/verification-before-completion/SKILL.md` | Evidence before claims |
+
+### GSD Commands (for session/state management patterns)
+| File | Location | Purpose |
+|------|----------|---------|
+| `new-project` | `~/.claude/commands/gsd/new-project.md` | Project initialization pattern |
+| `plan-phase` | `~/.claude/commands/gsd/plan-phase.md` | Planning with checker loop |
+| `execute-phase` | `~/.claude/commands/gsd/execute-phase.md` | Wave-based execution |
+| `pause-work` | `~/.claude/commands/gsd/pause-work.md` | Session handoff pattern |
+| `resume-work` | `~/.claude/commands/gsd/resume-work.md` | Context restoration |
+| `progress` | `~/.claude/commands/gsd/progress.md` | Status check + routing |
+
+### GSD Agents (for multi-agent patterns)
+| File | Location | Purpose |
+|------|----------|---------|
+| `gsd-planner` | `~/.claude/agents/gsd-planner.md` | Plan creation agent |
+| `gsd-plan-checker` | `~/.claude/agents/gsd-plan-checker.md` | Plan verification loop |
+| `gsd-executor` | `~/.claude/agents/gsd-executor.md` | Task execution agent |
+| `gsd-verifier` | `~/.claude/agents/gsd-verifier.md` | Work verification agent |
 
 ---
 
