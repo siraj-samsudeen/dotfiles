@@ -54,11 +54,36 @@ Run these checks and report results:
 | Type Check | `npm run typecheck` | ✓ No errors |
 | Lint | `npm run lint` | ✓ No warnings |
 | Build | `npm run build` | ✓ Success |
+| Coverage | `npm test -- --coverage` | ✓ 100% branches |
 
 **Automated Result:** PASS / FAIL
 ```
 
 If automated checks fail, fix them before proceeding to manual verification.
+
+### Coverage Gate (Mandatory)
+
+Coverage MUST be 100% for new/modified files:
+
+| Metric | Threshold |
+|--------|-----------|
+| Line coverage | 100% |
+| Branch coverage | 100% |
+| Function coverage | 100% |
+
+```bash
+npm test -- --coverage
+```
+
+**If coverage < 100%:**
+1. Identify uncovered lines from the report
+2. Either add tests for those lines, OR
+3. Remove the untested code (it shouldn't exist without a test driving it)
+4. Re-run until 100%
+
+**Why this matters:** The TodoList example had 75% branch coverage. The uncovered 25% included the `onBlur` handler that was never wired to the backend. 100% coverage would have caught this.
+
+**Uncovered branch = untested code path = potential bug.**
 
 ## Step 2: Generate Manual Verification Guide
 

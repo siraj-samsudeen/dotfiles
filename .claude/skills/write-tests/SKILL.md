@@ -285,6 +285,77 @@ See `testing-anti-patterns.md` in this directory:
 - Adding test-only methods to production classes
 - Mocking without understanding dependencies
 
+## Mutation Tests MUST Verify State
+
+For apps with persistence (databases, APIs, Convex, etc.), UI assertions alone are insufficient.
+
+**The Problem:**
+
+```typescript
+// BAD: Only checks UI - test passes but data never persisted
+it("saves on blur", async () => {
+  await user.dblClick(screen.getByText("Buy milk"));
+  await user.type(editInput, "Buy eggs");
+  await user.tab(); // blur
+  expect(screen.getByText("Buy eggs")).toBeInTheDocument(); // UI updated!
+  // But did the database actually change? We don't know.
+});
+```
+
+This test can pass while the mutation never fires. Local state updated, backend unchanged.
+
+**The Fix:**
+
+```typescript
+// GOOD: Verifies actual persistence
+it("saves on blur and persists to database", async () => {
+  const { t, user } = setupTodoList();
+
+  await user.dblClick(screen.getByText("Buy milk"));
+  await user.type(editInput, "Buy eggs");
+  await user.tab(); // blur
+
+  // UI verification
+  expect(screen.getByText("Buy eggs")).toBeInTheDocument();
+
+  // Database verification (REQUIRED)
+  const todos = await t.run(async (ctx) => ctx.db.query("todos").collect());
+  expect(todos[0].text).toBe("Buy eggs");
+});
+```
+
+**Rule:** Every test that should modify server state (create, update, delete) MUST verify the state actually changed. Without database verification, you're testing local state illusions.
+
+**Applies to:**
+- Convex mutations
+- REST API calls
+- GraphQL mutations
+- Any backend state change
+
+## Git Workflow (RED→GREEN Commits)
+
+TDD naturally produces atomic commits:
+
+**After each RED→GREEN cycle:**
+```bash
+git add <test-file> <implementation-file>
+git commit -m "RED: Add test for <behavior>
+GREEN: Implement <behavior>"
+```
+
+Or separate commits for clarity:
+```bash
+# After RED (test written and failing)
+git add <test-file>
+git commit -m "RED: Add test for <behavior>"
+
+# After GREEN (minimal implementation passes)
+git add <implementation-file>
+git commit -m "GREEN: Implement <behavior>"
+```
+
+This creates a clear history showing test-first discipline.
+
 ## Final Rule
 
 ```

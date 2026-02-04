@@ -30,8 +30,11 @@ feather-spec (light)  →  derive-tests-from-spec  →  Full Gherkin (complete)
 Identify:
 - Requirement groups (QT-1, QT-2, etc.)
 - EARS statements in each group
+- **Examples tables** (sample data from user)
 - Data model constraints
 - Out of scope items
+
+**Examples are gold.** They become concrete Gherkin scenario data instead of generic placeholders.
 
 ### Step 2: Expand Each Group to Gherkin
 
@@ -49,31 +52,44 @@ User reviews all Gherkin scenarios before implementation. This is **Checkpoint: 
 
 ### WHEN (Event-Driven) → Happy Path + Edge Cases
 
-**Spec (light):**
-```
+**Spec (with examples):**
+```markdown
 WHEN I type and press Enter, THE SYSTEM SHALL create a task
+
+**Examples:**
+| Input | Result |
+|-------|--------|
+| "Buy milk" | Task created, incomplete |
+| "Call dentist" | Task created, incomplete |
 ```
 
-**Gherkin (expanded):**
+**Gherkin (uses examples as data):**
 ```gherkin
-# Happy path (from spec)
-Scenario: Create task quickly
-  When I type "Buy groceries" and press Enter
-  Then "Buy groceries" appears in my task list
+# Happy path - uses example data from spec
+Scenario: QT-1.1 - Create task quickly
+  When I type "Buy milk" and press Enter
+  Then "Buy milk" appears in my task list
+  And "Buy milk" is marked incomplete
+
+Scenario: QT-1.2 - Create another task
+  When I type "Call dentist" and press Enter
+  Then "Call dentist" appears in my task list
 
 # Edge cases (added by this skill)
-Scenario: Empty input is ignored
+Scenario: QT-1.3 - Empty input is ignored
   When I press Enter with nothing typed
   Then no task is created
 
-Scenario: Whitespace-only input is ignored
+Scenario: QT-1.4 - Whitespace-only input is ignored
   When I type "   " and press Enter
   Then no task is created
 
-Scenario: Input clears after creation
-  When I create a task
+Scenario: QT-1.5 - Input clears after creation
+  When I type "Buy milk" and press Enter
   Then the input field is empty
 ```
+
+**Key:** "Buy milk" and "Call dentist" came from the spec examples, not invented here.
 
 ### IF/THEN (Error Cases) → Error Scenarios
 
@@ -110,112 +126,58 @@ Scenario: Timer hidden for other statuses
 
 ## Output Format
 
-Generate grouped Gherkin that matches spec structure:
+Generate clean, grouped Gherkin. Save to `docs/specs/<feature>/gherkin.md`.
+
+**In the file** (for traceability): Include IDs, test level mappings, seed data.
+
+**In conversation** (for user): Show clean Gherkin grouped by spec section, brief summary, and ask for approval.
+
+Example conversation output:
 
 ```markdown
-# Gherkin Scenarios: [Feature Name]
+# Gherkin Scenarios: TodoList
 
-**Spec:** `docs/specs/[feature].md`
+## TL-1: Create Task
 
----
-
-## QT-1: Quick Task Creation
-
-### From Spec (Happy Path)
+### Happy Path (in spec)
 
 ```gherkin
-Scenario: Create task quickly
-  When I type "Buy groceries" and press Enter
-  Then "Buy groceries" appears in my task list
+Scenario: Create task as manager
+  Given I am logged in as Alice (manager)
+  When I type "Review quarterly reports" and press Enter
+  Then "Review quarterly reports" appears in my task list
 ```
 
-### Edge Cases (Added)
+### Edge Cases (not in spec)
 
 ```gherkin
 Scenario: Empty input is ignored
   When I press Enter with nothing typed
   Then no task is created
+```
 
-Scenario: Whitespace-only input is ignored
-  When I type "   " and press Enter
-  Then no task is created
+## TL-2: View Tasks
 
-Scenario: Input clears after creation
-  When I create a task
-  Then the input field is empty
+### Happy Path (in spec)
+
+```gherkin
+Scenario: Empty state shows message
+  Given I have no tasks
+  Then I see "No todos yet"
+
+Scenario: User sees only their own tasks
+  Given Alice has task "Review reports"
+  And Bob has task "Fix bug"
+  When I am logged in as Alice
+  Then I see "Review reports"
+  And I do not see "Fix bug"
 ```
 
 ---
 
-## QT-2: Quick Task Visibility
+21 scenarios across 5 groups. Saved to `docs/specs/todolist/gherkin.md`.
 
-### From Spec (Happy Path)
-
-```gherkin
-Scenario: Quick tasks are private by default
-  When I create a quick task
-  Then only I can see it
-
-Scenario: Assigning to teammate shares the task
-  Given I have a private quick task
-  When I assign it to Alice
-  Then Alice can see it
-```
-
-### Edge Cases (Added)
-
-```gherkin
-Scenario: Unassigning returns to private
-  Given I assigned my task to Alice
-  When I remove the assignee
-  Then only I can see it again
-```
-
----
-
-## QT-3: Project Task
-
-### From Spec (Happy Path)
-
-```gherkin
-Scenario: Project tasks are team-visible
-  Given I am in project "Website Redesign"
-  When I create a task "Update homepage"
-  Then my teammates can see it
-```
-
-### Edge Cases (Added)
-
-```gherkin
-Scenario: Moving task to project makes it shared
-  Given I have a private quick task
-  When I move it to project "Website Redesign"
-  Then my teammates can see it
-```
-
----
-
-## Summary
-
-| Group | From Spec | Edge Cases | Total |
-|-------|-----------|------------|-------|
-| QT-1 | 1 | 3 | 4 |
-| QT-2 | 2 | 1 | 3 |
-| QT-3 | 1 | 1 | 2 |
-| **Total** | **4** | **5** | **9** |
-
----
-
-## Checkpoint: Gherkin Review
-
-Please review these scenarios before implementation:
-
-- [ ] Happy path scenarios match your intent?
-- [ ] Edge cases are worth testing?
-- [ ] Any scenarios to add?
-- [ ] Any scenarios to remove?
-
-**Your response:** "Approved" / "Add: [scenario]" / "Remove: [scenario]" / "Change: [scenario]"
+**Approved to commit?**
 ```
 
 ## Edge Case Categories
@@ -259,6 +221,62 @@ Don't add scenarios for:
 - Scenarios covered by framework (auth, CSRF, etc.)
 - Duplicate coverage across groups
 
+## Use Best Judgment (Don't Ask User)
+
+Feather-spec intentionally omits edge cases that aren't important for user sign-off. When deriving tests, **use sensible defaults for standard UX patterns** instead of asking the user.
+
+### Standard Defaults (Never Ask)
+
+| Edge Case | Default Behavior | Why |
+|-----------|------------------|-----|
+| Empty/whitespace input | Ignore silently | No one expects an error for empty |
+| Escape key during edit | Cancel and revert | Universal UX pattern |
+| Save empty text | Revert to original | Safe/forgiving > destructive |
+| Input field after submit | Clear it | Standard form behavior |
+| Data after action | Persists (it's a database app) | Obvious |
+
+### Example: What We Learned
+
+When deriving tests for a TodoList spec, these questions came up:
+
+**Q1: Empty Input**
+> When I press Enter with nothing typed, what should happen?
+
+**Default answer:** Ignore silently. No error, no task created.
+
+**Q2: Cancel Editing**
+> When I'm editing "Buy milk", change to "Buy oat milk", press Escape - what happens?
+
+**Default answer:** Revert to "Buy milk". Escape-to-cancel is universal.
+
+**Q3: Edit to Empty**
+> When I edit "Buy milk", delete all text, press Enter - what happens?
+
+**Default answer:** Revert to "Buy milk". Forgiving > destructive.
+
+**Lesson:** All three had obvious answers. Don't burden the user with questions that have clear defaults.
+
+### When TO Ask
+
+Only ask when there's genuine ambiguity:
+- Business logic with no clear default ("should completed tasks auto-archive after 30 days?")
+- Destructive vs non-destructive when both are equally valid
+- Feature scope questions ("should edit also allow changing due date?")
+
+## Keep Output Clean
+
+**Don't show users:**
+- Test IDs (internal reference only)
+- Long summary tables with counts
+- Mapping tables (test level, file locations)
+
+**Do show users:**
+- Grouped Gherkin scenarios (readable)
+- Brief summary ("21 scenarios across 5 groups")
+- Decisions made (for transparency)
+
+IDs and mappings go in the output file for traceability, but don't clutter the conversation.
+
 ## Test Level Mapping
 
 After Gherkin is approved, map to test levels:
@@ -279,6 +297,52 @@ After Gherkin is approved, map to test levels:
 | Private by default | E2E | e2e/quick-task.spec.ts |
 ```
 
+## Test ID Convention
+
+Each scenario gets a unique ID for end-to-end traceability.
+
+### ID Format
+
+`[GROUP]-[GROUP_NUM].[SCENARIO_NUM]`
+
+Examples:
+- `QT-1.1` = Quick Task group 1, scenario 1
+- `TL-3.2` = Todo List group 3, scenario 2
+
+### Generate Test ID Table
+
+After expanding Gherkin, create a mapping table:
+
+```markdown
+## Test IDs
+
+| ID | Spec Group | Scenario | Level | Test File |
+|----|------------|----------|-------|-----------|
+| TL-1.1 | TL-1: Create | creates task and persists | Integration | TodoList.integration.test.tsx |
+| TL-1.2 | TL-1: Create | clears input after create | Integration | TodoList.integration.test.tsx |
+| TL-1.3 | TL-1: Create | rejects empty text | Integration | TodoList.integration.test.tsx |
+| TL-3.1 | TL-3: Edit | saves on Enter and persists | Integration | TodoList.integration.test.tsx |
+| TL-3.2 | TL-3: Edit | saves on blur and persists | Integration | TodoList.integration.test.tsx |
+| TL-3.3 | TL-3: Edit | Escape discards without persisting | Integration | TodoList.integration.test.tsx |
+```
+
+### Why IDs Matter
+
+Traceability chain:
+
+```
+Spec requirement  →  Gherkin scenario  →  Test name  →  Verification step  →  Feedback
+      TL-3              TL-3.2           "TL-3.2: ..."    "TL-3 step 2"      "TL-3.2 failed"
+```
+
+When verify-feature reports "TL-3 step 2 failed":
+1. Find test `TL-3.2` in the test file
+2. Find Gherkin scenario `TL-3.2` in the derived tests
+3. Find spec requirement `TL-3` in the spec
+4. Understand exactly what broke and why
+
+Without IDs, you're guessing which test corresponds to which requirement.
+
 ## Checkpoint Gate
 
 **Do NOT proceed to implementation until user approves Gherkin scenarios.**
@@ -289,20 +353,114 @@ This checkpoint ensures:
 3. User understands what will be tested
 4. Traceability from spec → scenarios → tests
 
+## Generating Seed Data
+
+After Gherkin is approved, aggregate all examples into seed data:
+
+```markdown
+## Seed Data (from spec examples)
+
+```typescript
+// convex/seed.ts - Generated from spec examples
+export const seedData = {
+  todos: [
+    // From QT-1 examples
+    { text: "Buy milk", completed: false },
+    { text: "Call dentist", completed: false },
+    // From QT-2 examples (toggle scenarios)
+    { text: "Finish report", completed: true },
+  ],
+  users: [
+    // From QT-2 examples (visibility scenarios)
+    { name: "Alice", email: "alice@example.com" },
+  ],
+  projects: [
+    // From QT-3 examples
+    { name: "Website Redesign", teamId: "team-1" },
+  ],
+};
+```
+
+This ensures development uses the same data users mentioned in requirements.
+```
+
 ## Relationship to Other Skills
 
 ```
-feather-spec (light)
+feather-spec (light, with examples)
      ↓
 review-design (Checkpoint 1: artifacts)
      ↓
 derive-tests-from-spec (THIS SKILL)
+  - Uses examples as Gherkin data
+  - Generates seed data file
      ↓
 Checkpoint: Gherkin Review ← USER APPROVES HERE
      ↓
 write-plan-from-spec (implementation plan)
      ↓
-Implementation (TDD from Gherkin)
+Implementation (TDD from Gherkin, using seed data)
+```
+
+## Git Workflow
+
+**Before deriving tests:**
+```bash
+git status  # Verify clean state
+```
+
+**After Gherkin is approved:**
+```bash
+git add docs/specs/<feature>/gherkin.md claude-progress.md
+git commit -m "Add <feature> Gherkin scenarios and progress tracking"
+```
+
+Each artifact gets its own atomic commit for clean history and easy rollback.
+
+## Progress Tracking
+
+Create/update `claude-progress.md` in the project root to track:
+
+- **Work completed** - What was done this session
+- **User inputs collected** - Questions asked and answers given
+- **Decisions made** - Edge cases resolved with sensible defaults
+- **Discoveries/learnings** - What was learned that improves future work
+- **Wrong paths/corrections** - Mistakes made and how they were fixed
+- **Items for user review** - Anything pending user attention
+- **Next steps** - What comes next
+
+This enables async handoff - user can step away and return to understand exactly what happened, what decisions were made, and what needs attention.
+
+Example structure:
+```markdown
+# Claude Progress
+
+## Session: YYYY-MM-DD
+
+### Work Completed
+- Derived Gherkin scenarios (21 total)
+
+### User Inputs Collected
+| Question | Answer |
+|----------|--------|
+| Empty input behavior | Ignore silently |
+
+### Decisions Made (by Claude)
+| Edge Case | Decision | Rationale |
+|-----------|----------|-----------|
+| Input clears after submit | Yes | Standard form behavior |
+
+### Discoveries
+- Don't ask about standard UX patterns
+
+### Wrong Paths
+| What Happened | Correction |
+|---------------|------------|
+| Showed IDs to user | User asked for cleaner format |
+
+### Next Steps
+1. Create implementation plan
+2. Execute with TDD
 ```
 
 ## Traceability

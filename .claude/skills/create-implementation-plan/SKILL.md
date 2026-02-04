@@ -132,6 +132,71 @@ Every plan must include:
 
 This prevents "tests pass but feature broken" by requiring multiple verification layers.
 
+## Test File Structure
+
+Test files MUST mirror spec groups for traceability. This enables:
+- Feedback tracking: "TL-3 step 2 failed" → maps to test TL-3.2
+- Coverage analysis: Which spec requirements are tested?
+- Debugging: Failed test → spec requirement → implementation
+
+### Template
+
+```typescript
+/**
+ * Integration tests for [Feature]
+ * Spec: docs/specs/[feature]/spec.md
+ *
+ * Test IDs match spec groups:
+ * - TL-1.x = Create Task tests
+ * - TL-2.x = Toggle tests
+ * - TL-3.x = Edit tests
+ * - TL-4.x = Delete tests
+ */
+
+describe("TL-1: Create Task", () => {
+  describe("Core", () => {
+    it("TL-1.1: creates task and persists to database", async () => {
+      // Action + UI assertion + Database assertion (required)
+    });
+  });
+
+  describe("Edge", () => {
+    it("TL-1.2: clears input after create", async () => { /* ... */ });
+    it("TL-1.3: rejects empty text", async () => { /* ... */ });
+  });
+});
+
+describe("TL-3: Edit Task", () => {
+  describe("Core", () => {
+    it("TL-3.1: saves on Enter and persists to database", async () => { /* ... */ });
+    it("TL-3.2: saves on blur and persists to database", async () => { /* ... */ });
+  });
+
+  describe("Edge", () => {
+    it("TL-3.3: Escape discards without persisting", async () => { /* ... */ });
+  });
+});
+```
+
+### Why This Matters
+
+Without structure, tests become disconnected from requirements:
+
+```typescript
+// BAD: No traceability
+describe("Edge: Edit", () => {
+  it("saves on blur", ...);  // Which spec requirement? Unknown.
+});
+
+// GOOD: Clear traceability
+describe("TL-3: Edit Task", () => {
+  it("TL-3.2: saves on blur and persists to database", ...);
+  // TL-3 = spec group, .2 = second scenario in that group
+});
+```
+
+When verify-feature reports "TL-3 step 2 failed", you know exactly which test to check.
+
 ## Verification Checklist (for the plan itself)
 
 Before marking plan complete:
@@ -167,6 +232,21 @@ After saving the plan:
    - **Parallel Session (separate)** - Batch execution with checkpoints
 
 **Which approach?"**
+
+## Git Workflow
+
+**Before writing plan:**
+```bash
+git status  # Verify clean state
+```
+
+**After plan is complete:**
+```bash
+git add docs/specs/<feature>/implementation-plan.md
+git commit -m "Add <feature> implementation plan"
+```
+
+Each artifact gets its own atomic commit for clean history and easy rollback.
 
 ## Relationship to Other Skills
 

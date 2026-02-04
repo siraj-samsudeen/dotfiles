@@ -42,3 +42,26 @@ Me: "go" / "do step 1" / "skip the checkbox"
 ```
 
 I stay in control. I react to what I see. We iterate.
+
+---
+
+## Writing Skills
+
+When creating or updating skills (`.claude/skills/*/SKILL.md`):
+
+1. **Document the discovery process** - Don't just show the final solution. Show what was tried and why alternatives failed. This teaches future Claude instances (and humans) the reasoning.
+
+   Example from `/setup-convex-testing`:
+   ```
+   | Approach | Result |
+   | 1. Direct hook replacement | Failed - Can't intercept useQuery |
+   | 2. ConvexReactClientFake | Failed - Not designed for convex-test |
+   | 3. Custom ConvexTestProvider | **Works** |
+   ```
+
+2. **Show anti-patterns** - When you discover something is redundant or wrong, keep the example but explain why to avoid it.
+
+   Example: Backend tests section kept but with note:
+   > "Discovery: Backend tests are redundant! Integration tests already cover the backend. Running coverage confirms this."
+
+3. **Include the "why"** - Skills should teach, not just instruct. Future readers should understand the reasoning to adapt it to their context.

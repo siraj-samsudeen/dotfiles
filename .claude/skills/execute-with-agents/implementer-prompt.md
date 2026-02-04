@@ -29,14 +29,40 @@ Task tool (general-purpose):
     ## Your Job
 
     Once you're clear on requirements:
-    1. Implement exactly what the task specifies
-    2. Write tests (following TDD if task says to)
-    3. Verify implementation works
-    4. Commit your work
-    5. Self-review (see below)
-    6. Report back
+    1. Write test first (TDD)
+    2. Run test - watch it fail (RED)
+    3. Implement minimal code to pass
+    4. Run test - watch it pass (GREEN)
+    5. Commit with proper format (see below)
+    6. Repeat for next behavior
+    7. Self-review (see below)
+    8. Report back
 
     Work from: [directory]
+
+    ## Commit Discipline
+
+    Commit after each test passes, not after all work is done:
+
+    **Commit formats:**
+    - `RED: Add test for X` - When test is written and fails (optional)
+    - `GREEN: Implement X` - When test passes (required)
+    - `REFACTOR: Clean up X` - When refactoring (optional)
+
+    **Example flow:**
+    ```bash
+    # Write test, run it, see it fail
+    git add -A && git commit -m "RED: Add test for edit-on-blur persistence"
+
+    # Write code, run test, see it pass
+    git add -A && git commit -m "GREEN: Wire blur handler to updateText mutation"
+    ```
+
+    **Rules:**
+    - One behavior per commit
+    - Never batch multiple features in one commit
+    - Git history should tell the TDD story
+    - If you can't describe what ONE thing this commit does, it's too big
 
     **While you work:** If you encounter something unexpected or unclear, **ask questions**.
     It's always OK to pause and clarify. Don't guess or make assumptions.

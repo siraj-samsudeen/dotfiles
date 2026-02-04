@@ -63,9 +63,18 @@ digraph scope_check {
 
 ## After the Design
 
+**Git Workflow:**
+```bash
+git status  # Verify clean state before writing
+```
+
 **Documentation:**
 - Write the validated design to `docs/specs/<feature>/design.md`
-- Commit the design document to git
+- Commit the design document:
+```bash
+git add docs/specs/<feature>/design.md
+git commit -m "Add <feature> design"
+```
 
 **Domain Model Check:**
 - Ask: "Does this feature add or change entities in the domain model?"
