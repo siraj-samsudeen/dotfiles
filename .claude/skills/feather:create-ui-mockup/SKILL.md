@@ -1,15 +1,15 @@
 ---
-name: create-mockup
-description: Use when designing user interfaces. Creates visual HTML mockups that render in Chrome for realistic UI preview. Start with text diagrams, then offer HTML mockups.
+name: feather:create-ui-mockup
+description: Use when designing user interfaces. Creates lightweight visual HTML mockups that render in Chrome for realistic UI preview. Start with text diagrams, then offer HTML mockups. Part of the feather (lightweight, iterative) workflow.
 ---
 
-# Create Mockup
+# Feather UI Mockup
 
 ## Overview
 
-Create visual UI mockups using inline HTML/CSS rendered in Chrome via Playwright. This provides a realistic preview of designs without leaving the conversation.
+Create lightweight visual UI mockups using inline HTML/CSS rendered in Chrome via Playwright. "Feather" = quick, iterative, lightweight - not heavyweight design docs.
 
-**Announce at start:** "I'm using the create-mockup skill to create visual mockups."
+**Announce at start:** "I'm using feather:ui-mockup to create a quick visual preview."
 
 ## When to Use
 
@@ -17,6 +17,8 @@ Create visual UI mockups using inline HTML/CSS rendered in Chrome via Playwright
 - When presenting navigation options, layouts, or component designs
 - When text diagrams aren't sufficient to convey the design
 - When the user asks to "see" or "show" a design visually
+- During `/feather:slice-project` to preview UI for slices
+- Before writing specs, to validate visual direction
 
 ## The Flow
 
@@ -37,7 +39,7 @@ Start with ASCII/text diagrams for quick iteration:
 
 Once structure is agreed, offer:
 
-> "Would you like me to show you a quick HTML mockup? It renders in Chrome and gives a more realistic feel."
+> "Would you like me to show you a quick feather-mockup? It renders in Chrome and gives a more realistic feel."
 
 ### Step 3: Create Mockup
 
@@ -46,6 +48,13 @@ Use Playwright to render inline HTML:
 ```
 mcp__playwright__browser_navigate with url: data:text/html,<HTML_CONTENT>
 mcp__playwright__browser_take_screenshot
+```
+
+### Step 4: Save for Reference (Optional)
+
+If creating mockups during `/feather:slice-project`, save to:
+```
+docs/mockups/<slice-id>.html
 ```
 
 ## HTML Template (Dark Mode)
@@ -197,12 +206,73 @@ body {
 </div>
 ```
 
+### Form
+```html
+<form class="form">
+  <div class="form-group">
+    <label>Task Name</label>
+    <input class="input" type="text" placeholder="Enter task...">
+  </div>
+  <button class="btn btn-primary">Save</button>
+</form>
+```
+
+### Todo List (Common for Slice Projects)
+```html
+<div class="todo-list">
+  <div class="todo-item">
+    <input type="checkbox">
+    <span class="todo-text">Buy milk</span>
+    <button class="btn-icon">×</button>
+  </div>
+  <div class="todo-item completed">
+    <input type="checkbox" checked>
+    <span class="todo-text">Call dentist</span>
+    <button class="btn-icon">×</button>
+  </div>
+</div>
+
+<style>
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid #222;
+}
+.todo-item.completed .todo-text {
+  text-decoration: line-through;
+  color: #666;
+}
+.btn-icon {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+}
+.btn-icon:hover { color: #ef4444; }
+</style>
+```
+
 ## URL Encoding
 
 When using data URLs, encode special characters:
 - `#` → `%23`
 - `%` → `%25`
 - Space → `%20` (or use %25 for literal space in values)
+
+## Feather Philosophy
+
+**Feather = Lightweight**
+
+| Feather Approach | Heavyweight Approach |
+|------------------|---------------------|
+| Quick sketch | Detailed wireframe |
+| Iterate fast | Get it perfect first |
+| HTML in minutes | Design tool, export, review |
+| Good enough to decide | Pixel-perfect |
+
+The goal is to **validate direction quickly**, not create final designs.
 
 ## Tips
 
@@ -211,13 +281,46 @@ When using data URLs, encode special characters:
 3. **Dark mode default** - Most developer tools use dark mode
 4. **Screenshot after render** - Always capture with `browser_take_screenshot`
 5. **Multiple views** - Create separate mockups for different states/pages
+6. **Name saved files** - Use slice IDs when saving (e.g., `docs/mockups/TODO-1.html`)
 
-## Integration with Brainstorming
+## Integration with Slice Workflow
 
-This skill is typically used during **superpowers:brainstorming** sessions when:
-- Exploring navigation options
-- Presenting component layouts
-- Showing task detail views, modals, or slide-overs
-- Comparing visual approaches side by side
+During `/feather:slice-project`:
 
-Reference: "I'm using create-mockup to show you a visual preview."
+```
+Claude: "Slices with UI: TODO-1, PROJ-1, MEMBER-1
+
+Want to see feather-mockups before deciding?"
+
+User: "Show me TODO-1"
+
+Claude: "I'm using feather:ui-mockup to preview TODO-1..."
+
+[Creates mockup, takes screenshot]
+
+Claude: "Here's a quick mockup of the todo list.
+         The input at top, list below, checkboxes for completion.
+
+         Look right? Or want changes before we finalize slices?"
+```
+
+## Relationship to Other Skills
+
+```
+/feather:slice-project
+     │
+     ├── Offers: feather:ui-mockup for UI slices
+     │
+     ↓
+feather:ui-mockup (THIS SKILL)
+     │
+     ├── Saves to: docs/mockups/<slice-id>.html (optional)
+     │
+     ↓
+/feather:work-slice → create-spec (uses mockup as reference)
+```
+
+Also used in Simple Mode:
+```
+create-design → feather:ui-mockup → review-design
+```
