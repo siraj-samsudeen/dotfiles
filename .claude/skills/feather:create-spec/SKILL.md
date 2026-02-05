@@ -1,5 +1,5 @@
 ---
-name: create-spec
+name: feather:create-spec
 description: Lightweight, AI-native requirements specification framework for defining features with minimal redundancy and maximum traceability. Use when writing feature specifications, requirements documents, or any documentation intended to drive implementation. Outputs docs/specs/<feature>/spec.md.
 ---
 

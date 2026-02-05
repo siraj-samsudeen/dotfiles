@@ -23,7 +23,7 @@ For single features that fit in one session:
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  1. REQUIREMENTS                                                    │
-│     Skill: create-design → create-spec                              │
+│     Skill: feather:create-design → feather:create-spec              │
 │     Output: design.md, spec.md                                      │
 │                                                                     │
 │  2. DESIGN                                                          │
@@ -31,37 +31,37 @@ For single features that fit in one session:
 │     Output: UI mockups, user journey, UX touches                    │
 │                                                                     │
 │  3. ◆ CHECKPOINT 1                                                  │
-│     Skill: review-design                                            │
+│     Skill: feather:review-design                                    │
 │     Gate: 5 artifacts present? Architecture sound?                  │
 │     Feedback: Saved to .feedback/ if deferred                       │
 │                                                                     │
 │  4. TEST DERIVATION                                                 │
-│     Skill: derive-tests-from-spec                                   │
+│     Skill: feather:derive-tests                                     │
 │     Output: Gherkin scenarios grouped by spec IDs                   │
 │                                                                     │
 │  5. ◆ GHERKIN REVIEW                                                │
-│     (Built into derive-tests-from-spec)                             │
+│     (Built into feather:derive-tests)                               │
 │     Gate: User approves scenarios before implementation             │
 │                                                                     │
 │  6. PLANNING                                                        │
-│     Skill: create-implementation-plan                               │
+│     Skill: feather:create-plan                                      │
 │     Output: implementation-plan.md (behavioral tasks, NO code)      │
 │                                                                     │
 │  7. ISOLATION                                                       │
-│     Skill: isolate-work                                             │
+│     Skill: feather:isolate-work                                     │
 │     Output: Feature branch or worktree                              │
 │                                                                     │
 │  8. IMPLEMENTATION                                                  │
-│     Skill: execute-with-agents                                      │
+│     Skill: feather:execute                                          │
 │     Constraint: Test is READ-ONLY CONTRACT                          │
 │                                                                     │
 │  9. ◆ CHECKPOINT 2                                                  │
-│     Skill: verify-feature                                           │
+│     Skill: feather:verify                                           │
 │     Gate: Automated + manual verification                           │
 │     Feedback: All issues saved to .feedback/                        │
 │                                                                     │
 │  10. COMPLETION                                                     │
-│      Skill: finish-branch                                           │
+│      Skill: feather:finish                                          │
 │      Options: Merge / PR / Keep / Discard                           │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -159,10 +159,10 @@ For larger projects with multiple features spanning multiple sessions:
 
 | Situation | Mode | Start With |
 |-----------|------|------------|
-| Single feature, one session | Simple | `create-design` |
+| Single feature, one session | Simple | `feather:create-design` |
 | Multiple features, spans sessions | Slice | `/feather:slice-project` |
 | Vague idea, need to explore | Slice | `/feather:slice-project` |
-| Well-defined single feature | Simple | `create-spec` |
+| Well-defined single feature | Simple | `feather:create-spec` |
 | Existing slice project | Slice | `/feather:resume-slice` |
 
 ## Quick Reference: Which Skill When?
@@ -171,16 +171,16 @@ For larger projects with multiple features spanning multiple sessions:
 
 | Step | Trigger | Skill | Output |
 |------|---------|-------|--------|
-| Start feature | "Let's build X" | `create-design` | design.md |
-| Write requirements | After design | `create-spec` | spec.md |
-| Create UI design | Need visual | `feather:ui-mockup` | mockup |
-| Review before coding | Have design docs | `review-design` | approval |
-| Expand to tests | After CP1 passes | `derive-tests-from-spec` | Gherkin |
-| Plan implementation | After Gherkin approved | `create-implementation-plan` | plan.md |
-| Start coding | Before first commit | `isolate-work` | branch |
-| Execute plan | Have approved plan | `execute-with-agents` | code |
-| Verify feature | Implementation done | `verify-feature` | approval |
-| Finish up | All checks pass | `finish-branch` | merged |
+| Start feature | "Let's build X" | `feather:create-design` | design.md |
+| Write requirements | After design | `feather:create-spec` | spec.md |
+| Create UI design | Need visual | `feather:create-ui-mockup` | mockup |
+| Review before coding | Have design docs | `feather:review-design` | approval |
+| Expand to tests | After CP1 passes | `feather:derive-tests` | Gherkin |
+| Plan implementation | After Gherkin approved | `feather:create-plan` | plan.md |
+| Start coding | Before first commit | `feather:isolate-work` | branch |
+| Execute plan | Have approved plan | `feather:execute` | code |
+| Verify feature | Implementation done | `feather:verify` | approval |
+| Finish up | All checks pass | `feather:finish` | merged |
 
 ### Slice Mode Skills
 
@@ -197,7 +197,7 @@ For larger projects with multiple features spanning multiple sessions:
 ## The Three Checkpoints
 
 ### Checkpoint 1: Before Implementation
-**Skill:** `review-design`
+**Skill:** `feather:review-design`
 
 | Artifact | Required |
 |----------|----------|
@@ -210,14 +210,14 @@ For larger projects with multiple features spanning multiple sessions:
 **User says:** "Approved" → proceed | "Add X" → update or save to .feedback/
 
 ### Checkpoint: Gherkin Review
-**Skill:** `derive-tests-from-spec` (built-in)
+**Skill:** `feather:derive-tests` (built-in)
 
 **User reviews:** Generated scenarios match intent?
 
 **User says:** "Approved" → proceed | "Add/Remove/Change scenario"
 
 ### Checkpoint 2: After Implementation
-**Skill:** `verify-feature`
+**Skill:** `feather:verify`
 
 | Check | Type |
 |-------|------|
@@ -236,7 +236,7 @@ For larger projects with multiple features spanning multiple sessions:
 | Pre-commit hook | Git pre-commit | `git commit` if any check fails |
 | Vitest threshold | Coverage config | Tests fail if coverage drops below 100% |
 
-**Setup:** Run `/setup-tdd-guard` before starting slice work.
+**Setup:** Run `/feather:setup-tdd-guard` before starting slice work.
 
 ## Feedback Tracking
 
@@ -257,10 +257,10 @@ All feedback saved to `.feedback/` folder:
 
 | Don't | Do |
 |-------|-----|
-| Skip create-design | Always clarify intent first |
+| Skip feather:create-design | Always clarify intent first |
 | Put code in plans | Plans are behavioral, not code |
 | Let implementer modify tests | Test is READ-ONLY CONTRACT |
-| Claim done without CP2 | Always run verify-feature |
+| Claim done without CP2 | Always run feather:verify |
 | Lose feedback | Always save to .feedback/ |
 | Work multiple slices at once | One slice, STOP, human decides |
 | Skip TDD in polish | TDD is mandatory even for fixes |
@@ -272,19 +272,19 @@ All feedback saved to `.feedback/` folder:
 User: "Let's add quick task"
 
 Claude: "I'm using feather:workflow to guide this feature.
-         Starting with create-design to understand requirements."
+         Starting with feather:create-design to understand requirements."
 
-→ invoke: create-design
-→ invoke: create-spec
-→ invoke: feather:ui-mockup (if UI)
-→ invoke: review-design (CP1)
-→ invoke: derive-tests-from-spec
+→ invoke: feather:create-design
+→ invoke: feather:create-spec
+→ invoke: feather:create-ui-mockup (if UI)
+→ invoke: feather:review-design (CP1)
+→ invoke: feather:derive-tests
 → [Gherkin Review]
-→ invoke: create-implementation-plan
-→ invoke: isolate-work
-→ invoke: execute-with-agents
-→ invoke: verify-feature (CP2)
-→ invoke: finish-branch
+→ invoke: feather:create-plan
+→ invoke: feather:isolate-work
+→ invoke: feather:execute
+→ invoke: feather:verify (CP2)
+→ invoke: feather:finish
 ```
 
 ### New Multi-Feature Project
@@ -318,16 +318,16 @@ Claude: "I'm using /feather:resume-slice to restore context."
 feather:workflow (THIS - the map)
      │
      ├── Simple Mode
-     │   ├── create-design              → design.md
-     │   ├── create-spec                → spec.md
-     │   ├── feather:ui-mockup          → mockup
-     │   ├── review-design              → (CP1)
-     │   ├── derive-tests-from-spec     → Gherkin
-     │   ├── create-implementation-plan → plan.md
-     │   ├── isolate-work               → branch
-     │   ├── execute-with-agents        → code
-     │   ├── verify-feature             → (CP2)
-     │   └── finish-branch              → merged
+     │   ├── feather:create-design      → design.md
+     │   ├── feather:create-spec        → spec.md
+     │   ├── feather:create-ui-mockup   → mockup
+     │   ├── feather:review-design      → (CP1)
+     │   ├── feather:derive-tests       → Gherkin
+     │   ├── feather:create-plan        → plan.md
+     │   ├── feather:isolate-work       → branch
+     │   ├── feather:execute            → code
+     │   ├── feather:verify             → (CP2)
+     │   └── feather:finish             → merged
      │
      └── Slice Mode
          ├── /feather:slice-project             → .slices/*

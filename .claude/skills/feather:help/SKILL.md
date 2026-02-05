@@ -11,9 +11,9 @@ Welcome to the Feather workflow - a lightweight, TDD-enforced development system
 
 **Building something small (single feature)?**
 ```
-/create-design    → Clarify what you're building
-/create-spec      → Write requirements
-/feather:workflow → See the full process
+/feather:create-design    → Clarify what you're building
+/feather:create-spec      → Write requirements
+/feather:workflow         → See the full process
 ```
 
 **Building something bigger (multiple features)?**
@@ -34,7 +34,7 @@ Welcome to the Feather workflow - a lightweight, TDD-enforced development system
 For features that fit in one session:
 
 ```
-create-design → create-spec → feather:ui-mockup → derive-tests → implement → verify
+feather:create-design → feather:create-spec → feather:create-ui-mockup → feather:derive-tests → implement → feather:verify
 ```
 
 **Use when:** One well-defined feature, clear scope, fits in a session.
@@ -59,8 +59,8 @@ For larger projects spanning multiple sessions:
 | Skill | When to Use |
 |-------|-------------|
 | `/feather:slice-project` | Vague idea → ordered slices |
-| `/create-design` | Clarify intent for single feature |
-| `/create-spec` | Write lightweight requirements |
+| `/feather:create-design` | Clarify intent for single feature |
+| `/feather:create-spec` | Write lightweight requirements |
 
 ### Slice Workflow
 
@@ -83,17 +83,17 @@ For larger projects spanning multiple sessions:
 | Skill | When to Use |
 |-------|-------------|
 | `/feather:create-ui-mockup` | Quick visual HTML mockup |
-| `/derive-tests-from-spec` | Spec → Gherkin scenarios |
-| `/create-implementation-plan` | Plan implementation steps |
+| `/feather:derive-tests` | Spec → Gherkin scenarios |
+| `/feather:create-plan` | Plan implementation steps |
 
 ### Execution & Verification
 
 | Skill | When to Use |
 |-------|-------------|
-| `/setup-tdd-guard` | Enable TDD enforcement |
-| `/write-tests` | TDD for single feature |
-| `/verify-feature` | Checkpoint 2 verification |
-| `/finish-branch` | Complete and merge work |
+| `/feather:setup-tdd-guard` | Enable TDD enforcement |
+| `/feather:write-tests` | TDD for single feature |
+| `/feather:verify` | Checkpoint 2 verification |
+| `/feather:finish` | Complete and merge work |
 
 ### Reference
 
@@ -116,7 +116,7 @@ For larger projects spanning multiple sessions:
 Small and clear → Simple Mode:
 ```
 User: "I want to build a todo app"
-Claude: I'll use /create-design to clarify the scope...
+Claude: I'll use /feather:create-design to clarify the scope...
 ```
 
 ### "I want to build something like Basecamp"
@@ -141,7 +141,7 @@ Claude: I'll use /feather:resume-slice to restore context...
 Before using slice workflow, ensure TDD infrastructure:
 
 ```bash
-/setup-tdd-guard   # Installs TDD enforcement hooks
+/feather:setup-tdd-guard   # Installs TDD enforcement hooks
 ```
 
 This enables:
@@ -154,7 +154,7 @@ This enables:
 | Question | Answer |
 |----------|--------|
 | "What skill should I use?" | `/feather:workflow` shows the decision tree |
-| "How does TDD work here?" | `/setup-tdd-guard` explains enforcement |
+| "How does TDD work here?" | `/feather:setup-tdd-guard` explains enforcement |
 | "What's a slice?" | Vertical cut of functionality (UI → database) |
 | "Why STOP after each slice?" | Prevents context rot, keeps human in control |
 

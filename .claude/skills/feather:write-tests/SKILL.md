@@ -1,5 +1,5 @@
 ---
-name: write-tests
+name: feather:write-tests
 description: Use when implementing any feature or bugfix, before writing implementation code. Test-driven development - write the test first, watch it fail, write minimal code to pass.
 ---
 

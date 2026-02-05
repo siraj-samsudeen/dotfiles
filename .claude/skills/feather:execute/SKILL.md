@@ -1,5 +1,5 @@
 ---
-name: execute-with-agents
+name: feather:execute
 description: Use when executing implementation plans with independent tasks in the current session. Dispatches fresh subagent per task with two-stage review.
 ---
 

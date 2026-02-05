@@ -1,5 +1,5 @@
 ---
-name: create-implementation-plan
+name: feather:create-plan
 description: Create implementation plans from specs. Use when you have approved specs and need to plan implementation. Outputs implementation-plan.md.
 ---
 

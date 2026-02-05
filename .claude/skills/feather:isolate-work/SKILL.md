@@ -1,5 +1,5 @@
 ---
-name: isolate-work
+name: feather:isolate-work
 description: Use when starting feature work that needs isolation. Offers choice between simple branch or git worktree, with smart defaults for worktree location.
 ---
 

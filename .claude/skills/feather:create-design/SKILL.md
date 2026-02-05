@@ -1,5 +1,5 @@
 ---
-name: create-design
+name: feather:create-design
 description: Use before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent and creates design.md.
 ---
 

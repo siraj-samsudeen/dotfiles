@@ -1,5 +1,5 @@
 ---
-name: review-design
+name: feather:review-design
 description: Review design documents for architectural soundness and verify Checkpoint 1 artifacts. Use when user says "review the design", "check the design", or before creating an implementation plan.
 author: Claude
 version: 2.0.0

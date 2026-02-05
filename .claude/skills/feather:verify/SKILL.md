@@ -1,5 +1,5 @@
 ---
-name: verify-feature
+name: feather:verify
 description: Checkpoint 2 - Verify feature works after implementation. Runs automated checks, generates manual verification guide, collects structured feedback, saves to .feedback/ folder.
 ---
 

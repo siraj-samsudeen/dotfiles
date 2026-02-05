@@ -1,5 +1,5 @@
 ---
-name: setup-tdd-guard
+name: feather:setup-tdd-guard
 description: Set up TDD Guard with Vitest to enforce test-first development. Blocks implementation code until tests exist.
 ---
 

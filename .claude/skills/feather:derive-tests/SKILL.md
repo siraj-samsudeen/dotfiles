@@ -1,5 +1,5 @@
 ---
-name: derive-tests-from-spec
+name: feather:derive-tests
 description: Expand feather-spec into Gherkin scenarios (including edge cases) for user review before implementation. Groups match spec IDs. Creates checkpoint for scenario approval.
 ---
 
