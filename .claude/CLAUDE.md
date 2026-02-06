@@ -37,6 +37,22 @@ When creating skills: document what was tried and why it failed (not just the fi
 
 ---
 
+## DIALOGUE.md — Living Project Record
+
+Every project should have a `docs/DIALOGUE.md` that captures:
+- Questions asked and answers given (with implications)
+- Key decisions and their rationale
+- Milestones and what happened at each stage
+- Anything that helps a future session understand HOW we got here
+
+**Format:** Developer diary + cleaned chat transcript. Not a raw dump — pruned to key content. Don't duplicate what's already in committed files (requirements, roadmap, etc.) — reference them instead.
+
+**Update it:** Append new entries with each significant commit or decision point. Include a "Last updated" line at the bottom.
+
+**Why:** Context gets lost between sessions. DIALOGUE.md is the thread that connects them.
+
+---
+
 ## Instructions to Claude
 
 ### Communication

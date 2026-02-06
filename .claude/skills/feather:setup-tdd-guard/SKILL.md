@@ -186,6 +186,35 @@ project/
 └── package.json               # Test scripts
 ```
 
+## Pre-commit Hook (Enforce Coverage)
+
+Add a git pre-commit hook to block commits if coverage < 100%:
+
+```bash
+# Create the hook
+cat > .git/hooks/pre-commit << 'EOF'
+#!/bin/sh
+# Pre-commit hook: Enforce 100% test coverage
+# Bypass with: git commit --no-verify
+
+npm run test:coverage
+EOF
+
+# Make it executable
+chmod +x .git/hooks/pre-commit
+```
+
+**Why this matters:** Without enforcement, coverage checks get skipped. This was discovered when an agent committed code without running coverage first.
+
+**Legitimate bypass cases:**
+- WIP commits: `git commit --no-verify -m "WIP: incomplete"`
+- Docs-only changes: `git commit --no-verify -m "Update README"`
+- Emergency fixes: `git commit --no-verify -m "Hotfix: ..."`
+
+The `--no-verify` flag is standard git behavior and requires explicit intent to skip.
+
+---
+
 ## Troubleshooting
 
 ### Hook not working

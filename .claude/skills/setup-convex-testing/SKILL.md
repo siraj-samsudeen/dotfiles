@@ -9,10 +9,11 @@ description: Set up integration testing for React + Convex + Vite projects. Enab
 
 This skill sets up **complete testing infrastructure** for Convex projects:
 
-1. **TDD Guard** - Enforces test-first development (via `/setup-tdd-guard`)
-2. **Integration tests** - React components with real Convex backend execution
-3. **Coverage** - 100% coverage target with `@vitest/coverage-v8`
-4. **MECE tests** - No redundant tests, each test covers a distinct state
+1. **Integration tests** - React components with real Convex backend execution via [convex-test-provider](https://www.npmjs.com/package/convex-test-provider)
+2. **Coverage** - 100% coverage target with `@vitest/coverage-v8`
+3. **MECE tests** - No redundant tests, each test covers a distinct state
+
+> **TDD enforcement:** Use `/feather:setup-tdd-guard` to add TDD Guard hooks and pre-commit coverage checks.
 
 The goal is **Phoenix LiveView-style tests** where one test exercises both UI and backend simultaneously.
 
@@ -70,9 +71,9 @@ There's no official way to connect `convex-test` (Layer 1) directly to React's `
 |----------|------|------|
 | Layer 3 (real local backend) | Zero mocking, full stack | Requires running backend binary, slower |
 | Layer 2 (mock convex/react) | Fast, simple | Doesn't test real backend functions |
-| **Our approach (ConvexTestProvider)** | Tests real functions + React together | Custom bridge code to maintain |
+| **Our approach ([convex-test-provider](https://www.npmjs.com/package/convex-test-provider))** | Tests real functions + React together, npm package | Queries run once per mount (no live subscriptions) |
 
-**Our ConvexTestProvider creates a "Layer 2.5"** - using convex-test's in-memory DB connected to React without running a local backend.
+**[convex-test-provider](https://www.npmjs.com/package/convex-test-provider) creates a "Layer 2.5"** - using convex-test's in-memory DB connected to React without running a local backend. This was originally a custom `ConvexTestProvider` built in this skill, now published as an npm package.
 
 ---
 
@@ -110,12 +111,9 @@ The `convex-helpers` package has a `fakeConvexClient` but:
 - Requires manually implementing each query/mutation
 - Doesn't execute real backend functions
 
-### Approach 3: Custom ConvexTestProvider ✅
+### Approach 3: convex-test-provider ✅
 
-We built a minimal bridge that:
-- Wraps `convex-test` in a fake client compatible with `ConvexProvider`
-- Implements only `watchQuery` (what `useQuery` needs)
-- Executes real Convex functions via `t.query()`
+We built a minimal bridge that wraps `convex-test` in a fake client compatible with `ConvexProvider`. This was originally a custom `ConvexTestProvider` in this skill, now published as **[convex-test-provider](https://www.npmjs.com/package/convex-test-provider)** on npm.
 
 **This is what we use.**
 
@@ -126,7 +124,7 @@ We built a minimal bridge that:
 ### 1. Install Dependencies
 
 ```bash
-npm install -D convex-test @edge-runtime/vm @vitest/coverage-v8
+npm install -D convex-test convex-test-provider @edge-runtime/vm @vitest/coverage-v8
 ```
 
 ### 2. Update vitest.config.ts
@@ -184,100 +182,36 @@ Create `convex/test.setup.ts`:
 
 ```typescript
 /// <reference types="vite/client" />
+import { createConvexTest, renderWithConvex } from "convex-test-provider";
+import schema from "./schema";
+
 export const modules = import.meta.glob("./**/!(*.*.*)*.*s");
+export const test = createConvexTest(schema, modules);
+export { renderWithConvex };
 ```
 
-This enables `convex-test` to discover your Convex modules.
+**What this gives you:**
 
-### 4. Create ConvexTestProvider
+| Export | Purpose |
+|--------|---------|
+| `modules` | Module discovery for convex-test |
+| `test` | Custom Vitest `test` function with fixtures (`client`, `userId`, `seed`, `createUser`) |
+| `renderWithConvex` | Testing Library render wrapped with `ConvexTestProvider` |
 
-Create `src/test/ConvexTestProvider.tsx`:
+**Available test fixtures:**
 
-```tsx
-import { createContext, ReactNode, useContext, useCallback } from "react";
-import { ConvexProvider } from "convex/react";
-import { TestConvex } from "convex-test";
-import { FunctionReference } from "convex/server";
-import schema from "../../convex/schema";
+| Fixture | Description |
+|---------|-------------|
+| `testClient` | Raw convex-test client (unauthenticated) |
+| `userId` | Current user's ID (user auto-created) |
+| `client` | Authenticated client for the current user |
+| `seed(table, data)` | Insert data, auto-fills `userId` field |
+| `createUser()` | Create another authenticated user |
 
-type TestClient = TestConvex<typeof schema>;
-
-const ConvexTestContext = createContext<TestClient | null>(null);
-
-export function ConvexTestProvider({
-  client,
-  children,
-}: {
-  client: TestClient;
-  children: ReactNode;
-}) {
-  const cache = new Map<string, unknown>();
-
-  const fakeClient = {
-    watchQuery: (query: unknown, args: unknown) => {
-      const key = JSON.stringify({ query, args });
-      let subscriber: (() => void) | null = null;
-
-      client.query(query as never, args ?? {}).then((result) => {
-        cache.set(key, result);
-        subscriber?.();
-      });
-
-      return {
-        localQueryResult: () => cache.get(key),
-        onUpdate: (cb: () => void) => {
-          subscriber = cb;
-          return () => { subscriber = null; };
-        },
-      };
-    },
-  };
-
-  return (
-    <ConvexTestContext.Provider value={client}>
-      <ConvexProvider client={fakeClient as never}>
-        {children}
-      </ConvexProvider>
-    </ConvexTestContext.Provider>
-  );
-}
-
-/**
- * Hook to call mutations in tests.
- *
- * Usage:
- *   const createTodo = useMutation(api.todos.create);
- *   const id = await createTodo({ text: "Buy milk" });
- */
-export function useMutation<Args extends Record<string, unknown>, Result>(
-  mutation: FunctionReference<"mutation", "public", Args, Result>
-) {
-  const t = useContext(ConvexTestContext);
-  if (!t) throw new Error("useMutation must be used within ConvexTestProvider");
-
-  return useCallback(
-    async (args: Args): Promise<Result> => {
-      return await t.mutation(mutation, args);
-    },
-    [t, mutation]
-  );
-}
-```
-
-**How it works:**
-- Wraps the `convex-test` client in two layers:
-  1. `ConvexTestContext` - Provides access to `t` for mutations
-  2. `ConvexProvider` with fake client - Provides `useQuery` support
-- `useMutation` hook executes real Convex mutations via `t.mutation()`
-
-**Supports:**
-- `useQuery` (via fake watchQuery)
-- `useMutation` (via ConvexTestContext)
-- Database verification via `t.run()`
-
-**Limitations:**
-- No real-time subscription updates after initial load
-- `useAction` not implemented (add similar pattern if needed)
+**Query behavior:**
+- Queries execute **once** when the component mounts
+- UI does not re-render after a mutation in the same test
+- Assert backend state via `client.query()`, or re-mount to query again
 
 ---
 
@@ -288,42 +222,25 @@ export function useMutation<Args extends Record<string, unknown>, Result>(
 `src/components/TodoList.integration.test.tsx`:
 
 ```tsx
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
-import { convexTest } from "convex-test";
-import schema from "../../convex/schema";
-import { modules } from "../../convex/test.setup";
-import { ConvexTestProvider } from "../test/ConvexTestProvider";
+import { screen } from "@testing-library/react";
+import { describe, expect } from "vitest";
+import { test, renderWithConvex } from "../../convex/test.setup";
 import { TodoList } from "./TodoList";
 
 describe("TodoList (integration)", () => {
-  it("shows empty state when no todos exist", async () => {
-    const t = convexTest(schema, modules);
-
-    render(
-      <ConvexTestProvider client={t}>
-        <TodoList />
-      </ConvexTestProvider>
-    );
+  test("shows empty state when no todos exist", async ({ client }) => {
+    renderWithConvex(<TodoList />, client);
 
     // Wait for query to resolve
     expect(await screen.findByText("No todos yet")).toBeInTheDocument();
   });
 
-  it("renders todos from real backend in correct order", async () => {
-    const t = convexTest(schema, modules);
-
+  test("renders todos from real backend in correct order", async ({ client, seed }) => {
     // Seed data via convex-test
-    await t.run(async (ctx) => {
-      await ctx.db.insert("todos", { text: "First todo", completed: false });
-      await ctx.db.insert("todos", { text: "Second todo", completed: true });
-    });
+    await seed("todos", { text: "First todo", completed: false });
+    await seed("todos", { text: "Second todo", completed: true });
 
-    render(
-      <ConvexTestProvider client={t}>
-        <TodoList />
-      </ConvexTestProvider>
-    );
+    renderWithConvex(<TodoList />, client);
 
     // Wait for real query to resolve and render
     expect(await screen.findByText("Second todo")).toBeInTheDocument();
@@ -333,6 +250,26 @@ describe("TodoList (integration)", () => {
     const items = screen.getAllByRole("listitem");
     expect(items[0]).toHaveTextContent("Second todo");
     expect(items[1]).toHaveTextContent("First todo");
+  });
+});
+```
+
+### Multi-user Tests
+
+```tsx
+import { describe, expect } from "vitest";
+import { test } from "../../convex/test.setup";
+import { api } from "../../convex/_generated/api";
+
+describe("Access control", () => {
+  test("users only see their own todos", async ({ client, createUser }) => {
+    // Alice creates a todo
+    await client.mutation(api.todos.create, { text: "Alice's todo" });
+
+    // Bob can't see Alice's todo
+    const bob = await createUser();
+    const bobTodos = await bob.query(api.todos.list, {});
+    expect(bobTodos).toHaveLength(0);
   });
 });
 ```
@@ -470,26 +407,42 @@ it("shows empty state", ...)             // Integration test - ALSO tests empty 
 
 ## Data Seeding Patterns
 
-### Direct DB Insert (Fast, for simple seeding)
+### Via `seed` fixture (Recommended — auto-fills userId)
 
 ```tsx
-await t.run(async (ctx) => {
-  await ctx.db.insert("todos", { text: "Test todo", completed: false });
+test("with seeded data", async ({ seed }) => {
+  await seed("todos", { text: "Test todo", completed: false });
 });
 ```
 
 ### Via Mutations (Tests more of the stack)
 
 ```tsx
-await t.mutation(api.todos.create, { text: "Test todo" });
+test("via mutation", async ({ client }) => {
+  await client.mutation(api.todos.create, { text: "Test todo" });
+});
 ```
 
-### With Authentication
+### Direct DB Insert (Low-level, when you need full control)
 
 ```tsx
-const asUser = t.withIdentity({ name: "Test User", subject: "user123" });
-await asUser.mutation(api.todos.create, { text: "User's todo" });
-const todos = await asUser.query(api.todos.list);
+test("direct insert", async ({ testClient }) => {
+  await testClient.run(async (ctx) => {
+    await ctx.db.insert("todos", { text: "Test todo", completed: false });
+  });
+});
+```
+
+### Multi-user Scenarios
+
+```tsx
+test("multi-user", async ({ client, createUser }) => {
+  await client.mutation(api.todos.create, { text: "Alice's todo" });
+
+  const bob = await createUser();
+  const bobTodos = await bob.query(api.todos.list, {});
+  expect(bobTodos).toHaveLength(0);
+});
 ```
 
 ---
@@ -521,32 +474,7 @@ npm run test:coverage
 
 Target: **100% coverage** on production files.
 
-### Pre-commit hook (enforce coverage)
-
-Add a git pre-commit hook to block commits if coverage < 100%:
-
-```bash
-# Create the hook
-cat > .git/hooks/pre-commit << 'EOF'
-#!/bin/sh
-# Pre-commit hook: Enforce 100% test coverage
-# Bypass with: git commit --no-verify
-
-npm run test:coverage
-EOF
-
-# Make it executable
-chmod +x .git/hooks/pre-commit
-```
-
-**Why this matters:** Without enforcement, coverage checks get skipped. This was discovered when an agent committed code without running coverage first.
-
-**Legitimate bypass cases:**
-- WIP commits: `git commit --no-verify -m "WIP: incomplete"`
-- Docs-only changes: `git commit --no-verify -m "Update README"`
-- Emergency fixes: `git commit --no-verify -m "Hotfix: ..."`
-
-The `--no-verify` flag is standard git behavior and requires explicit intent to skip.
+> **Pre-commit enforcement:** Use `/feather:setup-tdd-guard` to add a pre-commit hook that blocks commits when coverage < 100%.
 
 ---
 
@@ -555,7 +483,7 @@ The `--no-verify` flag is standard git behavior and requires explicit intent to 
 ```
 project/
 ├── convex/
-│   ├── test.setup.ts          # Module discovery for convex-test
+│   ├── test.setup.ts          # Module discovery + createConvexTest helpers
 │   └── todos.ts               # Convex functions
 ├── src/
 │   ├── components/
@@ -563,8 +491,7 @@ project/
 │   │   ├── TodoList.test.tsx              # Mock test (loading state only)
 │   │   └── TodoList.integration.test.tsx  # Integration tests
 │   └── test/
-│       ├── setup.ts                # Jest-dom matchers
-│       └── ConvexTestProvider.tsx  # Bridge to convex-test
+│       └── setup.ts                # Jest-dom matchers
 ├── vitest.config.ts
 └── package.json
 ```
@@ -660,6 +587,8 @@ test("adding a todo via UI appears in the list", async () => {
 
 ## References
 
+- [convex-test-provider (npm)](https://www.npmjs.com/package/convex-test-provider) — The provider package used in this skill
+- [convex-test-provider (GitHub)](https://github.com/siraj-samsudeen/convex-test-provider) — Source and contributing guide
 - [Convex Testing Docs](https://docs.convex.dev/testing)
 - [convex-test Library](https://docs.convex.dev/testing/convex-test)
 - [Testing React Components with Convex (blog)](https://stack.convex.dev/testing-react-components-with-convex)
