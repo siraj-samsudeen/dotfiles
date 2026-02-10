@@ -79,6 +79,22 @@ Every v1 requirement must map to exactly one phase. No orphans. No duplicates.
 If a requirement doesn't fit any phase → create a phase or defer to v2.
 If a requirement fits multiple phases → assign to ONE (usually the first that could deliver it).
 
+## Outcome-First Writing
+
+Every description in the roadmap — phase goals, deliverables, requirement notes — leads with
+the outcome or capability, not the tool. Tools go in parentheses as supporting detail.
+
+Bad:  "convex-test-provider installed, @testing-library/react + user-event"
+Good: "Integration tests run real Convex functions with React components — no mocks for persistence (convex-test-provider, @testing-library)"
+
+Bad:  "Lefthook pre-commit hook running lint + format + coverage check"
+Good: "Every commit is automatically checked for lint errors, formatting, and test coverage (Lefthook)"
+
+Bad:  "Sonner toast via shadcn"
+Good: "Mutation failures surface as toast notifications with the error message (Sonner via shadcn)"
+
+The pattern: WHAT the developer/user can do → HOW it's implemented in parentheses.
+
 </philosophy>
 
 <goal_backward_phases>
@@ -570,6 +586,10 @@ When unable to proceed:
 **Don't duplicate requirements across phases:**
 - Bad: AUTH-01 in Phase 2 AND Phase 3
 - Good: AUTH-01 in Phase 2 only
+
+**Don't write deliverables as tool lists:**
+- Bad: "@testing-library/react + user-event for component interaction"
+- Good: "Components tested via realistic user interactions — clicks, typing, form submissions (@testing-library)"
 
 </anti_patterns>
 
