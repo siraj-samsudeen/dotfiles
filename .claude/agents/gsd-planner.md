@@ -384,6 +384,15 @@ Output: [Artifacts created]
   <done>[Acceptance criteria]</done>
 </task>
 
+<!-- When quality.specs is true, tasks include spec_ref: -->
+<task type="auto" spec_ref="TL-1">
+  <name>Task: Implement task creation</name>
+  <files>src/features/tasks/create.ts, src/features/tasks/create.test.ts</files>
+  <action>Implement TL-1 (Create Task). Test IDs: TL-1.1 through TL-1.5.</action>
+  <verify>TL-1.1 through TL-1.5 pass. Coverage >= threshold for create.ts.</verify>
+  <done>All TL-1 Gherkin scenarios passing.</done>
+</task>
+
 </tasks>
 
 <verification>
@@ -674,6 +683,48 @@ Each TDD plan produces 2-3 atomic commits.
 TDD plans target ~40% context (lower than standard 50%). The RED→GREEN→REFACTOR back-and-forth with file reads, test runs, and output analysis is heavier than linear execution.
 
 </tdd_integration>
+
+<spec_aware_planning>
+
+## Spec-Aware Planning (when quality.specs is true)
+
+When SPEC.md and GHERKIN.md are provided in context:
+
+**1. Task spec_ref attribute:**
+Every task MUST include `spec_ref="XX-N"` referencing which capability group it implements.
+
+**2. Action references Gherkin IDs:**
+Task `<action>` specifies which EARS criteria and Gherkin scenario IDs it implements.
+
+**3. Verify references test IDs:**
+Task `<verify>` references specific Gherkin scenario IDs that must pass.
+
+**4. Test files use Gherkin IDs:**
+When generating test file paths, test describe/it blocks should include Gherkin IDs for traceability:
+```typescript
+describe('TL-1: Create Task', () => {
+  it('TL-1.1: creates task and persists', () => { ... });
+  it('TL-1.2: empty input ignored', () => { ... });
+});
+```
+
+**5. Coverage per capability:**
+Each spec group should be covered by at least one task. Cross-check task spec_refs against all spec groups to ensure nothing is missed.
+
+**Example spec-aware task:**
+```xml
+<task type="auto" tdd="true" spec_ref="TL-1">
+  <name>Task: Implement task creation</name>
+  <files>src/features/tasks/create.ts, src/features/tasks/create.test.ts</files>
+  <action>Implement TL-1 (Create Task). Test IDs: TL-1.1 through TL-1.5.</action>
+  <verify>TL-1.1 through TL-1.5 pass. Coverage >= threshold for create.ts.</verify>
+  <done>All TL-1 Gherkin scenarios passing.</done>
+</task>
+```
+
+**When SPEC/GHERKIN not provided:** Plan normally from CONTEXT.md and REQUIREMENTS.md. Do not add spec_ref attributes.
+
+</spec_aware_planning>
 
 <gap_closure_mode>
 

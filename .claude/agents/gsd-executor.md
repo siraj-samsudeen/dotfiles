@@ -22,7 +22,7 @@ Load execution context:
 INIT=$(node /Users/siraj/.claude/get-shit-done/bin/gsd-tools.js init execute-phase "${PHASE}")
 ```
 
-Extract from init JSON: `executor_model`, `commit_docs`, `phase_dir`, `plans`, `incomplete_plans`.
+Extract from init JSON: `executor_model`, `commit_docs`, `phase_dir`, `plans`, `incomplete_plans`, `quality_tdd_mode`, `quality_specs`, `quality_two_stage_review`, `quality_feedback`, `quality_coverage_threshold`, `spec_reviewer_model`, `code_reviewer_model`.
 
 Also read STATE.md for position, decisions, blockers:
 ```bash
@@ -225,7 +225,16 @@ If spawned as continuation agent (`<completed_tasks>` in prompt):
 </continuation_handling>
 
 <tdd_execution>
-When executing task with `tdd="true"`:
+
+## Three-Tier TDD (based on quality_tdd_mode)
+
+### Tier: off (default)
+No TDD enforcement. Write tests as convenient. Standard execution.
+
+### Tier: basic
+Prompt-based RED-GREEN-REFACTOR cycle. Same as legacy `tdd="true"`.
+
+When executing task with `tdd="true"` or `quality_tdd_mode="basic"`:
 
 **1. Check test infrastructure** (if first TDD task): detect project type, install test framework if needed.
 
@@ -236,6 +245,34 @@ When executing task with `tdd="true"`:
 **4. REFACTOR (if needed):** Clean up, run tests (MUST still pass), commit only if changes: `refactor({phase}-{plan}): clean up [feature]`
 
 **Error handling:** RED doesn't fail → investigate. GREEN doesn't pass → debug/iterate. REFACTOR breaks → undo.
+
+### Tier: full
+Hook-enforced TDD with read-only test contract and coverage gates.
+
+**All basic tier rules apply, plus:**
+
+**5. Read-only test contract:** If task has `spec_ref`, the Gherkin-derived test scenarios are the contract. Do NOT modify spec-derived test assertions during GREEN phase. You may add helper functions or test utilities, but the test expectations are locked.
+
+**6. Coverage gate:** After GREEN phase, run coverage:
+```bash
+npm run test:coverage
+```
+Coverage must meet `quality_coverage_threshold` for files in this task's `<files>`. If below threshold, add more tests before proceeding.
+
+**7. Hook awareness:** The tdd-guard hook blocks Write/Edit on non-test files when tests are failing. Work with it:
+- Write test first (hook allows test file writes)
+- Run tests (they fail — expected in RED)
+- Write implementation (hook allows because test.json shows tests exist)
+- Run tests again (they pass — GREEN)
+
+**8. Traceability:** When writing tests, use Gherkin scenario IDs in describe/it blocks:
+```typescript
+describe('{SPEC_GROUP}: {Capability Name}', () => {
+  it('{ID}-1.1: {scenario description}', () => { ... });
+  it('{ID}-1.2: {scenario description}', () => { ... });
+});
+```
+
 </tdd_execution>
 
 <task_commit_protocol>
@@ -302,6 +339,22 @@ After all tasks complete, create `{phase}-{plan}-SUMMARY.md` at `.planning/phase
 Or: "None - plan executed exactly as written."
 
 **Auth gates section** (if any occurred): Document which task, what was needed, outcome.
+
+**Feedback integration** (when `quality_feedback` is true):
+
+If deviations were found during execution (Rules 1-3), create structured feedback items for significant ones:
+
+```bash
+mkdir -p .feedback/open .feedback/in-progress .feedback/resolved
+```
+
+For each deviation that represents a bug or missing functionality:
+1. Type: BUG (Rule 1 fixes), UX (Rule 2 security/validation), PERF (Rule 3 blocking)
+2. Priority: P1 (was blocking) or P2 (was auto-fixed)
+3. Status: resolved (since the executor already fixed it)
+4. Write to `.feedback/resolved/{ID}-{slug}.md` with resolution details
+
+This creates an audit trail of issues found and fixed during execution. Regenerate `.feedback/INDEX.md` after creating items.
 </summary_creation>
 
 <self_check>
@@ -321,6 +374,72 @@ git log --oneline --all | grep -q "{hash}" && echo "FOUND: {hash}" || echo "MISS
 
 Do NOT skip. Do NOT proceed to state updates if self-check fails.
 </self_check>
+
+<two_stage_review>
+
+## Two-Stage Review (when quality_two_stage_review is true)
+
+After self-check passes for each task, spawn two reviewers in sequence.
+
+**Stage 1: Spec Compliance Review**
+
+Only if `quality_specs` is true AND task has `spec_ref`:
+
+```
+Task(prompt="
+You are reviewing whether an implementation matches its specification.
+
+## What Was Requested
+{task action + spec_ref content from SPEC.md}
+
+## What Was Built
+{from task's commit diff: git diff HEAD~1}
+
+## Your Job
+Read the actual code. Compare to spec line by line.
+- Missing requirements?
+- Extra/unneeded work?
+- Misunderstandings?
+
+Report: Spec compliant / Issues found: [list with file:line]
+", subagent_type="general-purpose", model="{spec_reviewer_model}", description="Review spec compliance for task")
+```
+
+**If issues found:** Fix before proceeding. Re-run reviewer until compliant.
+
+**Stage 2: Code Quality Review**
+
+Only after Stage 1 passes (or if no spec):
+
+```
+Task(prompt="
+You are reviewing code quality of an implementation.
+
+## Task Requirements
+{task description from plan}
+
+## Commits to Review
+{git diff for this task's commits}
+
+## Your Job
+Review for:
+- Critical: Security vulnerabilities, data corruption, broken functionality
+- Important: Poor error handling, missing edge cases, confusing code
+- Minor: Style inconsistencies, naming issues
+
+Testing: Do tests verify real behavior? Are they comprehensive?
+
+Report: Approved / Needs fixes (Critical) / Needs fixes (Important)
+", subagent_type="general-purpose", model="{code_reviewer_model}", description="Review code quality for task")
+```
+
+**If Critical issues:** Fix and re-review.
+**If Important issues:** Fix and re-review.
+**If Minor only or Approved:** Proceed to commit.
+
+**When quality_two_stage_review is false:** Skip both stages. Standard self-check only.
+
+</two_stage_review>
 
 <state_updates>
 After SUMMARY.md, update STATE.md using gsd-tools:
