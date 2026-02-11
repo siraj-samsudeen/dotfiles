@@ -9,7 +9,7 @@ Explorations, research, and synthesis for workflow improvements.
 | `tdd-ralph-vertical-slices/` | TDD Ralph with Vertical Slices | Research complete, ready for planning | 2025-02-04 |
 | `feather-gsd-*.md` | Feather + GSD Integration | 10-phase plan complete, ready for execution | 2025-02-10 |
 | `vbw-vs-gsd-handoff.md` | VBW vs GSD vs Feather Evaluation | Handoff ready for hands-on testing | 2025-02-10 |
-| `feather-flow-standalone/` | feather-flow Standalone Repo | Exploration complete, repo created | 2026-02-11 |
+| `feather-flow-standalone/` | feather-flow Standalone Repo | Complete — published and tested | 2026-02-11 |
 
 ## Exploration Structure
 
