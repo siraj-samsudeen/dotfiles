@@ -1,0 +1,40 @@
+# Dotfiles: ignore everything, allowlist tracked files
+# With showUntrackedFiles=no, untracked files won't show in status.
+# This file prevents accidental `git add` of things you don't want.
+
+# ── Ignore everything by default ──
+*
+
+# ── Shell ──
+!.zshrc
+!.zshenv
+!.p10k.zsh
+
+# ── Git ──
+!.gitconfig
+!.cfg-ignore
+
+# ── Tool configs ──
+!.config/
+!.config/mise/
+!.config/mise/config.toml
+!RectangleConfig.json
+
+# ── Claude Code ──
+# Must un-ignore parent dirs first, then contents
+!.claude/
+!.claude/CLAUDE.md
+!.claude/settings.json
+!.claude/agents/
+!.claude/agents/**
+!.claude/commands/
+!.claude/commands/**
+!.claude/hooks/
+!.claude/hooks/**
+!.claude/skills/
+!.claude/skills/**
+!.claude/siraj-experiments/
+!.claude/siraj-experiments/**
+
+# ── Docs ──
+!README.md

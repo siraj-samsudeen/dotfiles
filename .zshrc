@@ -72,6 +72,10 @@ alias tree='tree -a -I .git'         # Show hidden files, ignore .git
 alias ls="${aliases[ls]:-ls} -A"     # Show hidden files (except . and ..)
 alias pref="open ~/.zshrc -a \"Visual Studio Code\""  # Quick edit zshrc
 
+# Dotfiles management (bare repo)
+alias dotfiles='git --git-dir=$HOME/.cfg --work-tree=$HOME'
+alias dotfiles-untracked='comm -23 <(ls -1dA ~/.[!.]* 2>/dev/null | xargs -I{} basename {} | sort -u) <(dotfiles ls-files | sed "s|/.*||" | sort -u)'
+
 # ============================================
 # SHELL OPTIONS
 # ============================================
