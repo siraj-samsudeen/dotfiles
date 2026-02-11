@@ -77,10 +77,12 @@
       "mcp__playwright__browser_wait_for",
       "mcp__chrome-mcp-server__chrome_navigate"
     ],
+    "defaultMode": "dontAsk",
     "additionalDirectories": [
       "/Users/siraj/.claude/skills"
     ]
   },
+  "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
       {
@@ -111,7 +113,6 @@
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true
   },
-  "enableAllProjectMcpServers": true,
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754285015216
