@@ -2,39 +2,36 @@
 
 Explorations, research, and synthesis for workflow improvements.
 
-## Active Explorations
+## Experiments
 
-| Folder | Name | Status | Date |
-|--------|------|--------|------|
-| `tdd-ralph-vertical-slices/` | TDD Ralph with Vertical Slices | Research complete, ready for planning | 2025-02-04 |
-| `feather-gsd-*.md` | Feather + GSD Integration | 10-phase plan complete, ready for execution | 2025-02-10 |
-| `vbw-vs-gsd-handoff.md` | VBW vs GSD vs Feather Evaluation | Handoff ready for hands-on testing | 2025-02-10 |
-| `feather-flow-standalone/` | feather-flow Standalone Repo | Complete — published and tested | 2026-02-11 |
-| `visible-tdd-agents.md` | Visible TDD Agents | Two approaches selected for hands-on testing | 2026-02-12 |
+| Folder | Name | Status | Started |
+|--------|------|--------|---------|
+| `dotfiles-audit/` | Dotfiles Audit & Cleanup | Complete | 2026-02-11 |
+| `superpowers-to-feather/` | Superpowers to Feather Transition | Complete | 2026-02-10 |
+| `feather-evolution/` | Feather Workflow Evolution | Complete | 2025-02-04 |
+| `gsd-to-feather/` | GSD to Feather Integration | Research Complete | 2026-02-10 |
+| `visible-tdd-agents/` | Visible TDD Agents | In Progress | 2026-02-12 |
 
-## Exploration Structure
+## Related Systems
 
-Each exploration should have:
+- **`study-idea/`** — Queue-based system for studying URLs, concepts, and tools. Has its own `QUEUE.md` and `SKILL.md`.
+- **`reports/`** — Study reports produced by the study-idea skill (and pre-system analyses migrated here).
+
+## Experiment Structure
+
+Each experiment lives in a kebab-case folder with an `EXPLORATION.md`:
 
 ```
 <experiment-name>/
-├── EXPLORATION.md    # Research, sources, key ideas
-├── SYNTHESIS.md      # Decisions made, final design (after planning)
-├── CHANGELOG.md      # What changed during implementation (optional)
-└── artifacts/        # Any supporting files (optional)
+├── EXPLORATION.md    # Question, Status, Context, Log, Findings, Next Steps
+└── artifacts/        # Original documents, supporting files (optional)
 ```
-
-## Naming Conventions
-
-- Folder names: `kebab-case`, short, descriptive
-- Process names: Title Case for reference in conversations
 
 ## Persisting to Dotfiles
 
-Use `/update-config` to commit explorations to the bare repo:
-
 ```bash
-# After creating/updating an exploration
-/update-config
-# Then: add, commit, push the siraj-experiments folder
+# Use the dotfiles alias to commit changes
+dotfiles add ~/.claude/siraj-experiments/<folder>
+dotfiles commit -m "experiments: <description>"
+dotfiles push
 ```
