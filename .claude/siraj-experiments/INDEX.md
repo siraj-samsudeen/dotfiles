@@ -14,8 +14,7 @@ Explorations, research, and synthesis for workflow improvements.
 
 ## Related Systems
 
-- **`~/.claude/skills/study-idea/`** — Queue-based system for studying URLs, concepts, and tools. Has its own `QUEUE.md` and `SKILL.md`. Moved from experiments to skills.
-- **`study-idea-reports/`** — Study reports produced by the study-idea skill (and pre-system analyses migrated here).
+- **`study-idea/`** — Queue, report template, origin, and study reports for the `/study-idea` command. Contains `queue.md`, `report-template.md`, `origin.md`, and `reports/`.
 
 ## Experiment Structure
 
