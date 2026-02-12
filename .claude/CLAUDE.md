@@ -1,3 +1,16 @@
+# Dotfiles
+
+All tracked files under `$HOME` (including `~/.claude/`) are managed by a **bare git repo** at `$HOME/.cfg`. There is no `.git/` directory in any of these paths.
+
+All git operations must use:
+```bash
+git --git-dir=$HOME/.cfg --work-tree=$HOME
+```
+
+The `dotfiles` shell alias exists in `~/.zshrc` but is **not available** in non-interactive shells (i.e., tool calls). Always use the full command above.
+
+---
+
 # How We Work Together
 
 Example workflow:
