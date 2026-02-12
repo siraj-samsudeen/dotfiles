@@ -1,0 +1,3 @@
+\setenv PAGER 'pspg -X --no-mouse -s 16'
+\pset border 2
+\pset linestyle unicode

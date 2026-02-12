@@ -2,5 +2,6 @@
 experimental = true
 
 [tools]
+bun = "latest"
 node = "lts"
 python = "3.13"

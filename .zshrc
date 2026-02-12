@@ -93,6 +93,11 @@ export PYTHONPYCACHEPREFIX="$HOME/.cache/pycache/"
 export ERL_AFLAGS="-kernel shell_history enabled"
 
 # ============================================
+# SECRETS (tokens, API keys — not tracked in dotfiles)
+# ============================================
+[[ -f ~/.secrets ]] && source ~/.secrets
+
+# ============================================
 # TERMINAL INTEGRATION
 # ============================================
 # iTerm2 integration - enhanced terminal features

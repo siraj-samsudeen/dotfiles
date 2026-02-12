@@ -65,6 +65,7 @@ Every project should have a `docs/DIALOGUE.md` that captures:
 - If you are showing something that the user is not familiar with, show him URLs of docs/blogs/videos to help him understand the idea thoroughly
 - Don't write too much code or don't do too many changes at once - the user should be able to review your work in 2-3 minutes approx.
 - If you are in a multi-step process, pause at each step, explain your reasoning, provide him the options and get to know his thought before taking the next step.
+- When presenting options or questions, go one at a time. If questions are very small, batch up to 3 maximum.
 
 ### Tools
 

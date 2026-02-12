@@ -1,6 +1,5 @@
-# Dotfiles: ignore everything, allowlist tracked files
-# With showUntrackedFiles=no, untracked files won't show in status.
-# This file prevents accidental `git add` of things you don't want.
+# Dotfiles: allowlist approach — ignore everything (*), un-ignore (!) tracked files.
+# Full audit & rationale: .claude/siraj-experiments/dotfiles-audit.md
 
 # ── Ignore everything by default ──
 *
@@ -11,14 +10,18 @@
 !.p10k.zsh
 
 # ── Git ──
-!.gitconfig
-!.cfg-ignore
+!.gitconfig   # identity, aliases, editor, credential helpers
+!.gitignore   # global gitignore (hides .cfg bare repo db)
+!.cfg-ignore  # this file
 
 # ── Tool configs ──
 !.config/
 !.config/mise/
 !.config/mise/config.toml
 !RectangleConfig.json
+!.psqlrc      # pspg pager, unicode borders
+!.duckdbrc    # loads nanodbc ODBC extension
+!.odbc.ini    # SQL Server DSN config (credentials in ~/.secrets)
 
 # ── Claude Code ──
 # Must un-ignore parent dirs first, then contents
@@ -38,3 +41,30 @@
 
 # ── Docs ──
 !README.md
+
+# ── Intentionally NOT tracked ──
+# .iterm2_shell_integration.zsh — managed by iTerm2, auto-updates
+# .npmrc — contains ${NPM_TOKEN} reference, safe but not needed cross-machine
+# .zprofile — just Homebrew boilerplate, re-added on install
+
+# ── Secrets (NEVER track) ──
+# .secrets — tokens, API keys, passwords (sourced in .zshrc)
+# .odbc.ini credentials — moved to .secrets as ODBC_AFANS_UID/PWD
+# .netrc — network credentials
+# .ssh/ — SSH keys
+# .aws/ — AWS credentials
+# .streamlit/ — contains credentials.toml
+
+# ── Histories (never track, machine-specific) ──
+# .bash_history, .zsh_history, .zsh_sessions, .duckdb_history,
+# .psql_history, .isql_history, .mariadb_history, .irb_history,
+# .python_history, .Rhistory, .lesshst, .viminfo
+
+# ── App data, caches, runtime (never track) ──
+# IDE/editors: .vscode, .cursor, .aide, .windsurf, .kiro, .codeium, .codex
+# AI tools: .amp, .gemini, .camel, .companion, .serena, .traycer
+# Lang runtimes: .bun, .gem, .hex, .mix, .npm, .yarn, .volta, .rustup, .m2, .gradle
+# Data/ML: .conda, .anaconda, .jupyter, .ipython, .matplotlib, .bamboolib, .mito
+# Infra: .docker, .fly, .railway, .convex, .expo, .dbt, .dagster, .dlt, .rill, .sqlmesh
+# System: .cache, .local, .Trash, .DS_Store, .CFUserTextEncoding, .gnupg, .terminfo
+# Other: .claude.json, .claude-code-docs, .claude-monitor, .claude-worktrees
