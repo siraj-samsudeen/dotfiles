@@ -208,7 +208,7 @@ If you catch yourself thinking:
 
 **ALL of these mean: STOP. Return to Phase 1.**
 
-**If 3+ fixes failed:** Question the architecture (see Phase 4.5)
+**If 3+ fixes failed:** Question the architecture (see Phase 4, step 5)
 
 ## Common Rationalizations
 
@@ -240,10 +240,30 @@ See these files in this directory:
 - **`defense-in-depth.md`** - Add validation at multiple layers after finding root cause
 - **`condition-based-waiting.md`** - Replace arbitrary timeouts with condition polling
 
-## Real-World Impact
+## When Process Reveals No Root Cause
 
-From debugging sessions:
-- Systematic approach: 15-30 minutes to fix
-- Random fixes approach: 2-3 hours of thrashing
-- First-time fix rate: 95% vs 40%
-- New bugs introduced: Near zero vs common
+If systematic investigation reveals issue is truly environmental, timing-dependent, or external:
+
+1. You've completed the process
+2. Document what you investigated
+3. Implement appropriate handling (retry, timeout, error message)
+4. Add monitoring/logging for future investigation
+
+**But:** Most "no root cause" cases are incomplete investigation.
+
+## Human Partner Signals
+
+**Watch for these redirections from your human partner:**
+- "Is that not happening?" — You assumed without verifying
+- "Will it show us...?" — You should have added evidence gathering
+- "Stop guessing" — You're proposing fixes without understanding
+- "Ultrathink this" — Question fundamentals, not just symptoms
+- Frustration or repeated clarification — Your approach isn't working
+
+**When you see these:** STOP. Return to Phase 1.
+
+## Related
+
+For persistent debugging sessions that survive context resets, see `/gsd:debug`.
+
+<!-- Based on obra/superpowers systematic-debugging (MIT) by Jesse Vincent -->
