@@ -11,7 +11,7 @@ The user will provide: $ARGUMENTS
 
 ## Phase 0: Route (Always Run First)
 
-Read the queue file at `~/.claude/siraj-experiments/study-idea/QUEUE.md`.
+Read the queue file at `~/.claude/skills/study-idea/QUEUE.md`.
 
 Then determine intent from `$ARGUMENTS`:
 
@@ -51,15 +51,15 @@ Confirm with the queue count. **STOP.**
 ## Phase 1: Study
 
 Read the detailed study methodology from:
-`~/.claude/siraj-experiments/study-idea/SKILL.md`
+`~/.claude/skills/study-idea/SKILL.md`
 
 Follow its steps (Fetch → Extract Core Ideas → Map to Skills → Generate Report).
 
 Use the report template at:
-`~/.claude/siraj-experiments/study-idea/references/report-template.md`
+`~/.claude/skills/study-idea/references/report-template.md`
 
 Save the completed report to:
-`~/.claude/siraj-experiments/reports/{kebab-case-name}-{YYYY-MM-DD}.md`
+`~/.claude/siraj-experiments/study-idea-reports/{kebab-case-name}-{YYYY-MM-DD}.md`
 
 Present the summary: top 3 integration opportunities + recommended first build.
 
@@ -67,7 +67,7 @@ Present the summary: top 3 integration opportunities + recommended first build.
 ```markdown
 - [x] **{short-name}** — {url}
   {original note}
-  _Added: {date}_ · _Studied: {YYYY-MM-DD}_ · [Report](../reports/{name}-{date}.md)
+  _Added: {date}_ · _Studied: {YYYY-MM-DD}_ · [Report](../study-idea-reports/{name}-{date}.md)
 ```
 
 **STOP. Ask what's next.**
