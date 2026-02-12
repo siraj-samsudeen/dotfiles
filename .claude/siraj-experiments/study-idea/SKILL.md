@@ -1,49 +1,16 @@
 ---
 name: study-idea
 description: >
-  Deep-dive research and integration agent for new ideas, tools, repos, and concepts found
-  on the internet. Use this skill whenever you encounter an interesting GitHub repo, blog post,
-  library, framework, technique, or workflow and want to systematically study it, compare it
-  against your existing Claude Code skills, and create a working integration experiment.
-  Triggers on: "study this", "assimilate this idea", "research this repo", "integrate this into
-  my skills", "study-idea", or any URL accompanied by a request to learn from it. Even if the
-  user just pastes a URL and says "interesting", consider triggering this skill.
+  Use when the /study-idea command needs the detailed study methodology for deep-diving
+  a URL, repo, blog post, or concept.
 ---
 
-# Study Idea
+# Study Methodology
 
-A two-phase research-to-integration agent for assimilating new ideas into your skill ecosystem.
+Reference for how to deeply study a source and produce a structured report.
+Called by the `/study-idea` command during Phase 1.
 
-## Philosophy
-
-The best way to learn something new is to study it deeply, then find where it connects to
-what you already know, and finally build something that bridges the two. This skill automates
-that process: it takes a URL or concept, performs a deep-dive analysis, produces a structured
-report for your review, and — once you approve — creates a working skill or integration
-experiment.
-
-## When This Skill Activates
-
-- User shares a URL (GitHub repo, blog post, documentation, tool page) and wants to learn from it
-- User says "study this", "assimilate", "research", "integrate this"
-- User pastes something interesting and asks what can be extracted from it
-- User wants to compare a new approach against their existing workflow
-
-## Two-Phase Workflow
-
-```
-Phase 1: STUDY (always runs)
-  Fetch → Analyze → Map → Compare → Report → Present for review
-
-Phase 2: INTEGRATE (runs after user approval)
-  Design → Build → Test → Deploy to experiments folder
-```
-
----
-
-## Phase 1: Study & Report
-
-### Step 1: Fetch & Classify
+## Step 1: Fetch & Classify
 
 Determine what kind of source the user has shared:
 
@@ -181,108 +148,18 @@ After generating the report, present a summary to the user with:
 2. Recommended next step (which integration to build first)
 3. Ask: "Which of these would you like me to build into a working skill?"
 
-Wait for the user's response before proceeding to Phase 2.
+Return control to the `/study-idea` command after presenting the summary.
 
 ---
 
-## Phase 2: Integrate & Build
+## Success Criteria
 
-This phase runs only after the user reviews the report and approves specific integrations.
-
-### Step 1: Design the Skill
-
-Based on the user's selection, design the new skill following these patterns:
-
-- Follow the feather-spec approach for requirements if the skill is complex
-- Use the standard skill structure (SKILL.md + scripts/ + references/)
-- Keep it lean — start with the core value and iterate
-
-### Step 2: Build the Skill
-
-Create the skill in: `~/.claude/siraj-experiments/{skill-name}/`
-
-Structure:
-```
-{skill-name}/
-├── SKILL.md              # The skill definition
-├── scripts/              # Any automation scripts
-├── references/           # Reference docs or examples
-└── ORIGIN.md             # Where this came from (URL, date, key insights)
-```
-
-The ORIGIN.md file is important — it creates traceability back to the source idea. Include:
-- Source URL
-- Date studied
-- Key ideas extracted
-- Which ideas were integrated
-- Link to the study report
-
-### Step 3: Test the Skill
-
-Create 2-3 realistic test prompts and describe them to the user. The user can run these
-in Claude Code to verify the skill works as expected.
-
-### Step 4: Document for Future Integration
-
-If the user has a feather-skills repo (or plans to create one), generate a short summary
-of what this skill does and where it fits, so it can be added to the repo later.
-
----
-
-## Report Template
-
-The report follows this structure (see `references/report-template.md` for full template):
-
-```markdown
-# Study Report: {Source Name}
-
-**Source:** {URL}
-**Studied:** {Date}
-**Type:** {GitHub Repo | Blog Post | Documentation | Package | Other}
-
-## Executive Summary
-{2-3 sentences: what this is and why it's interesting}
-
-## Source Analysis
-### Overview
-### Architecture & Key Patterns
-### Technical Stack
-### Strengths
-### Limitations
-### Comparison with Existing Ecosystem
-
-## Core Ideas Extracted
-### Idea 1: {Name}
-### Idea 2: {Name}
-...
-
-## Integration Map
-{Table mapping ideas to existing skills}
-
-## Recommendations
-### Quick Wins (Low effort, high impact)
-### Strategic Integrations (Higher effort, transformative)
-### Reference Only (Interesting but not actionable now)
-
-## Proposed Experiments
-### Experiment 1: {Name}
-- **Goal:** ...
-- **Approach:** ...
-- **Success criteria:** ...
-
-## Next Steps
-{What to build first and why}
-```
-
----
-
-## File Locations
-
-| What | Where |
-|------|-------|
-| Study reports | `~/.claude/siraj-experiments/reports/` |
-| Built skills | `~/.claude/siraj-experiments/{skill-name}/` |
-| This skill | `~/.claude/siraj-experiments/study-idea/` |
+- At least 3 core ideas extracted with transferable patterns
+- Integration map completed (every idea mapped to existing skill or gap)
+- Coverage audit performed (no silently skipped important files)
+- Report saved to `~/.claude/siraj-experiments/reports/`
+- Report uses the template at `~/.claude/siraj-experiments/study-idea/references/report-template.md`
+- Summary presented with top 3 opportunities and recommended first build
 
 ---
 

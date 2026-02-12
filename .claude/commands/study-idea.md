@@ -53,9 +53,12 @@ Confirm with the queue count. **STOP.**
 Read the detailed study methodology from:
 `~/.claude/siraj-experiments/study-idea/SKILL.md`
 
-Follow its Phase 1 steps (Fetch → Extract Core Ideas → Map to Skills → Generate Report).
+Follow its steps (Fetch → Extract Core Ideas → Map to Skills → Generate Report).
 
-Save the report to:
+Use the report template at:
+`~/.claude/siraj-experiments/study-idea/references/report-template.md`
+
+Save the completed report to:
 `~/.claude/siraj-experiments/reports/{kebab-case-name}-{YYYY-MM-DD}.md`
 
 Present the summary: top 3 integration opportunities + recommended first build.
