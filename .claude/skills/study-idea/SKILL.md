@@ -134,7 +134,7 @@ prevents blind spots from silently making it into the final report.
 ### Step 6: Generate the Report
 
 Create a structured markdown report and save it to:
-`~/.claude/siraj-experiments/reports/{idea-name}-{date}.md`
+`~/.claude/siraj-experiments/study-idea-reports/{idea-name}-{date}.md`
 
 Use this template (read from `references/report-template.md`).
 
@@ -157,8 +157,8 @@ Return control to the `/study-idea` command after presenting the summary.
 - At least 3 core ideas extracted with transferable patterns
 - Integration map completed (every idea mapped to existing skill or gap)
 - Coverage audit performed (no silently skipped important files)
-- Report saved to `~/.claude/siraj-experiments/reports/`
-- Report uses the template at `~/.claude/siraj-experiments/study-idea/references/report-template.md`
+- Report saved to `~/.claude/siraj-experiments/study-idea-reports/`
+- Report uses the template at `references/report-template.md`
 - Summary presented with top 3 opportunities and recommended first build
 
 ---
