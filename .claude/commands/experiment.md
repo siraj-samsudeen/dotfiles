@@ -3,8 +3,8 @@ name: experiment
 description: >
   Tracks experiments in siraj-experiments/. Creates new experiments, captures mid-session
   discoveries worth tracking, or continues existing experiments with dated log entries.
-  Triggers on: "new experiment", "track this", "this is worth capturing", "continue experiment",
-  or any mention of wanting to systematically explore an idea.
+disable-model-invocation: true
+argument-hint: "[new|capture|continue]"
 ---
 
 # Experiment Tracker
@@ -12,9 +12,14 @@ description: >
 **Home:** `~/.claude/siraj-experiments/`
 **Index:** `~/.claude/siraj-experiments/INDEX.md`
 
+## Current Experiments
+
+!`cat ~/.claude/siraj-experiments/INDEX.md 2>/dev/null || echo "No INDEX.md found"`
+
 ## Step 1: Determine Mode
 
-Ask the user (via AskUserQuestion) which mode:
+If `$ARGUMENTS` is "new", "capture", or "continue", use that mode directly.
+Otherwise, ask the user (via AskUserQuestion) which mode:
 
 - **New** — fresh experiment from scratch
 - **Capture** — mid-session discovery worth tracking
@@ -34,7 +39,7 @@ Checklist:
 - [ ] Commit to dotfiles
 ```
 
-After creation, tell user: "Run `/experiment` → Continue when you have findings."
+After creation, tell user: "Run `/experiment continue` when you have findings."
 
 ---
 
@@ -56,9 +61,11 @@ Checklist:
 
 ## Mode: Continue
 
+The INDEX.md content is already loaded above. Present the active experiments via AskUserQuestion.
+
 ```
 Checklist:
-- [ ] Read INDEX.md, present active experiments via AskUserQuestion
+- [ ] Present active experiments from INDEX.md (already loaded above)
 - [ ] Read selected experiment's EXPLORATION.md
 - [ ] Show: Question, Status, most recent log entry, Next Steps
 - [ ] Ask: "What's new? What did you explore or discover?"
@@ -123,4 +130,3 @@ Do NOT push — user pushes manually.
 - **Continue context:** show enough to jog memory, don't dump the entire file
 - **Capture summaries:** factual and concise — key findings, not a transcript
 - **Status values:** `In Progress` | `Research Complete` | `Complete` | `Paused`
-- **Trigger phrases:** "this is worth tracking", "let me capture this", "new experiment"
