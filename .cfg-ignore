@@ -41,6 +41,7 @@
 
 # ── Docs ──
 !README.md
+!setup.sh     # post-checkout install script
 
 # ── Intentionally NOT tracked ──
 # .iterm2_shell_integration.zsh — managed by iTerm2, auto-updates
