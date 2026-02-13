@@ -1,9 +1,8 @@
 ---
 name: experiment
 description: >
-  Tracks experiments in siraj-experiments/. Creates new experiments, captures mid-session
-  discoveries worth tracking, or continues existing experiments with dated log entries.
-disable-model-invocation: true
+  Use when starting, capturing, or continuing an experiment in ~/.claude/siraj-experiments/.
+  Modes: new (fresh experiment), capture (mid-session discovery worth tracking), continue (add findings to existing).
 argument-hint: "[new|capture|continue]"
 ---
 
