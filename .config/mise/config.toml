@@ -4,4 +4,5 @@ experimental = true
 [tools]
 bun = "latest"
 node = "lts"
+"npm:repomix" = "latest"
 python = "3.13"

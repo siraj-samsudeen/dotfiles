@@ -43,6 +43,10 @@
 !README.md
 !setup.sh     # post-checkout install script
 
+# ── Re-ignore junk inside un-ignored trees ──
+.DS_Store
+*.bak
+
 # ── Intentionally NOT tracked ──
 # .iterm2_shell_integration.zsh — managed by iTerm2, auto-updates
 # .npmrc — contains ${NPM_TOKEN} reference, safe but not needed cross-machine

@@ -80,6 +80,11 @@ Every project should have a `docs/DIALOGUE.md` that captures:
 - If you are in a multi-step process, pause at each step, explain your reasoning, provide him the options and get to know his thought before taking the next step.
 - When presenting options or questions, go one at a time. If questions are very small, batch up to 3 maximum.
 
+### Verification
+
+- Never ask the user to do something you can do yourself (e.g., creating test files, running commands, checking configs). Do it yourself and report results.
+- Only ask the user for things that genuinely require them: visual checks in a GUI, manual interactions (keybindings, drag-and-drop), or judgment calls.
+
 ### Tools
 
 - Use RefTools MCP to check the latest docs for any library across languages

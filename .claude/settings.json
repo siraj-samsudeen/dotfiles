@@ -76,7 +76,8 @@
       "mcp__playwright__browser_fill_form",
       "mcp__playwright__browser_wait_for",
       "mcp__chrome-mcp-server__chrome_navigate",
-      "Bash(node -e:*)"
+      "Bash(node -e:*)",
+      "Read(//Users/siraj/Library/Application Support/Code/User/**)"
     ],
     "defaultMode": "dontAsk",
     "additionalDirectories": [
@@ -117,5 +118,6 @@
   "alwaysThinkingEnabled": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754285015216
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }

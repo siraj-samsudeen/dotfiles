@@ -1,9 +1,9 @@
 # Feather Workflow Evolution
 
 > **Question:** How should a lightweight TDD workflow for Claude Code be designed?
-> **Status:** Complete
+> **Status:** In Progress (skill audit)
 > **Started:** 2025-02-04
-> **Last Updated:** 2026-02-11
+> **Last Updated:** 2026-02-12
 
 ---
 
@@ -35,6 +35,16 @@ Packaged Feather as `feather-flow` — a standalone GitHub repo with `curl | bas
 
 Published to https://github.com/siraj-samsudeen/feather-flow. Audit found 27 stale cross-references across 11 files before v1.0.
 
+### 2026-02-12 — Skill Audit
+
+Audited all 4 standalone skills against Anthropic best practices. Found that `debug-issue` needed migration into feather namespace + harvesting best ideas from gsd-debugger. Three other skills (request-review, receive-review, setup-convex-testing) have open questions pending.
+
+Migrated `debug-issue` → `feather:debug`. Key decisions:
+- **Decorative → actionable principle:** Tables of biases/rationalizations are educational for humans but decorative for LLMs. Embedded the antidotes as inline process instructions instead. This is a generalizable skill-authoring anti-pattern to add to `audit-skill` and `create-skill`.
+- **Merged Common Rationalizations into Red Flags** — each red flag thought now carries its counter-argument inline.
+- **Harvested from gsd-debugger:** falsifiability, multiple hypotheses, disconfirming evidence (into Phase 3), freshness check (into Phase 1), research vs reasoning (new section), investigation techniques and hypothesis/verification (new reference files).
+- **Rewrote all 5 reference files** from decorative/reference style into actionable instructions, keeping examples and context.
+
 ---
 
 ## Findings
@@ -59,9 +69,14 @@ Original research and design documents preserved verbatim in `artifacts/`:
 | `tdd-ralph-handoff.md` | `tdd-ralph-vertical-slices/HANDOFF.md` | Session handoff with design decisions and resume instructions |
 | `feather-skill-plan.md` | `feather-slice/PLAN.md` | 7 skill designs, file structures, verification plan |
 | `feather-flow-exploration.md` | `feather-flow-standalone/EXPLORATION.md` | Distribution solution, symlink discovery, publishing |
+| `skill-audit-lineage.md` | skill audit 2026-02-12 | Lineage map: what came from superpowers vs gsd-debugger vs new for feather |
 
 ---
 
 ## Next Steps
 
-None — Feather is designed, built, and published. Active development continues in https://github.com/siraj-samsudeen/feather-flow.
+- [ ] Complete feather:debug migration (reference files remaining)
+- [ ] Audit skill 2: request-review
+- [ ] Audit skill 3: receive-review
+- [ ] Audit skill 4: setup-convex-testing
+- [ ] Add "decorative → actionable" anti-pattern to audit-skill and create-skill
