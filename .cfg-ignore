@@ -39,6 +39,19 @@
 !.claude/siraj-experiments/
 !.claude/siraj-experiments/**
 
+# ── Editor configs (VS Code = source, Cursor = symlinks) ──
+# Must un-ignore each parent dir — git ignores children of ignored parents
+!Library/
+!Library/Application Support/
+!Library/Application Support/Code/
+!Library/Application Support/Code/User/
+!Library/Application Support/Code/User/settings.json
+!Library/Application Support/Code/User/keybindings.json
+!Library/Application Support/Cursor/
+!Library/Application Support/Cursor/User/
+!Library/Application Support/Cursor/User/settings.json
+!Library/Application Support/Cursor/User/keybindings.json
+
 # ── Docs ──
 !README.md
 !setup.sh     # post-checkout install script
