@@ -12,6 +12,7 @@ Explorations, research, and synthesis for workflow improvements.
 | `gsd-to-feather/` | GSD to Feather Integration | Research Complete | 2026-02-10 |
 | `visible-tdd-agents/` | Visible TDD Agents | In Progress | 2026-02-12 |
 | `settings-unification/` | VS Code & Cursor Settings Unification | In Progress | 2026-02-13 |
+| `feather-design-v2/` | Feather Design v2 | In Progress | 2026-02-16 |
 
 ## Related Systems
 
