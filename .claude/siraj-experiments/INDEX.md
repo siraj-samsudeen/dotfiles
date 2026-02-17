@@ -13,6 +13,7 @@ Explorations, research, and synthesis for workflow improvements.
 | `visible-tdd-agents/` | Visible TDD Agents | In Progress | 2026-02-12 |
 | `settings-unification/` | VS Code & Cursor Settings Unification | In Progress | 2026-02-13 |
 | `feather-design-v2/` | Feather Design v2 | In Progress | 2026-02-16 |
+| `feather-install-ux/` | Feather Install UX | In Progress | 2026-02-17 |
 
 ## Related Systems
 
