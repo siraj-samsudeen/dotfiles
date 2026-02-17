@@ -77,7 +77,13 @@
       "mcp__playwright__browser_wait_for",
       "mcp__chrome-mcp-server__chrome_navigate",
       "Bash(node -e:*)",
-      "Read(//Users/siraj/Library/Application Support/Code/User/**)"
+      "Read(//Users/siraj/Library/Application Support/Code/User/**)",
+      "Bash(git --git-dir=\"/Users/siraj/.cfg\" --work-tree=\"/Users/siraj\" add:*)",
+      "Bash(git --git-dir=\"/Users/siraj/.cfg\" --work-tree=\"/Users/siraj\" status)",
+      "Bash(git --git-dir=\"/Users/siraj/.cfg\" --work-tree=\"/Users/siraj\" diff:*)",
+      "Bash(npm create:*)",
+      "mcp__Ref__ref_search_documentation",
+      "Bash(npx vitest run:*)"
     ],
     "defaultMode": "dontAsk",
     "additionalDirectories": [
@@ -96,28 +102,14 @@
           }
         ]
       }
-    ],
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"/Users/siraj/.claude/hooks/gsd-check-update.js\""
-          }
-        ]
-      }
     ]
-  },
-  "statusLine": {
-    "type": "command",
-    "command": "node \"/Users/siraj/.claude/hooks/gsd-statusline.js\""
   },
   "enabledPlugins": {
     "typescript-lsp@claude-plugins-official": true
   },
   "alwaysThinkingEnabled": true,
+  "skipDangerousModePermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754285015216
-  },
-  "skipDangerousModePermissionPrompt": true
+  }
 }
