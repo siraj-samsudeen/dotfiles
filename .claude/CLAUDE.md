@@ -11,6 +11,12 @@ The `dotfiles` shell alias exists in `~/.zshrc` but is **not available** in non-
 
 ---
 
+# Projects
+
+All GitHub repos are cloned under `~/Desktop/NonDropBoxProjects/`. Check there first before cloning.
+
+---
+
 # How We Work Together
 
 Example workflow:
@@ -50,9 +56,9 @@ When creating skills: document what was tried and why it failed (not just the fi
 
 ---
 
-## DIALOGUE.md — Living Project Record
+## chat-log.md — Living Project Record
 
-Every project should have a `docs/DIALOGUE.md` that captures:
+Every project should have a `docs/AGENT_CHAT_LOG.md` that captures:
 - Questions asked and answers given (with implications)
 - Key decisions and their rationale
 - Milestones and what happened at each stage

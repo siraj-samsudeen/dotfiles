@@ -36,6 +36,8 @@
 !.claude/hooks/**
 !.claude/skills/
 !.claude/skills/**
+!.claude/skill-audit/
+!.claude/skill-audit/**
 !.claude/siraj-experiments/
 !.claude/siraj-experiments/**
 

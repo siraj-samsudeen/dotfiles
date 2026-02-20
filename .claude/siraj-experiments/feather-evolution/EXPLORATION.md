@@ -75,7 +75,7 @@ Original research and design documents preserved verbatim in `artifacts/`:
 
 ## Next Steps
 
-- [ ] Complete feather:debug migration (reference files remaining)
+- [x] Complete feather:debug migration (6 files, 1049 lines)
 - [ ] Audit skill 2: request-review
 - [ ] Audit skill 3: receive-review
 - [ ] Audit skill 4: setup-convex-testing
