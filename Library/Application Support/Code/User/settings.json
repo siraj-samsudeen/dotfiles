@@ -932,5 +932,8 @@
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest", "--headless", "--isolated"]
     }
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
   }
 }

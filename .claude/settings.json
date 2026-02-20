@@ -83,7 +83,11 @@
       "Bash(git --git-dir=\"/Users/siraj/.cfg\" --work-tree=\"/Users/siraj\" diff:*)",
       "Bash(npm create:*)",
       "mcp__Ref__ref_search_documentation",
-      "Bash(npx vitest run:*)"
+      "Bash(npx vitest run:*)",
+      "WebFetch(domain:docs.convex.dev)",
+      "WebFetch(domain:discord-questions.convex.dev)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npx vitest:*)"
     ],
     "defaultMode": "dontAsk",
     "additionalDirectories": [

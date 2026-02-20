@@ -57,19 +57,21 @@ The system tracks its own bugs during development. Three phases:
 
 | Run | Methodology | What It Tests |
 |-----|-------------|---------------|
-| **A** | GSD Alone | Baseline: horizontal decomposition, research-heavy |
-| **B** | Feather Alone | Baseline: vertical slices, TDD, no architecture guidance |
-| **C** | GSD Research → Feather Slices | Handoff (known problematic — re-running for quantitative data) |
-| **D** | Feather + Bootstrap + Conventions + Progressive Trust | The proposed solution |
-| **E** | Feather + Post-Slice Quality Gates (no conventions) | Reactive vs proactive — is catching after enough? |
+| **A** | GSD Alone | Baseline: horizontal decomposition, no TDD enforcement |
+| **B** | GSD + tdd-guard only | Just TDD enforcement added to GSD (via `/feather:setup-tdd-guard`), nothing else from Feather |
+| **C** | Feather Alone | Baseline: vertical slices, TDD, no architecture guidance |
+| **D** | GSD Research → Feather Slices | Handoff (known problematic — re-running for quantitative data) |
+| **E** | Feather + Bootstrap + Conventions + Progressive Trust | The proposed solution |
+| **F** | Feather + Post-Slice Quality Gates (no conventions) | Reactive vs proactive — is catching after enough? |
 
 ### Execution Order
 
 1. Runs A, B, C — need no new skills, establish baselines
-2. Analyze results — what specifically did the violations tell us?
-3. Build new Feather skills (bootstrap, check-conventions, set-trust-level)
-4. Runs D, E — test the enhanced approaches
-5. Final comparison across all 5
+2. Run D — handoff approach (needs GSD research + Feather execution)
+3. Analyze results A–D — what specifically did the violations tell us?
+4. Build new Feather skills (bootstrap, check-conventions, set-trust-level)
+5. Runs E, F — test the enhanced approaches
+6. Final comparison across all 6
 
 ## Proposed New Feather Skills
 

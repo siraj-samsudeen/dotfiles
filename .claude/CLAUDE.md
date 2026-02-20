@@ -88,3 +88,4 @@ Every project should have a `docs/DIALOGUE.md` that captures:
 ### Tools
 
 - Use RefTools MCP to check the latest docs for any library across languages
+- For questions about Claude Code itself (features, settings, IDE integration, etc.), use the `/docs` skill first. Only fall back to web search if `/docs` doesn't cover it.
