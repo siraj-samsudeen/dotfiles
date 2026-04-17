@@ -1,0 +1,17 @@
+- [Project Context](project_context.md) — feather-etl replaces dlt+sqlmesh+dagster; Slices 1-3 verified, mode merged, V7/V8 next
+- [User Profile](user_profile.md) — Data platform builder, cost-conscious, prefers simplicity and human-readable config
+- [Architecture: Local Staging](arch_local_staging.md) — Local DuckDB staging before MotherDuck to save cost
+- [Architecture: Mode System](arch_mode_system.md) — dev/prod/test mode controls target schema, column filtering, gold materialization
+- [Architecture: Silver-direct hybrid](arch_silver_direct_hybrid.md) — YAML column_map for simple renames (implemented), SQL transforms only for JOINs
+- [Architecture: Bronze = clean copy](arch_bronze_clean_copy.md) — Filter junk at extraction, not in silver views; resource-constrained SMB pattern
+- [Research Status](research_status.md) — Research complete, key decisions locked, gold materialization now mode-dependent
+- [Execution Strategy](execution_strategy.md) — 4-wave DAG updated: V4 done via mode, V7/V8 plans ready, MVP next
+- [Reference: afans-reporting-dev](reference_afans_project.md) — 12 silver/gold SQL models = template for V8 transforms
+- [Feedback: Keep last_modified](feedback_last_modified.md) — Source timestamp columns always stay in silver; they answer data freshness questions
+- [Feedback: pytz is hidden DuckDB dep](dep_pytz_duckdb.md) — Never imported but DuckDB needs it for timestamps; do not remove
+- [Feedback: PyPI publish workflow](publish_workflow.md) — Use twine (not uv publish) for uploads; uv doesn't read ~/.pypirc
+- [Feedback: fixtures vs helpers](feedback_fixtures_vs_helpers.md) — Fixtures are for lifecycle state only; pure utilities go in tests/helpers.py, imported explicitly
+- [Feedback: pytest over hands_on_test.sh](feedback_pytest_over_hands_on.md) — hands_on_test.sh is deprecated; don't add checks; migrate touched entries to pytest
+- [Feedback: format all before push](feedback_format_all_before_push.md) — run `ruff format .` across whole repo and commit as separate style commit before every push; no hook
+- [Feedback: Design for agents AND humans](feedback_design_for_agents_and_humans.md) — every feature must work equally well in TTY and non-TTY; exit-code 3 = needs decision; every prompt needs a flag
+- [User timezone](user_timezone.md) — India (IST, Asia/Kolkata, UTC+5:30); system clock may differ

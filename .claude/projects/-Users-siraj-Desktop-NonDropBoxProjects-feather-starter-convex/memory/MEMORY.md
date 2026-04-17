@@ -1,0 +1,15 @@
+- [Use generators for new entities](feedback_use_generators.md) — scaffold via gen:feature first, customize after
+- [User's domain focus](user_domain_focus.md) — ERP-like transactional systems, Excel first-class, schema reconciliation is key differentiator
+- [Frappe as the model](feedback_frappe_model.md) — adopt Frappe patterns wholesale; Quad meta-model (Data+Layout+Actions+Reports)
+- [Audit trail over immutability](project_audit_trail_over_immutability.md) — reject Submit/Cancel/Amend; change tracking + period close instead
+- [Run convex dev for types](feedback_run_convex_dev.md) — always run npx convex dev --once after generating new features
+- [Tableau Standard](feedback_sensible_defaults.md) — Smart Defaults, Open for Power Override. Infer from context, never ask what you can figure out.
+- [Live app testing mandatory](feedback_live_app_testing.md) — tests passing != app working. Always verify via agent-browser after generating features.
+- [Generator must produce tests](feedback_generator_tests.md) — never hand-write tests for generated features. Fix generator templates instead.
+- [Upstream update strategy](project_upstream_update_strategy.md) — git upstream + feather update CLI. npm core package dropped.
+- [v2.0 progress](project_session_2026_03_28.md) — 13/21 phases done. Team-critical features (Search, E2E) prioritized over DX (Excel, Bundles).
+- [No coverage exclusions](feedback_no_coverage_exclusions.md) — never exclude testable code from coverage; only purely static items allowed
+- [Test philosophy review](feedback_test_philosophy_review.md) — all tests must be reviewed against testing philosophy; audit existing tests too
+- [Architect = Claude Code skill](project_architect_as_skill.md) — /feather:architect skill, not @anthropic-ai/sdk. No API key management.
+- [--no-verify for docs commits](feedback_no_verify_docs.md) — pre-commit hooks guard code, not .planning/ docs; skip with --no-verify
+- [On-demand advisor research](feedback_advisor_on_demand.md) — keep minimal_decisive default; escalate to full research when user asks for specific decisions

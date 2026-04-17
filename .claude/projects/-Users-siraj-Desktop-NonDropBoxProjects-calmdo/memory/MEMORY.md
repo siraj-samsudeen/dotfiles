@@ -1,0 +1,2 @@
+- [Requirements Quality Filter](feedback_requirements_review.md) — 5-rule filter: drop defaults, merge duplicates, separate what vs how
+- [Four-Lens Requirements Review](feedback_four_lens_review.md) — Run 4-lens analysis before approval gate

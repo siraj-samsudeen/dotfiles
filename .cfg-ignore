@@ -40,6 +40,11 @@
 !.claude/skill-audit/**
 !.claude/siraj-experiments/
 !.claude/siraj-experiments/**
+!.claude/projects/
+!.claude/projects/*/
+!.claude/projects/*/memory/
+!.claude/projects/*/memory/**
+.claude/projects/*/memory/.consolidate-lock
 
 # ── Editor configs (VS Code = source, Cursor = symlinks) ──
 # Must un-ignore each parent dir — git ignores children of ignored parents
