@@ -11,6 +11,7 @@ Adopt (or re-sync) a consistent set of agent-config artifacts into the
 current project:
 
 - Vendored patched superpowers skills (`brainstorming`, `writing-plans`)
+- Vendored slash commands (e.g. `research_codebase`)
 - The cross-project spec template
 - The `Standing workflow preferences for superpowers skills` section in the
   project's `CLAUDE.md`
@@ -37,6 +38,7 @@ All sources live in the user's vault at
 | `skills/brainstorming/NOTES.md` | `.claude/skills/brainstorming/NOTES.md` |
 | `skills/writing-plans/SKILL.md` | `.claude/skills/writing-plans/SKILL.md` |
 | `skills/writing-plans/NOTES.md` | `.claude/skills/writing-plans/NOTES.md` |
+| `commands/*.md` | `.claude/commands/*.md` (one-for-one) |
 | `spec-template.md` | `docs/conventions/spec-template.md` |
 | `CLAUDE-md-snippet.md` | merged into `CLAUDE.md` (see merge rules) |
 
@@ -73,10 +75,15 @@ Path                                            State
 .claude/skills/brainstorming/NOTES.md           ...
 .claude/skills/writing-plans/SKILL.md           ...
 .claude/skills/writing-plans/NOTES.md           ...
+.claude/commands/<each master command>          MISSING | IDENTICAL | DIFFERS
 docs/conventions/spec-template.md               ...
 CLAUDE.md snippet                               ABSENT | PRESENT-IDENTICAL | PRESENT-DIFFERS
 .gitignore .claude/worktrees/ entry             ABSENT | PRESENT
 ```
+
+For commands, iterate over every `*.md` file in the masters' `commands/`
+directory and add one row per file to the survey. This keeps the skill
+future-proof as more commands are added to the masters.
 
 Show this table to the user.
 
@@ -102,9 +109,9 @@ Never silently overwrite a differing CLAUDE.md section.
 Based on the survey, build a plan of the writes that will happen:
 
 - Missing files → create with master content.
-- Differing files → overwrite with master content (skills and spec-template
-  are expected to be kept in sync with masters, so this is safe; they are
-  not meant to be project-customized).
+- Differing files → overwrite with master content (skills, commands, and
+  spec-template are expected to be kept in sync with masters, so this is
+  safe; they are not meant to be project-customized).
 - CLAUDE.md → append/replace/skip per Step 3.
 - `.gitignore` → add line if missing.
 
