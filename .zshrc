@@ -76,6 +76,10 @@ alias pref="open ~/.zshrc -a \"Visual Studio Code\""  # Quick edit zshrc
 alias dotfiles='git --git-dir=$HOME/.cfg --work-tree=$HOME'
 alias dotfiles-untracked='comm -23 <(ls -1dA ~/.[!.]* 2>/dev/null | xargs -I{} basename {} | sort -u) <(dotfiles ls-files | sed "s|/.*||" | sort -u)'
 
+# Obsidian vault — externalized .git/ kept outside Dropbox to avoid sync conflicts.
+# Working tree stays in Dropbox so cross-device sync via Dropbox keeps working.
+alias vault='git --git-dir=$HOME/.vault-git --work-tree=$HOME/Dropbox/Siraj/Projects/siraj-claude-vault'
+
 # ============================================
 # SHELL OPTIONS
 # ============================================
