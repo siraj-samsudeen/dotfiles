@@ -45,6 +45,10 @@
 !.claude/projects/*/memory/
 !.claude/projects/*/memory/**
 .claude/projects/*/memory/.consolidate-lock
+!.claude/scripts/
+!.claude/scripts/**
+!.claude/scheduled-tasks/
+!.claude/scheduled-tasks/**
 
 # ── Editor configs (VS Code = source, Cursor = symlinks) ──
 # Must un-ignore each parent dir — git ignores children of ignored parents
