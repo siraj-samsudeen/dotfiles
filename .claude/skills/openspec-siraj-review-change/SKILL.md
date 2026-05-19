@@ -54,7 +54,9 @@ Before launching subagents, read the artifacts and `openspec/config.yaml` and CL
 - What the change is doing (one sentence)
 - The locked design choices (key behaviors, constraints, rejected alternatives)
 - Numbering / naming conventions the project uses
+- **The decision format convention** the project uses (e.g., "Format A — Question / Alternatives with pros and cons / Recommendation" — if referenced in `openspec/config.yaml`'s `rules.design`). Pass this to Subagent 2 so it can audit Format A compliance.
 - Any project-specific patterns (e.g., "first verb in rewrite — sets convention for others")
+- **Renamed entities** to watch for. Note any names that have changed during the change folder's life (skills, commands, flags, doc paths). Pass these to Subagent 1 as explicit search-for-stale-refs targets.
 
 This brief is your input to both subagents so they ground their review in the agreed design, not just the artifact text.
 
@@ -76,7 +78,7 @@ Background (what the design SHOULD be, per the user's locked decisions):
 What to flag:
 
 1. **Contradictions** — anything that says one thing in one file and the opposite in another.
-2. **Stale references** — mentions of things that were dropped (renamed flags, removed scenarios, deleted requirements, abandoned approaches).
+2. **Stale references** — mentions of things that were dropped (renamed flags, removed scenarios, deleted requirements, abandoned approaches). **Pay special attention to renames** — when an entity (skill name, command, doc path, flag, file rename) has been renamed during the change's life, references to the old name in proposal.md / spec.md / design.md / tasks.md / `openspec/config.yaml` must ALL be updated. The background brief should name renamed entities; grep for the old name in every file to find stragglers.
 3. **Cross-reference breakage** — "see decision N" when the decision doesn't exist; "scenario Nx" when Nx was renumbered or removed.
 4. **Terminology drift** — same concept named differently across files.
 5. **PRD ↔ change consistency** (if a PRD is in scope) — anything in the PRD that contradicts the change artifacts, and vice versa.
@@ -135,6 +137,11 @@ What to look for:
 - Scenarios too abstract for the implementer to know what to assert
 - Missing references between spec/design/tasks where needed
 - Edge cases mentioned in proposal that no scenario captures
+
+**Design.md structure and discipline** (the background brief names the project's locked decision format, e.g., Format A):
+- Does every numbered decision use the locked format consistently? Flag decisions that omit the alternatives section, skip the recommendation reasoning, or collapse into a one-line statement when they should be in the format.
+- Is each decision a real technical choice NOT dictated by the spec? Flag "decisions" that restate spec requirements as decisions, or that re-derive principles already in the vault — these belong in proposal.md's "Does NOT do" section or are simply redundant.
+- Is there a `## Smaller choices` section for low-impact decisions accepted without full walkthrough? If many small decisions are dispersed inline among the big ones, the big decisions get diluted — flag for consolidation into a Smaller choices panel.
 
 **Scenario → commit mapping quality** (if tasks.md has a mapping section):
 - Are multi-scenario commits genuinely grouped under one of the stated rules (same code path or observability dependency), or just thematically related?
