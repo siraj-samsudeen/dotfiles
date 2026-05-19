@@ -135,16 +135,33 @@ git --git-dir=$HOME/.cfg --work-tree=$HOME diff --cached --name-only
 
 # 6. Commit with narrow scope — never `-a`; the index can contain unrelated stale entries
 git --git-dir=$HOME/.cfg --work-tree=$HOME commit -m "<concise scope>: <what+why>"
+
+# 7. Push to origin — always push after committing (commit + push are one unit here)
+git --git-dir=$HOME/.cfg --work-tree=$HOME push
 ```
+
+When committing multiple logical groups in a row, push once at the end
+of the batch (single `push` ships all the new commits).
+
+## Always push after committing
+
+Unlike most repos, the dotfiles bare repo is treated as a
+commit+push unit. After any commit (or a batch of related commits),
+run `git --git-dir=$HOME/.cfg --work-tree=$HOME push`. Origin is the
+source of truth across machines, and unpushed dotfile commits silently
+diverge across laptops.
+
+The only exception: explicit user instruction to hold off pushing.
 
 ## What this skill must NOT do
 
-- Do not `git push` the dotfiles repo unless the user explicitly asks.
 - Do not `git add -A` or `git commit -a` — both stage unrelated pending
   changes the index has accumulated silently.
 - Do not delete or amend history without explicit user approval.
 - Do not modify `.cfg-ignore` beyond adding `!` rules for paths the
   current task needs — leave the rest of the file alone.
+- Do not force-push (`--force`, `--force-with-lease`) without explicit
+  user approval.
 
 ## Commit-message style
 
