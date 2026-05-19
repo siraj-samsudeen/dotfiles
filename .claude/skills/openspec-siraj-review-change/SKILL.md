@@ -1,5 +1,5 @@
 ---
-name: review-openspec-change
+name: openspec-siraj-review-change
 description: Review an OpenSpec change folder for cross-document consistency and right-sized verbosity-vs-guardrails. Launches two parallel Sonnet subagents — one auditing for contradictions / stale references / scenario-to-commit mapping integrity, one auditing for over-shooting (dead weight, spec restatement in design.md, tautological scenarios, over-prescriptive tasks) and under-shooting (unanchored vague terms, missing state-after-commit lines, decisions stated in proposal but not anchored in design). Use after substantial rewrites of an OpenSpec change, before committing the change folder, or whenever the user says "review this", "ready to commit", "check the change", or pauses on an OpenSpec change folder. Defaults to the most recently modified change folder if no name is given.
 ---
 
@@ -9,7 +9,7 @@ This skill runs a two-subagent review of an OpenSpec change folder before commit
 
 ## When to invoke
 
-**Explicit user request** — "review the change", "ready to commit", "check the artifacts", "/review-openspec-change", or any phrasing where the user wants a pre-commit sanity pass.
+**Explicit user request** — "review the change", "ready to commit", "check the artifacts", "/openspec-siraj-review-change", or any phrasing where the user wants a pre-commit sanity pass.
 
 **Proactive suggestion** — when the user has just finished a substantial rewrite of an OpenSpec change folder and signals they're winding down ("let's commit", "I think we're done", "looks good"), suggest invoking this skill before they commit. Phrase the suggestion: *"Before you commit, want me to run the two-subagent review to catch any contradictions or over/under-shooting?"* Take a no gracefully.
 
