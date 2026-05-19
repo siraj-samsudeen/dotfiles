@@ -24,3 +24,5 @@
 	helper = osxkeychain
 [core]
 	editor = code --wait
+[sequence]
+	editor = vi
