@@ -57,5 +57,10 @@
   {
     "key": "cmd+t",
     "command": "claude-vscode.terminal.open"
+  },
+  {
+    "key": "alt+cmd+s",
+    "command": "workbench.action.toggleUnifiedSidebarFromKeyboard",
+    "when": "!isAuxiliaryWindowFocusedContext"
   }
 ]
