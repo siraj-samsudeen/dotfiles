@@ -1,5 +1,9 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "env": {
+    "CLAUDE_CODE_EFFORT_LEVEL": "high",
+    "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "128000"
+  },
   "permissions": {
     "allow": [
       "Mix:*",
@@ -87,14 +91,32 @@
       "WebFetch(domain:docs.convex.dev)",
       "WebFetch(domain:discord-questions.convex.dev)",
       "WebFetch(domain:raw.githubusercontent.com)",
-      "Bash(npx vitest:*)"
+      "Bash(npx vitest:*)",
+      "Bash(git --git-dir=$HOME/.cfg --work-tree=$HOME diff --cached -- ~/.claude/siraj-experiments/feather-evolution/artifacts/skill-audit-lineage.md)",
+      "Edit(/.claude/skills/templates/**)",
+      "Skill(obsidian)",
+      "Skill(obsidian:*)",
+      "Read(//Users/siraj/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/**)",
+      "Edit(/.claude/skills/brainstorming/**)",
+      "Edit(/.claude/skills/writing-plans/**)",
+      "Bash(mkdir -p /Users/siraj/Dropbox/Siraj/Projects/siraj-claude-vault/cross-project/agent-overrides/commands)",
+      "Bash(mkdir -p /Users/siraj/.claude/commands)",
+      "Read(//Users/siraj/Dropbox/Siraj/Projects/siraj-claude-vault/cross-project/agent-overrides/**)",
+      "Edit(/.claude/skills/using-git-worktrees/**)",
+      "Edit(~/.claude/skills/deep-thinking/**)",
+      "Bash(ls /Users/siraj/Desktop/NonDropBoxProjects/calmdo/node_modules/ 2>/dev/null | grep -i feather; find /Users/siraj/Desktop/NonDropBoxProjects -maxdepth 4 -type d -name \"feather-testing-convex\" 2>/dev/null)",
+      "Read(//Users/siraj/Desktop/NonDropBoxProjects/**)",
+      "Edit(~/.claude/skills/verify-plan/**)"
     ],
-    "defaultMode": "dontAsk",
+    "defaultMode": "auto",
     "additionalDirectories": [
-      "/Users/siraj/.claude/skills"
+      "/Users/siraj/.claude/skills",
+      "/Users/siraj/.claude",
+      "/Users/siraj/.claude/projects/-Users-siraj-Desktop-NonDropBoxProjects-feather-starter-convex/memory",
+      "/Users/siraj/Desktop/NonDropBoxProjects/feather-etl/.claude/skills",
+      "/Users/siraj/Desktop/NonDropBoxProjects/feather-etl/.claude"
     ]
   },
-  "enableAllProjectMcpServers": true,
   "hooks": {
     "PreToolUse": [
       {
@@ -116,11 +138,24 @@
             "timeout": 5
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"/Users/siraj/.claude/feather-flow/hooks/check-update.js\""
+          }
+        ]
       }
     ],
     "Stop": [
       {
         "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/heal-capture.sh 2>/dev/null || true",
+            "timeout": 10
+          },
           {
             "type": "command",
             "command": "bash ~/.claude/hooks/vault-sync-reminder.sh 2>/dev/null || true",
@@ -136,10 +171,31 @@
     ]
   },
   "enabledPlugins": {
-    "typescript-lsp@claude-plugins-official": true
+    "superpowers@claude-plugins-official": true,
+    "feature-dev@claude-plugins-official": true
   },
-  "alwaysThinkingEnabled": true,
-  "skipDangerousModePermissionPrompt": true,
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    },
+    "digital-dividend-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "thlandgraf/cc-marketplace"
+      }
+    }
+  },
+  "outputStyle": "default",
+  "effortLevel": "xhigh",
+  "skipDangerousModePermissionPrompt": false,
+  "verbose": false,
+  "fileCheckpointingEnabled": false,
+  "remoteControlAtStartup": false,
+  "agentPushNotifEnabled": true,
+  "skipAutoPermissionPrompt": true,
   "feedbackSurveyState": {
     "lastShownTime": 1754285015216
   }
