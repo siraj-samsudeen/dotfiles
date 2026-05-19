@@ -86,7 +86,6 @@ alias vault='git --git-dir=$HOME/.vault-git --work-tree=$HOME/Dropbox/Siraj/Proj
 setopt glob_dots                      # Include hidden files in glob patterns
 # setopt no_auto_menu                 # DISABLED - show completion menu on first TAB
 
-
 # ============================================
 # LANGUAGE-SPECIFIC SETTINGS
 # ============================================
@@ -122,3 +121,10 @@ export PATH="/Users/siraj/.amp/bin:$PATH"
 # VERSION MANAGERS AND LANGUAGE TOOLS
 # ============================================
 eval "$(mise activate zsh)"
+# opencode
+export PATH=/Users/siraj/.opencode/bin:$PATH
+
+export PATH="/opt/homebrew/opt/ruby/bin:/opt/homebrew/lib/ruby/gems/4.0.0/bin:$PATH"
+
+# postgresql@17 (keg-only; brew-services managed — see vault decision db-services-via-brew)
+export PATH="/opt/homebrew/opt/postgresql@17/bin:$PATH"
