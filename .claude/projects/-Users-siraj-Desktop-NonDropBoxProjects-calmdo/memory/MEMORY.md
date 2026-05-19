@@ -1,2 +1,8 @@
+- [Plan formatting conventions](feedback_plan_format.md) — Files per subtask, readable titles, actionable verify steps, no redundant assertions
+- [Plan content quality rules](feedback_plan_content.md) — Self-contained context, justify decisions vs alternatives, no YAGNI, no external doc references
 - [Requirements Quality Filter](feedback_requirements_review.md) — 5-rule filter: drop defaults, merge duplicates, separate what vs how
 - [Four-Lens Requirements Review](feedback_four_lens_review.md) — Run 4-lens analysis before approval gate
+- [Mechanism over instruction](feedback_mechanism_over_instruction.md) — Don't bloat CLAUDE.md explaining hooks/scripts that reveal themselves on first use
+- [No persona framing](feedback_no_persona_framing.md) — In plans/ADRs, describe the situation concretely instead of "solo dev"/"junior dev"/etc.
+- [Check all --help levels](feedback_check_all_help_levels.md) — When investigating a CLI, walk the full help tree before composing flags creatively
+- [No interactive rebase from tool calls](feedback_no_interactive_rebase.md) — Use git reset --soft + manual commits instead; rebase -i opens VS Code via the agent shell

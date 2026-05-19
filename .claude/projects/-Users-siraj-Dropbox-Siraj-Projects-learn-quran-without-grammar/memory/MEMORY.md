@@ -4,3 +4,4 @@
 - [Memorized vs understood](feedback_memorized_vs_understood.md) — LQWG's two axes of "known" are "memorized" and "understood" — never "recitation fluency / meaning comprehension"
 - [Scoring v4](project_scoring_v4.md) — 2026-04-17: waqf sentences, D1/D3/D4, four-phase A1/A2/B/C, اللَّه excluded. Spec + mockups in repo.
 - [Visual companion](feedback_visual_companion.md) — Always accept visual companion in brainstorming — skip the offer, just start the server
+- [Plan presentation](feedback_plan_presentation.md) — After writing a plan, present task-by-task: what/benefit+risk/test/code-sketch before offering execution

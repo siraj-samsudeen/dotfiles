@@ -4,6 +4,7 @@
 - [Architecture: Mode System](arch_mode_system.md) — dev/prod/test mode controls target schema, column filtering, gold materialization
 - [Architecture: Silver-direct hybrid](arch_silver_direct_hybrid.md) — YAML column_map for simple renames (implemented), SQL transforms only for JOINs
 - [Architecture: Bronze = clean copy](arch_bronze_clean_copy.md) — Filter junk at extraction, not in silver views; resource-constrained SMB pattern
+- [Architecture: Warehouse layers (4-layer model)](arch_warehouse_layers.md) — Canonical Bronze/Silver/Gold/Departmental-Data-Marts defs at docs/architecture/warehouse-layers.md; Gold tightened to dimensional model
 - [Research Status](research_status.md) — Research complete, key decisions locked, gold materialization now mode-dependent
 - [Execution Strategy](execution_strategy.md) — 4-wave DAG updated: V4 done via mode, V7/V8 plans ready, MVP next
 - [Reference: afans-reporting-dev](reference_afans_project.md) — 12 silver/gold SQL models = template for V8 transforms
@@ -14,4 +15,17 @@
 - [Feedback: pytest over hands_on_test.sh](feedback_pytest_over_hands_on.md) — hands_on_test.sh is deprecated; don't add checks; migrate touched entries to pytest
 - [Feedback: format all before push](feedback_format_all_before_push.md) — run `ruff format .` across whole repo and commit as separate style commit before every push; no hook
 - [Feedback: Design for agents AND humans](feedback_design_for_agents_and_humans.md) — every feature must work equally well in TTY and non-TTY; exit-code 3 = needs decision; every prompt needs a flag
+- [Feedback: Plan Preflight format](feedback_plan_preflight.md) — present plans as big-picture Preflight (scope/contract/surface/tasks/deps/done), not deep dives
+- [Feedback: Spec MD for review, Preflight stays light](feedback_preflight_as_md.md) — in-chat Preflight is a lightweight altitude outline; full design detail goes in the spec MD file the user reviews in an editor
+- [Feedback: Readable spec formatting](feedback_readable_formatting.md) — airy bulleted sections, one idea per bullet, avoid long-cell tables and densely-packed task blocks
+- [Feedback: Right-size specs](feedback_spec_right_sizing.md) — scale section depth to problem size; skip sections that add no signal; the convention is the shape, not the length
+- [Reference: Spec-writing principles in Obsidian](reference_spec_principles.md) — canonical docs at cross-project/principles/: plan-preflight, scope-describes-outcomes, spec-sections-natural-shape, brainstorming-skill-patches
+- [Feedback: Always uv run feather](feedback_uv_run_feather.md) — never bare `feather`; global install may lack new deps
+- [Feedback: Build in user-workflow order](feedback_workflow_driven_build_order.md) — for CLI tools, build features in the order a user runs them end-to-end; workflow order is the only order testable end-to-end
+- [Feedback: Rewrite test policy](feedback_test_policy_rewrite.md) — in the code-reorg worktree: write tests fresh (not port), no strict TDD ritual, enforce 100% line+branch coverage
+- [OpenSpec config.yaml is canonical](openspec_config_is_canonical.md) — all per-artifact preferences for OpenSpec work live in `openspec/config.yaml`; new spec-driven feedback goes there, not chat memory
+- [add-feather-init is the verb template](add_feather_init_is_template.md) — the first verb's design (core/cli split, spec-driven errors, per-file rules, output streams) is the convention every later verb inherits; deviation requires explicit one-line justification
+- [Workflow: subagent reviews after major OpenSpec doc work](workflow_subagent_reviews.md) — after substantial rewrites, launch two parallel Sonnet subagents (consistency + improvements), include the scenario→commit mapping check
+- [Namespace: custom OpenSpec skills use openspec-siraj-*](feedback_openspec_siraj_namespace.md) — custom skills authored by user use `openspec-siraj-<verb>` prefix to separate from upstream openspec-* plugin family
+- [Feedback: one block at a time](feedback_one_block_at_a_time.md) — long reviews/critiques presented one ≤1-page block at a time; stop and wait for feedback between blocks
 - [User timezone](user_timezone.md) — India (IST, Asia/Kolkata, UTC+5:30); system clock may differ
