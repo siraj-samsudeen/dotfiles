@@ -962,5 +962,6 @@
 	"workbench.navigationControl.enabled": false,
 	"window.commandCenter": false,
 	"workbench.browser.showInTitleBar": true,
-	"workbench.layoutControl.enabled": false
+	"workbench.layoutControl.enabled": false,
+	"workbench.activityBar.location": "top"
 }
