@@ -29,6 +29,13 @@ unreviewed work from landing.
 
 To switch: "Switch to agent-execute mode" / "Switch to user-execute mode."
 
+**Auto-mode does NOT change the default.** Even when the harness is in
+auto-mode (system reminder "Work without stopping for clarifying
+questions"), this skill stays in user-execute. The mini-plan IS the
+output the user wants from auto-mode; producing it without writing code
+is not a clarifying question — it is the deliverable. Only switch to
+agent-execute when the user explicitly says so.
+
 ---
 
 ## Session Start
@@ -97,27 +104,88 @@ follow `docs/spec-conventions.md`: local (`1a`, `2b`) inside one spec
 file, qualified (`init.1a`) across files. If a reference is unclear,
 surface it before writing the plan rather than inventing one.
 
-Mini-plan format:
+### Plan persistence — write the plan to a file
+
+The plan is the user's reviewable artifact, not ephemeral chat. Write it
+to disk under the change folder so the user can review in their editor
+and so it survives archive:
+
+```
+openspec/changes/<change>/plans/commit-N-<slug>.md
+```
+
+- `N` is the commit number (matches the `## Commit N — …` heading in `tasks.md`).
+- `<slug>` is a short kebab-case version of the commit subject (e.g.,
+  `commit-1-feather-yaml-in-cwd`).
+- Create `plans/` if it does not exist.
+
+Then in chat: print a lightweight **Preflight** (≤15 lines) pointing at
+the file. The Preflight names the commit, lists the test functions, and
+gives the verification commands — enough for the user to know what to
+expect. Full detail lives in the file.
+
+### Test-first ordering
+
+`docs/testing.md §2` locks the cadence: write tests → RED → impl →
+GREEN → coverage. The plan file must reflect that order. Lead with
+the test list; impl follows because the tests demand it.
+
+### Plan file format
 
 ```markdown
-**<task-id> — Mini-plan**
+# Commit N — <subject>
 
-What I will build:
-- <file or function>: <what it does>
+Spec scenarios: <list> · Status: drafted (RED not yet run)
 
-What I will NOT touch:
-- <files or systems out of scope>
+## Tests to write (testing.md §2 steps 2–3)
 
-Verification: <command + expected outcome — e.g., "pytest src/feather_etl/commands/init/init_test.py — expect 2 RED with informative failure messages">
+1. `<test_function_name>` (`<spec-ref>`)
+   - **Given:** <setup>
+   - **When:** <invocation>
+   - **Then:** <assertion(s)>
 
-Spec references: <e.g., init.1a, init.2a>
+2. `<test_function_name>` (`<spec-ref>`)
+   - ...
+
+## Impl that makes them pass (step 4)
+
+- `<file>` — <what lands here, named by what the test forces into existence>
+- ...
+
+## Out of scope this commit
+
+- <deferred thing> → Commit M
+
+## Verification (steps 3, 5, 6)
+
+1. RED: `<command>` — expect failures of the form <kind>
+2. GREEN: `<command>` — expect both tests passing
+3. Coverage: `<command>` — expect 100% line+branch on touched files (full-verb gate is the final smoke-test commit)
+
+## Spec references
+
+- <ref> — <design pointer>
+```
+
+### Preflight format (chat, ≤15 lines)
+
+```
+**Commit N — <subject>** — plan: `openspec/changes/<change>/plans/commit-N-<slug>.md`
+
+Tests (test-first per testing.md §2):
+- <test_function_name> (<spec-ref>)
+- <test_function_name> (<spec-ref>)
+
+Verification: <one-line summary of pytest + coverage commands>
+
+Open question (if any): <one-line>
 ```
 
 In **user-execute** mode:
-> "Plan above. Your turn — let me know when you're done and I'll verify."
+> "Plan written. Open it in your editor, then your turn — let me know when you've landed the tests and impl and I'll verify."
 
 In **agent-execute** mode:
-> "Plan above. Shall I proceed?"
+> "Plan written. Shall I proceed?"
 Wait for explicit approval before writing any code.
 
 If the plan reveals the task is larger than the checkbox implies:
@@ -267,6 +335,9 @@ Do not auto-run either.
 | Batch multiple checkboxes into one cycle | One checkbox per cycle |
 | Auto-continue after tick | Always ask before next cycle |
 | Write code in user-execute mode | Wait for the user |
+| Flip to agent-execute because auto-mode is on | Auto-mode keeps user-execute; only explicit user request switches |
+| Keep the mini-plan in chat only | Always write it to `openspec/changes/<change>/plans/commit-N-<slug>.md`; chat carries a Preflight pointer |
+| List impl deliverables first, tests last | Lead with the test list; impl is what the tests force into existence (testing.md §2) |
 | Tick before verification passes | Verification is non-optional |
 | Commit without explicit user approval | Always ask, even if context "obviously" wants a commit |
 | Silently fix code when spec says otherwise | Surface as divergence, three options |

@@ -1,15 +1,15 @@
 ---
 name: handoff
-description: Use when the user asks to hand off a specific task to a fresh agent after a long or topic-switching conversation — extracts only the decisions, artifacts, and context load-bearing for that one task and writes them to ./AGENT_HANDOFF.md at the repo root.
+description: Use when the user asks to hand off a specific task to a fresh agent after a long or topic-switching conversation — extracts only the decisions, artifacts, and context load-bearing for that task and writes them to ./handoff_[topic].md at the repo root.
 ---
 
 # handoff
 
 ## Overview
 
-When a conversation has covered multiple topics and the user wants to pass one specific task to a fresh agent, this skill extracts only the load-bearing slice for that task. Output always goes to `./AGENT_HANDOFF.md` at the repo root.
+When a conversation has covered multiple topics and the user wants to pass one specific task to a fresh agent, this skill extracts only the load-bearing slice for that task. Output goes to `./handoff_[topic].md` where `[topic]` is derived from the task scope.
 
-Goal: a fresh agent reads the handoff cold and has everything it needs for the named task — nothing more, nothing tangential.
+Goal: a fresh agent reads the handoff cold and has everything it needs for the named task — nothing more, nothing tangential. Topic naming makes multiple handoffs discoverable and avoids clobbering.
 
 ## When to use
 
@@ -25,16 +25,20 @@ Goal: a fresh agent reads the handoff cold and has everything it needs for the n
 
 ## Process
 
-1. **Ask the task.** "What task are you handing off?" Confirm scope if the user already named it.
-2. **Scan for load-bearing artifacts.** Decisions made, files written, issues filed, vault principles referenced.
-3. **Curate ruthlessly.** Apply Just Enough — include only what the fresh agent needs to act on THIS task. Pointer-link to vault principles / issues / files rather than inlining.
-4. **Draft the handoff** using the template below; follow the repo's file-layout conventions.
-5. **Write to `./AGENT_HANDOFF.md`** at the repo root. Overwrite if it exists — one handoff lives at a time. The user reviews the file in their editor; edit the file directly if they request changes. **Do NOT paste the full draft inline in chat** — long markdown blocks are hard to read there.
+1. **Identify possible handoff topics.** Scan the current conversation and user's request. If multiple distinct tasks/topics exist, list them (2-4 max). If only one is clear, proceed. If user specified a topic explicitly, use that.
+2. **Prompt for choice if multiple topics.** Ask the user which topic(s) to write a handoff for. Offer single or multiple selections.
+3. **Suggest a topic slug.** For the chosen task, derive a kebab-case topic name (e.g., `bugfix-auth`, `feature-dark-mode`, `refactor-db-layer`). Show the user the suggested name; allow them to override.
+4. **Scan for load-bearing artifacts.** Decisions made, files written, issues filed, vault principles referenced — specific to this task.
+5. **Curate ruthlessly.** Apply Just Enough — include only what the fresh agent needs to act on THIS task. Pointer-link to vault principles / issues / files rather than inlining.
+6. **Draft the handoff** using the template below; follow the repo's file-layout conventions.
+7. **Write to `./handoff_[topic].md`** at the repo root. The user reviews the file in their editor; edit the file directly if they request changes. **Do NOT paste the full draft inline in chat** — long markdown blocks are hard to read there. Multiple handoffs can coexist (one per topic).
 
 ## Template
 
+Filename: `handoff_[topic].md` (e.g., `handoff_bugfix-auth.md`, `handoff_feature-dark-mode.md`)
+
 ```markdown
-# Agent Handoff: <task name>
+# Handoff: <task name>
 
 **Task:** <one-line summary of what the next agent must do>
 **Scope:** <one-line what's in; what's out>
@@ -78,10 +82,11 @@ Items explicitly NOT to tackle, with pointers to where they live instead.
 
 ## Common mistakes
 
-- Writing the handoff before asking the user for the task scope. The user knows what's load-bearing; guessing wastes a round trip.
+- Writing the handoff before asking the user for the task scope (or identifying multiple possible scopes). The user knows what's load-bearing; guessing wastes a round trip.
+- Skipping the topic-suggestion step. A thoughtful topic name (`bugfix-auth` vs `refactor-db`) makes handoffs discoverable and helps the user choose if multiple exist.
 - Inlining whole principle files that already exist in the vault. Link instead.
 - Including tangential discussions. Just Enough — if the fresh agent can act without it, drop it.
-- Writing to a non-standard location. Always `./AGENT_HANDOFF.md` at repo root; if the user wants a different target, that's a different skill or a manual edit.
+- Writing to a non-standard location. Always `./handoff_[topic].md` at repo root; topic should be kebab-case and concise. Multiple handoffs can coexist (one per topic).
 
 ## Related principles
 

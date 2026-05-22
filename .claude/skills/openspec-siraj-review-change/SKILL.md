@@ -187,6 +187,15 @@ Apply approved fixes. Do not re-run the subagent review unless the user explicit
 
 ## Related skills
 
+- `openspec-siraj-walk-decisions` — runs **before** this (produces design.md).
+- `openspec-siraj-stress-test-tasks` — runs **after** this (simulates an implementer against the locked artifacts). May trigger a re-run of this skill if its apply phase touched ≥2 source docs, introduced renames, or added new Decisions / Smaller choices — see that skill's Step 7.
+- `openspec-siraj-execute-task` — runs last (per-checkbox implementation with gates).
 - `openspec-verify-change` — verifies implementation matches artifacts (post-implementation).
 - `openspec-archive-change` — finalises a change after implementation is complete.
 - `verify-plan` — analogous review pattern for plan files (uses three parallel agents).
+
+## Lifecycle
+
+```
+walk-decisions → review-change → stress-test-tasks → [maybe review-change again] → execute-task
+```
