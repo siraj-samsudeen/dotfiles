@@ -1,0 +1,35 @@
+#!/bin/bash
+# Ramachandran (RCT.in) FortiClient VPN control
+# Usage: rama-vpn connect | rama-vpn disconnect | rama-vpn status
+
+case "$1" in
+  connect)
+    ITEM="Connect to RCT.in"
+    ;;
+  disconnect)
+    ITEM="Disconnect from RCT.in"
+    ;;
+  status)
+    STATUS=$(osascript -e 'tell application "System Events" to tell process "FortiTray" to return name of every menu item of menu 1 of menu bar item 1 of menu bar 1')
+    if echo "$STATUS" | grep -q "Disconnect"; then
+      echo "connected"
+    else
+      echo "disconnected"
+    fi
+    exit 0
+    ;;
+  *)
+    echo "Usage: rama-vpn connect|disconnect|status"
+    exit 1
+    ;;
+esac
+
+osascript << EOF
+tell application "System Events"
+    tell process "FortiTray"
+        click menu bar item 1 of menu bar 1
+        delay 0.5
+        click menu item "$ITEM" of menu 1 of menu bar item 1 of menu bar 1
+    end tell
+end tell
+EOF
