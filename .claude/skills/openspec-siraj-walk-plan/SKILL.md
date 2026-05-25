@@ -26,17 +26,7 @@ Opus R2 against the same Commit 1) showed that the polished shape flipped
 Opus from YAGNI-violating to YAGNI-clean. The shape isn't decoration; it
 materially affects what agents produce.
 
-**Sibling skills:**
-
-- `openspec-siraj-walk-decisions` — authors `design.md` (across-the-change
-  decisions). Walks Format A questions one at a time.
-- `openspec-siraj-execute-task` — the consumer. Reads §1 for orientation,
-  §4 for the test list, §5 for impl steps. Writes deviations into §8 at
-  commit time.
-- `review-document` — the polish layer. Run after authoring to apply the
-  seven lenses (multi-altitude, bullet structure, reference cleanliness,
-  don't state the obvious, canonical home, directive language, verbatim
-  anchors).
+**Where this fits:** Stage 6 of the openspec-siraj pipeline — invoked after `openspec-siraj-stress-test-tasks` clears, before `openspec-siraj-execute-task` consumes the plan. Produces ONE per-commit plan file at a time. See `openspec-siraj-flow` for the full pipeline diagram, sibling-skills graph, and the artifact-tree convention. After authoring, run `/review-document` for the structural lens pass; for load-bearing commits, `openspec-siraj-stress-test-plan` empirically validates the plan before execution.
 
 ---
 
@@ -51,11 +41,19 @@ materially affects what agents produce.
 
 ## When NOT to use
 
-- Authoring `tasks.md` (commit blocks across the change) — that's
-  `openspec-siraj-walk-decisions` or hand-edited per
-  `openspec/conventions.md`.
-- Authoring `spec.md` or `design.md` — separate concerns.
+- Authoring `tasks.md` (commit blocks across the change) — hand-edited
+  per the six-section commit-block shape in `openspec-siraj-flow`.
+- Authoring `spec.md` or `design.md` — separate concerns
+  (`openspec-siraj-walk-decisions` for design; spec is hand-edited per
+  the numbering / title rules in `openspec-siraj-flow`).
 - Pure structural polish on a finished plan — use `review-document`.
+
+## What this skill does NOT do
+
+- Does not validate the plan empirically — that's `openspec-siraj-stress-test-plan`.
+- Does not implement anything — that's `openspec-siraj-execute-task`.
+- Does not author `tasks.md` (the cross-commit overview).
+- Does not run the per-commit review gates by itself — author the plan, then invoke `review-document` and (optionally) `stress-test-plan` separately.
 
 ---
 
@@ -456,40 +454,21 @@ After drafting, scan and tick:
 
 ---
 
-## Integration with `openspec-siraj-execute-task`
+## Section-by-section role for the executor
 
-This skill produces the artifact; `execute-task` consumes it.
+The plan file feeds `openspec-siraj-execute-task`. Each section serves a different read by the executor:
 
-- **§1** orients the executor (file tree, runtime flow, before/after).
-  An executor who's read §1 can load the slice into head before reading
-  any test or code.
-- **§2** provides the glossary if the executor encounters unfamiliar
-  patterns mid-impl.
-- **§3** gives design intent — especially the YAGNI directive that
-  shapes what the executor MUST NOT add.
-- **§4** is the test list. The executor writes these first (RED step
-  of `docs/testing.md` cadence) and runs them to confirm RED before
-  any impl.
-- **§5** is the impl checklist. Executor reads bullets, writes code,
-  re-runs §4's tests for GREEN.
-- **§6** lets the executor surface a question if one arises that wasn't
-  resolved at plan-walk time.
-- **§7** captures any contract changes the executor needs to make
-  upstream (e.g., spec.md tweaks, testing.md updates).
-- **§8** is where the executor records any divergence from §5 before
-  committing.
+- **§1** orients (file tree, runtime flow, before/after). An executor who's read §1 loads the slice into head before any test or code.
+- **§2** provides the glossary for unfamiliar patterns mid-impl.
+- **§3** gives design intent — especially the YAGNI directive that shapes what the executor MUST NOT add.
+- **§4** is the test list — executor writes these first (RED), runs them to confirm RED, then GREEN after impl.
+- **§5** is the impl checklist.
+- **§6** lets the executor surface a question that wasn't resolved at plan-walk time.
+- **§7** captures any contract changes the executor needs to make upstream (spec.md tweaks, testing.md updates).
+- **§8** records any divergence from §5 before committing.
 
-If `execute-task` can't find a plan for the next commit, it should
-either invoke this skill to author one OR halt and ask Siraj.
+If `execute-task` can't find a plan for the next commit, it either invokes this skill OR halts and asks the user.
 
 ---
 
-## Skill location
-
-This skill lives at `~/.claude/skills/openspec-siraj-walk-plan/SKILL.md`.
-Cross-project (global) — every OpenSpec change in every project benefits
-from the same shape.
-
-Companion skill: `~/.claude/skills/review-document/SKILL.md` (the polish
-layer applied after any document — plan, spec, design, tasks — is
-authored).
+**Next:** `/review-document` on the freshly-authored plan (structural lens pass), then for load-bearing commits `/openspec-siraj-stress-test-plan` (empirical validation), then `/openspec-siraj-execute-task`. See `openspec-siraj-flow` for the full Stage 6 pipeline.

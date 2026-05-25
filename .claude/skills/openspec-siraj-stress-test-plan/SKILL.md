@@ -34,19 +34,7 @@ to refine the plan based on findings → re-runs this skill until the
 report is clean → invokes `openspec-siraj-execute-task` for actual
 production execution.
 
----
-
-## How this differs from sibling skills
-
-| Skill | Input | Agents produce | Output | Action on result |
-|---|---|---|---|---|
-| `verify-plan` | a plan file (text) | text reviews | review findings | edit plan |
-| `openspec-siraj-stress-test-tasks` | `tasks.md` | implementation plans for each commit | tasks.md gaps | edit tasks.md |
-| **`openspec-siraj-stress-test-plan`** | **a per-commit plan** | **CODE for that commit** | **plan-gap report** | **edit the plan via walk-plan** |
-| `openspec-siraj-execute-task` Curated mode | a per-commit plan | code | side-by-side comparison | pick winner + commit |
-
-The two right columns matter: **the action you take after.** stress-test-plan
-pushes back to plan refinement; Curated mode commits a winner.
+**Where this fits:** Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-walk-plan` + `review-document` polish a per-commit plan, before `openspec-siraj-execute-task` consumes it for production code. Optional, but recommended for load-bearing commits. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill, `verify-plan` (parallel text review of a plan), `openspec-siraj-stress-test-tasks` (tasks.md gap-finding), and `openspec-siraj-execute-task` Curated mode (production winner-picking).
 
 ---
 
@@ -204,28 +192,6 @@ task complexity suggests otherwise.
 
 ---
 
-## Integration with the OpenSpec workflow
-
-The full validated workflow:
-
-```
-opsx:new
-  → spec.md authored
-  → openspec-siraj-walk-decisions → design.md
-  → tasks.md authored (manual or via opsx)
-  → openspec-siraj-review-change   (cross-doc consistency)
-  → openspec-siraj-stress-test-tasks   (validates tasks.md)
-  → for each commit:
-      → openspec-siraj-walk-plan       (authors the plan)
-      → review-document                 (lens-polish on the plan)
-      → openspec-siraj-stress-test-plan (THIS skill — validates the plan)
-      → openspec-siraj-execute-task     (Curated mode — produces commit)
-  → opsx:verify
-  → opsx:archive
-```
-
-This skill sits between `walk-plan` (produces the plan) and
-`execute-task` (consumes the plan). It's the empirical validation step
-that catches plan weaknesses before they become commit weaknesses.
+**Next:** if the stress-test surfaces convergent failures or divergences, push back to `/openspec-siraj-walk-plan` to refine the plan, then re-run this skill until clean. Once clean, invoke `/openspec-siraj-execute-task` (Curated mode) for the production commit. See `openspec-siraj-flow` for the full Stage 6 pipeline.
 
 Skip this skill for trivial commits; invoke it on load-bearing slices.

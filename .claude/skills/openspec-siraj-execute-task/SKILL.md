@@ -3,10 +3,11 @@ name: openspec-siraj-execute-task
 description: >
   Execute an OpenSpec change's tasks.md one checkbox at a time with a
   mini-plan → execute → verify → tick → ask gate loop. Use when the user
-  wants disciplined per-task progress with explicit review before commits,
-  instead of /opsx:apply's run-to-blocker loop. The tasks.md already encodes
-  the TDD cadence (write tests → RED → implement → GREEN → coverage); this
-  skill enforces the rhythm and the review gates around it.
+  wants disciplined per-task progress with explicit review before
+  commits, instead of /openspec-siraj:apply's run-to-blocker loop. The
+  tasks.md already encodes the TDD cadence (write tests → RED →
+  implement → GREEN → coverage); this skill enforces the rhythm and the
+  review gates around it.
 ---
 
 # OpenSpec Execute Task
@@ -17,6 +18,33 @@ One checkbox per cycle. A gate at every step. The user owns the loop.
 at the boundaries. A mini-plan catches "about to write the wrong thing"
 cheaply. A verify step confirms it worked. A commit gate prevents
 unreviewed work from landing.
+
+---
+
+## Where this fits
+
+Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-walk-plan` authors the per-commit plan and `review-document` (and optionally `openspec-siraj-stress-test-plan`) polish it. Consumes the plan file at `openspec/changes/<change>/plans/commit-N-<slug>.md`. See `openspec-siraj-flow` for the full pipeline diagram, sibling-skills graph, and disambiguation between this skill and `/openspec-siraj:apply` (which this skill replaces) or `/openspec-siraj:verify` (which is a post-implementation CLI gate).
+
+## When to use
+
+- A change folder has a polished plan for the next commit and the user is ready to implement that commit.
+- The user wants disciplined per-checkbox progress with explicit review gates instead of running impl to a blocker.
+- The user says "execute the next task", "implement commit N", "/openspec-siraj-execute-task", or pauses on a plan file with no implementation yet.
+
+## When NOT to use
+
+- The plan file doesn't exist yet — use `openspec-siraj-walk-plan` first.
+- The plan exists but hasn't been polished — run `review-document` and (for load-bearing commits) `openspec-siraj-stress-test-plan` first.
+- The user wants run-to-blocker bulk implementation without per-checkbox gates — use `/openspec-siraj:apply` instead (project-local policy avoids this; see orchestrator's "Avoided CLI verbs").
+- The implementation is done and you're checking it against the artifacts — use `/openspec-siraj:verify`.
+
+## What this skill does NOT do
+
+- Does not author the plan file (that's `openspec-siraj-walk-plan`).
+- Does not validate cross-doc consistency (that's `openspec-siraj-review-change`, pre-implementation).
+- Does not check implementation against artifacts after the fact (that's `/openspec-siraj:verify`).
+- Does not commit on the user's behalf without explicit approval — Step 5 always asks.
+- Does not push. Does not `git add -A`. Never.
 
 ---
 
@@ -441,11 +469,13 @@ may be grouped into one commit at the user's discretion.
 
 When all checkboxes are ticked:
 
-> "All tasks complete. Want me to run `/opsx:verify` to check
+> "All tasks complete. Want me to run `/openspec-siraj:verify` to check
 > implementation against the spec? Once that's clean, archive with
-> `/opsx:archive`."
+> `/openspec-siraj:archive`."
 
 Do not auto-run either.
+
+**Next:** `/openspec-siraj:verify` to validate, then `/openspec-siraj:archive`, then `/openspec-siraj:sync` to move delta specs into `openspec/specs/`. See `openspec-siraj-flow` for the full Stage 7 pipeline.
 
 ---
 

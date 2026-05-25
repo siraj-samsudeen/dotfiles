@@ -7,13 +7,26 @@ description: Walk through OpenSpec design decisions one at a time using Format A
 
 This skill formalises the design-walkthrough rhythm from feather-etl's `add-feather-init` session: surface every material implementation choice the spec leaves open, drill into each one as its own decision (Format A — Question / Alternatives with pros and cons / Recommendation), invite pushback, lock the outcome, and accumulate them into a clean `design.md`.
 
-## When to invoke
+**Where this fits:** Stage 3 of the openspec-siraj pipeline — invoked after `spec.md` is locked (per the numbering + scenario title conventions in `openspec-siraj-flow`), before `tasks.md` is hand-authored. See `openspec-siraj-flow` for the full pipeline diagram and sibling-skills graph.
 
-**Explicit user request** — "walk me through the design decisions", "let's design [the verb]", "what design choices do we have", "/openspec-siraj-walk-decisions", or any phrasing requesting interactive design-decision authoring.
+## When to use
 
-**Proactive suggestion** — when the user finishes locking a spec (`spec.md` complete; design.md absent or stub) and signals readiness to design. Phrase the suggestion: *"Spec is locked. Want me to walk through the design decisions one at a time in Format A?"* Take a no gracefully.
+- A new OpenSpec change has a locked `spec.md` and needs `design.md` authored.
+- The user says "walk me through the design decisions", "let's design [the verb]", "what design choices do we have", or "/openspec-siraj-walk-decisions".
+- Proactively: after spec authoring wraps, suggest *"Spec is locked. Want me to walk through the design decisions one at a time in Format A?"* — take a no gracefully.
 
-**Do NOT auto-invoke** when the user is implementing, reviewing, or troubleshooting. This skill is for the design-authoring phase only.
+## When NOT to use
+
+- The user is implementing, reviewing, or troubleshooting — this skill is design-authoring only.
+- `design.md` already exists and is locked — use `/review-document` or `openspec-siraj-review-change` for polish, not this skill.
+- The "decisions" you'd surface just restate the spec — flag and skip; they don't earn a Format A walkthrough.
+
+## What this skill does NOT do
+
+- Does not author `spec.md` (hand-edited per orchestrator conventions).
+- Does not author `tasks.md` (hand-edited per the six-section shape in `openspec-siraj-flow`).
+- Does not validate cross-doc consistency (that's `openspec-siraj-review-change`).
+- Does not commit anything — Step 5 writes `design.md`; user commits.
 
 ## What it produces
 
@@ -199,8 +212,6 @@ Both catch different failure modes; the structural pass before the cross-doc aud
 
 A full walkthrough for ~8 big decisions typically takes 30-60 minutes of conversation. Smaller-choices panel adds maybe 5 minutes. Design.md write is one tool call.
 
-## Related skills
+---
 
-- `openspec-siraj-review-change` — pre-commit review across proposal/spec/design/tasks. Runs AFTER this skill finishes.
-- `openspec-siraj-execute-task` — per-task implementation gate loop. Runs AFTER design.md + tasks.md are locked.
-- Upstream `openspec-*` skills handle the rest of the OpenSpec lifecycle (new-change, propose, apply, archive, etc.).
+**Next:** `/review-document` on `design.md` (structural lens pass — Step 6 above), then hand-author `tasks.md` per the six-section commit-block shape in `openspec-siraj-flow`, then `/openspec-siraj-review-change`. See `openspec-siraj-flow` for the full pipeline.

@@ -12,19 +12,20 @@ or does it still have to guess?* If the implementer would guess, the gap
 belongs in a source doc or as a pointer in tasks.md — better surfaced now
 than discovered during execute-task.
 
-## When to invoke
+**Where this fits:** Stage 5 of the openspec-siraj pipeline — second of two pre-implementation gates. Runs after `openspec-siraj-review-change` clears, before per-commit work begins. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill (tasks.md implementability), review-change (cross-doc consistency), and stress-test-plan (per-commit plan clarity).
 
-**Explicit user request** — "stress-test the tasks", "are the tasks ready",
-"/openspec-siraj-stress-test-tasks", or any phrasing where the user wants a
-pre-implementation gate.
+## When to use
 
-**Proactive suggestion** — after `openspec-siraj-review-change` clears and
-the change is otherwise ready to implement, suggest:
-*"Review passed. Want me to stress-test against a simulated implementer
-before you start execute-task?"* Take a no gracefully.
+- `openspec-siraj-review-change` has cleared and the change is otherwise ready to implement.
+- The user says "stress-test the tasks", "are the tasks ready for implementation", or invokes the skill explicitly.
+- Proactively after review-change clears; phrase the suggestion as *"Review passed. Want me to stress-test against a simulated implementer before you start execute-task?"* — take a no gracefully.
 
-**Do NOT auto-fire** on every tasks.md edit. The cost is wasted if tasks.md
-is mid-author.
+## When NOT to use
+
+- `tasks.md` is mid-author — the fanout cost is wasted if the artifact isn't stable.
+- You want cross-doc consistency audit (not implementability) — use `openspec-siraj-review-change`.
+- You want to validate a per-commit plan empirically — use `openspec-siraj-stress-test-plan`.
+- You want post-implementation verification — use `/openspec-siraj:verify`.
 
 ## Step 1 — Discover the change folder
 
@@ -44,10 +45,11 @@ The agents must read:
 - `openspec/changes/<name>/design.md`
 - `openspec/changes/<name>/specs/<capability>/spec.md` (all of them)
 - `openspec/changes/<name>/tasks.md`
-- `openspec/conventions.md` (if present)
-- `openspec/config.yaml` (if present)
+- `openspec/conventions.md` (if present — typically thin or absent; conventions live in `openspec-siraj-flow` skill)
+- `openspec/config.yaml` (if present — optional)
 - `CLAUDE.md` / `AGENTS.md` / `GEMINI.md` (whichever exists)
-- `docs/testing.md` or equivalent (if referenced from config.yaml)
+- `docs/testing.md` or equivalent
+- The `openspec-siraj-flow` skill itself, for the canonical numbering / scenario title / tasks.md commit-block conventions (subagents should treat it as authoritative for shape questions)
 
 If tasks.md is absent, stop and say so — this skill needs tasks.md to
 stress-test.
@@ -121,8 +123,9 @@ applying clearly-correct fixes over asking the user about trivialities.
   find. Haiku-only gaps need a higher bar (Haiku's catches are sometimes
   edge-case noise; verify before applying).
 - **Convergent format critique** — promote any unanimous structural finding
-  into `openspec/conventions.md` (or its equivalent rules file) as a
-  refinement of the relevant section.
+  into the `openspec-siraj-flow` skill (canonical home for tasks.md
+  commit-block shape, numbering, scenario titles, etc.) as a refinement of
+  the relevant section.
 
 ### Surface for decision
 
@@ -150,7 +153,7 @@ applying clearly-correct fixes over asking the user about trivialities.
 | Missing behavioural detail (what happens when X) | `spec.md` requirement or `design.md` Decision |
 | Cross-verb test conventions | `docs/testing.md` |
 | Single-commit pointer / clarification | `tasks.md` only |
-| Structural format guidance flagged by ≥2 agents | `openspec/conventions.md` + `openspec/config.yaml` rule |
+| Structural format guidance flagged by ≥2 agents | `openspec-siraj-flow` skill (canonical home) |
 
 Report applied fixes in a short summary. Do NOT ask the user to apply
 mechanical fixes — apply them. Ask only when judgment is required.
@@ -193,8 +196,8 @@ before `openspec-siraj-execute-task`.
 - Does not author tasks.md (that's `openspec-siraj-walk-decisions` plus
   user editing).
 - Does not run A/B format experiments — the tasks.md shape is fixed in
-  `openspec/conventions.md`. A/B was a one-time meta-exercise; routine
-  stress-testing reads the single locked shape.
+  `openspec-siraj-flow` (canonical home). A/B was a one-time meta-exercise;
+  routine stress-testing reads the single locked shape.
 
 ## Cost
 
@@ -206,17 +209,6 @@ before `openspec-siraj-execute-task`.
 
 One-time per implementation push, not per edit.
 
-## Related skills
+---
 
-- `openspec-siraj-walk-decisions` — runs **before** this (produces
-  design.md + tasks.md).
-- `openspec-siraj-review-change` — runs **before** this (cross-doc
-  consistency). May need to re-run after stress-test apply per Step 7.
-- `openspec-siraj-execute-task` — runs **after** this (per-checkbox
-  implementation with gates).
-
-## Lifecycle
-
-```
-walk-decisions → review-change → stress-test-tasks → [maybe review-change again] → execute-task
-```
+**Next:** Stage 6 of the pipeline begins — `/openspec-siraj-walk-plan` to author the per-commit plan for commit 1. See `openspec-siraj-flow` for the full Stage 6 loop (walk-plan → review-document → stress-test-plan → execute-task, repeated per commit).

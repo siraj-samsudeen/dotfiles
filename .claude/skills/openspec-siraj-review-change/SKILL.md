@@ -7,13 +7,20 @@ description: Review an OpenSpec change folder for cross-document consistency, ri
 
 This skill runs a three-subagent review of an OpenSpec change folder before commit. It's the formalisation of a pattern we've found valuable: an independent consistency check, an independent verbosity/guardrails check, and an independent structural-lens audit (the 7 lenses from `review-document` applied to the change-folder docs). Results are synthesised back to the user.
 
-## When to invoke
+**Where this fits:** Stage 5 of the openspec-siraj pipeline — first of two pre-implementation gates. Runs after `tasks.md` is hand-authored, before `openspec-siraj-stress-test-tasks`. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill (cross-doc consistency), stress-test-tasks (tasks.md implementability), and `/openspec-siraj:verify` (post-implementation gate).
 
-**Explicit user request** — "review the change", "ready to commit", "check the artifacts", "/openspec-siraj-review-change", or any phrasing where the user wants a pre-commit sanity pass.
+## When to use
 
-**Proactive suggestion** — when the user has just finished a substantial rewrite of an OpenSpec change folder and signals they're winding down ("let's commit", "I think we're done", "looks good"), suggest invoking this skill before they commit. Phrase the suggestion: *"Before you commit, want me to run the two-subagent review to catch any contradictions or over/under-shooting?"* Take a no gracefully.
+- An OpenSpec change folder is substantially complete (proposal + spec + design + tasks all present) and the user is winding down.
+- The user says "review the change", "ready to commit", "check the artifacts", or invokes the skill explicitly.
+- Proactively after substantial rewrites; phrase the suggestion as *"Before you commit, want me to run the three-subagent review?"* — take a no gracefully.
 
-**Do NOT auto-invoke** on every file edit. The skill takes 30-60 seconds and the cost is wasted if the change is still mid-author.
+## When NOT to use
+
+- The change folder is mid-author — the 30-60 second cost is wasted if tasks.md is still being written.
+- You're checking implementation against artifacts after coding — use `/openspec-siraj:verify` instead.
+- You want to find tasks.md gaps for an implementing agent — use `openspec-siraj-stress-test-tasks` instead.
+- The plan files are what you want reviewed — use `/review-document` on each, then `openspec-siraj-stress-test-plan`.
 
 ## Step 1: Discover the change folder
 
@@ -40,12 +47,12 @@ If any of the four is missing, note it and continue with what's present.
 
 The skill should adapt to what the project actually uses. Discover (don't assume):
 
-- **OpenSpec config**: `openspec/config.yaml` — always include if present. Its `context:` block names the project's load-bearing references.
+- **OpenSpec config**: `openspec/config.yaml` — include if present. (Optional; the openspec CLI works without it. Project-level conventions live in `openspec-siraj-flow` skill — that's the canonical home for numbering, scenario titles, tasks.md commit-block shape, etc.)
 - **CLAUDE.md** (or `AGENTS.md`, `GEMINI.md`): the repo-wide agent instructions. Always include if present.
-- **PRD**: many projects don't have one. Look for `docs/prd/PRD-*.md`, `docs/PRD-*.md`, `docs/prd.md`, or any reference to a PRD path in `openspec/config.yaml`'s `context:` block. Include only if found.
-- **Testing conventions**: `docs/testing.md` or any equivalent referenced from `openspec/config.yaml`. Include if found.
-- **Spec conventions**: `docs/spec-conventions.md` or equivalent. Include if found.
-- **Vault principles**: if `openspec/config.yaml` references a vault path (e.g., `~/Dropbox/.../cross-project/principles/`), the relevant principle files are referenceable but **do not pull their full contents into subagent prompts** — just name the principles by filename so subagents can read them if needed.
+- **PRD**: many projects don't have one. Look for `docs/prd/PRD-*.md`, `docs/PRD-*.md`, `docs/prd.md`, or any reference in CLAUDE.md. Include only if found.
+- **Testing conventions**: `docs/testing.md` or equivalent. Include if found.
+- **Project-local conventions**: `openspec/conventions.md` is now empty/absent by default — conventions live in the `openspec-siraj-flow` skill. If a project keeps a thin local conventions.md (project-specific additions only), include it.
+- **Vault principles**: if CLAUDE.md or another doc references a vault path (e.g., `~/Dropbox/.../cross-project/principles/`), the relevant principle files are referenceable but **do not pull their full contents into subagent prompts** — just name the principles by filename so subagents can read them if needed.
 
 ## Step 4: Distill a "what the design should be" brief
 
@@ -223,18 +230,6 @@ Apply approved fixes. Do not re-run the subagent review unless the user explicit
 
 ~30-60 seconds elapsed (three Sonnet subagents in parallel — parallel execution means three doesn't take much longer than two). ~75-100k tokens combined across the three. One-time cost per pre-commit checkpoint, not per edit.
 
-## Related skills
+---
 
-- `openspec-siraj-walk-decisions` — runs **before** this (produces design.md).
-- `openspec-siraj-stress-test-tasks` — runs **after** this (simulates an implementer against the locked artifacts). May trigger a re-run of this skill if its apply phase touched ≥2 source docs, introduced renames, or added new Decisions / Smaller choices — see that skill's Step 7.
-- `openspec-siraj-execute-task` — runs last (per-checkbox implementation with gates).
-- `openspec-verify-change` — verifies implementation matches artifacts (post-implementation).
-- `openspec-archive-change` — finalises a change after implementation is complete.
-- `verify-plan` — analogous review pattern for plan files (uses three parallel agents).
-- `review-document` — the standalone version of Subagent 3's lens audit. Invoke directly on any single doc (spec, design, plan, tasks, README, ADR, SKILL.md) for the 7-lens polish pass; this skill bundles it into the pre-commit review across the change folder.
-
-## Lifecycle
-
-```
-walk-decisions → review-change → stress-test-tasks → [maybe review-change again] → execute-task
-```
+**Next:** `/openspec-siraj-stress-test-tasks` (validates tasks.md against a simulated implementer). If its apply phase touches ≥2 source docs, introduces renames, or adds new Decisions / Smaller choices, re-run this skill before proceeding to Stage 6 (per-commit plans). See `openspec-siraj-flow` for the full pipeline.
