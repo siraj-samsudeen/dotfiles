@@ -22,19 +22,38 @@ unreviewed work from landing.
 
 ## Execution Modes
 
-- **user-execute** (default): agent produces mini-plan + spec refs;
-  the user writes the code; the agent verifies.
-- **agent-execute** (opt-in): agent produces mini-plan; user approves;
-  agent writes code; user reviews the diff.
+Three modes for HOW each task's code gets written. The user picks at
+session start (sticky for the session) and may override per task. All
+subagent modes use `run_in_background: true` so the main chat stays
+responsive while agents work.
 
-To switch: "Switch to agent-execute mode" / "Switch to user-execute mode."
+- **Curated (default)** — Sonnet and Opus run in parallel in isolated
+  worktrees, implementing the same task independently. After both
+  finish, the skill shows a side-by-side comparison and the user picks
+  the winner (wholesale or hand-picked per file). Highest signal;
+  ~2× time/cost of single-subagent mode.
 
-**Auto-mode does NOT change the default.** Even when the harness is in
-auto-mode (system reminder "Work without stopping for clarifying
-questions"), this skill stays in user-execute. The mini-plan IS the
-output the user wants from auto-mode; producing it without writing code
-is not a clarifying question — it is the deliverable. Only switch to
-agent-execute when the user explicitly says so.
+- **Single subagent** — one subagent (Sonnet / Opus / Haiku) implements
+  the task in a worktree. User reviews the output and accepts (or
+  switches to inline for the revision). Model picked by task complexity:
+  - **Haiku** for trivial tasks (~30–60 s runtime).
+  - **Sonnet** for typical tasks — the in-mode default.
+  - **Opus** for architecturally hard tasks.
+
+- **Inline** — the current-session agent writes the code directly in
+  the working tree. No subagent, no worktree, no comparison. Fastest.
+
+To switch mid-session: "Switch to single subagent with sonnet" /
+"Go inline for this one" / "Curated for the rest." The skill confirms
+the change and applies it from the next task forward.
+
+**Auto-mode keeps Curated as default.** When the harness is in auto-mode
+("Work without stopping for clarifying questions"), this skill still
+spawns Sonnet + Opus in parallel — Siraj's stated preference is that
+auto-mode favors quality over spend. The skill still shows the
+side-by-side comparison and waits for an explicit pick rather than
+auto-selecting silently. Picking a winner without showing the
+comparison is never auto-mode behavior.
 
 ---
 
@@ -71,9 +90,9 @@ agent-execute when the user explicitly says so.
 │    User reviews and approves            │
 ├─────────────────────────────────────────┤
 │ 2. Execute                              │
-│    user-execute: user writes code       │
-│    agent-execute: agent writes code     │
-│    → user reviews diff                  │
+│    Curated: Sonnet+Opus → pick winner   │
+│    Single: 1 subagent  → review         │
+│    Inline: in-session  → review diff    │
 ├─────────────────────────────────────────┤
 │ 3. Verify                               │
 │    Run the verification the task        │
@@ -181,12 +200,20 @@ Verification: <one-line summary of pytest + coverage commands>
 Open question (if any): <one-line>
 ```
 
-In **user-execute** mode:
-> "Plan written. Open it in your editor, then your turn — let me know when you've landed the tests and impl and I'll verify."
+After the Preflight is in chat, confirm or set the execution mode for
+this task. If the session has a sticky mode, lead with it:
 
-In **agent-execute** mode:
-> "Plan written. Shall I proceed?"
-Wait for explicit approval before writing any code.
+> "Plan written: `<plan-path>`.
+>
+> Mode for `<task-id>` — sticky default is **<current-mode>**:
+> (a) Curated — Sonnet + Opus in parallel, you pick winner.
+> (b) Single subagent — name the model (Sonnet / Opus / Haiku).
+> (c) Inline — I write the code in this session.
+>
+> Say 'go' to proceed with the sticky default, or pick a letter to override."
+
+Wait for an answer (or 'go') before doing anything. The mode chosen
+governs Step 2's execution flow.
 
 If the plan reveals the task is larger than the checkbox implies:
 > "This looks larger than one checkbox. Want to split <task-id> before starting?"
@@ -196,15 +223,116 @@ Stop until decided.
 
 ## Step 2 — Execute
 
-### user-execute mode
-Wait for the user to signal done.
+The flow depends on the mode chosen in Step 1. All three converge on
+Step 3 (Verify) after producing code in the main working tree.
 
-### agent-execute mode
-Write code. Show the diff. Say:
-> "Review the changes above. Ready to verify?"
-Wait for explicit confirmation before running verification.
+### Curated mode
 
-Do not auto-commit. Do not proceed to verification without confirmation.
+1. **Pre-check.** Plan + supporting docs (spec, design, testing.md)
+   must be committed to `origin/main` — git worktrees inherit from the
+   tracking ref, not from the dirty working tree. If uncommitted docs
+   exist:
+   > "Curated mode needs the plan + docs committed and pushed first.
+   > Commit + push these now? (y/n)"
+   Wait for approval. Use `git push origin main` after commit.
+
+2. **Stash impl.** Stash any uncommitted impl in the working tree with
+   a descriptive label (`git stash push -u -m "siraj-impl-pre-curated"`).
+
+3. **Launch in parallel.** Two `Agent` tool calls in the SAME message
+   so they execute concurrently:
+   - Sonnet: `model: "sonnet"`, `isolation: "worktree"`, `run_in_background: true`.
+   - Opus: `model: "opus"`, `isolation: "worktree"`, `run_in_background: true`.
+   - Identical prompts (see Subagent Prompt Template below).
+
+4. **Sequenced reveal.** When the FIRST subagent finishes, immediately
+   show its report (files touched, RED/GREEN results, coverage,
+   deviations). Annotate that the second is still running. Continue in
+   the main chat (user can ask questions, edit other files) while
+   waiting for the second.
+
+5. **Compare.** When BOTH finish, produce a side-by-side comparison:
+   - One section per file (`__init__.py`, `cli.py`, `core.py`, etc.).
+   - Column order: **Sonnet → Opus → Recommendation**.
+   - For each file: full content side-by-side + analysis of
+     differences + recommended pick + rationale.
+
+6. **User picks.** User chooses wholesale winner OR hand-picks per
+   file. Wait for the answer; never pick silently.
+
+7. **Apply.** Copy picked code from the chosen worktree(s) into the
+   main repo via `cp` (explicit paths, not `rsync -a`).
+
+8. **Verify in main repo.** Run RED→GREEN→coverage in the main repo
+   (verifies the picked code passes outside the worktree).
+
+9. **Commit.** Standard Step 5 ask-before-commit flow (still
+   user-approved).
+
+10. **Cleanup.** `git stash drop`, `git worktree remove -f -f` both
+    worktrees, `git worktree prune`, delete the worktree branches.
+
+### Single subagent mode
+
+1. Pre-check (same as Curated).
+2. Stash impl (same).
+3. Launch ONE subagent: chosen model, `isolation: "worktree"`,
+   `run_in_background: true`. Same prompt template.
+4. Wait for the single completion report.
+5. **Brief review.** Read the worktree's code, summarize what changed
+   in chat (one paragraph per file).
+6. User accepts OR asks for changes. If changes: either relaunch the
+   subagent with revised prompt or switch to inline for this revision.
+7. Apply (copy worktree → main).
+8. Verify in main repo.
+9. Commit (Step 5 flow).
+10. Cleanup (drop stash, remove worktree, prune branches).
+
+### Inline mode
+
+1. Agent writes code in the current session (in the working tree).
+2. Show the diff.
+3. Say:
+   > "Review the changes above. Ready to verify?"
+4. Wait for explicit confirmation before running verification.
+
+### Subagent Prompt Template (Curated + Single)
+
+Each subagent gets the SAME prompt structure (identical text in Curated
+mode so the comparison is apples-to-apples):
+
+> You are implementing **<task-id> of the <change-name> change** in
+> the feather-etl repo. Your worktree is `<worktree-path>`.
+>
+> ## Read these files first (in order)
+> 1. `openspec/changes/<change>/plans/commit-N-<slug>.md` — primary brief.
+> 2. `openspec/changes/<change>/specs/<capability>/spec.md` — scenarios.
+> 3. `docs/testing.md` — cadence (vertical slicing, test-first batch).
+> 4. `openspec/changes/<change>/design.md` — decisions referenced by plan.
+>
+> ## Your task
+> Implement <task-id> per the plan. Follow the test-first cadence:
+> write tests → confirm RED → write impl → confirm GREEN → run coverage.
+>
+> ## Constraints
+> - Strict YAGNI per plan §3 (the **DO NOT add** directive).
+> - Floor-not-wall per plan §5.
+> - PEP-420 namespace packages — no empty `__init__.py` markers.
+> - Use `uv run` for all Python invocations.
+>
+> ## Report back (under 400 words)
+> 1. Files created/modified — full paths.
+> 2. RED step result — exact failures seen at collection time.
+> 3. GREEN step result — test names + pass/fail.
+> 4. Coverage report — line + branch percentages on touched files.
+> 5. Deviations recorded in plan §8 with one-line rationale.
+> 6. Consult moments — any decision where you considered consulting
+>    the user per `docs/testing.md` "consult before reaching for
+>    non-default tools."
+
+In ALL modes: do not auto-commit. Do not proceed to verification
+without the user's go-ahead (Curated and Single-subagent verify in
+the main repo after Apply; Inline verifies in the same tree).
 
 ---
 
@@ -334,8 +462,10 @@ Do not auto-run either.
 | Skip mini-plan because "task is small" | Every checkbox gets a mini-plan |
 | Batch multiple checkboxes into one cycle | One checkbox per cycle |
 | Auto-continue after tick | Always ask before next cycle |
-| Write code in user-execute mode | Wait for the user |
-| Flip to agent-execute because auto-mode is on | Auto-mode keeps user-execute; only explicit user request switches |
+| Pick a curated winner silently without showing comparison | Always render Sonnet + Opus side-by-side; wait for the user's pick |
+| Use curated mode for trivial Haiku-tier tasks | Match mode to task — single-subagent with Haiku is right for small refactors |
+| Launch curated subagents without committing the plan first | Pre-commit plan + supporting docs and push to `origin/main` (worktrees inherit from `origin/main`, not the dirty working tree) |
+| Auto-pick a winner in auto-mode | Auto-mode keeps Curated as the default; it does NOT change the "wait for user's pick" gate |
 | Keep the mini-plan in chat only | Always write it to `openspec/changes/<change>/plans/commit-N-<slug>.md`; chat carries a Preflight pointer |
 | List impl deliverables first, tests last | Lead with the test list; impl is what the tests force into existence (testing.md §2) |
 | Tick before verification passes | Verification is non-optional |
