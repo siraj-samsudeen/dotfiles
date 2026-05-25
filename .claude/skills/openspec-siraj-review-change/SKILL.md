@@ -1,11 +1,11 @@
 ---
 name: openspec-siraj-review-change
-description: Review an OpenSpec change folder for cross-document consistency and right-sized verbosity-vs-guardrails. Launches two parallel Sonnet subagents — one auditing for contradictions / stale references / scenario-to-commit mapping integrity, one auditing for over-shooting (dead weight, spec restatement in design.md, tautological scenarios, over-prescriptive tasks) and under-shooting (unanchored vague terms, missing state-after-commit lines, decisions stated in proposal but not anchored in design). Use after substantial rewrites of an OpenSpec change, before committing the change folder, or whenever the user says "review this", "ready to commit", "check the change", or pauses on an OpenSpec change folder. Defaults to the most recently modified change folder if no name is given.
+description: Review an OpenSpec change folder for cross-document consistency, right-sized verbosity-vs-guardrails, and structural lens issues. Launches three parallel Sonnet subagents — one auditing for contradictions / stale references / scenario-to-commit mapping integrity, one auditing for over-shooting (dead weight, spec restatement in design.md, tautological scenarios, over-prescriptive tasks) and under-shooting (unanchored vague terms, missing state-after-commit lines, decisions stated in proposal but not anchored in design), and one running the 7 structural lenses from `review-document` (multi-altitude, bullet structure, reference cleanliness, don't state the obvious, canonical home, directive language, verbatim cross-doc anchors). Use after substantial rewrites of an OpenSpec change, before committing the change folder, or whenever the user says "review this", "ready to commit", "check the change", or pauses on an OpenSpec change folder. Defaults to the most recently modified change folder if no name is given.
 ---
 
 # Review an OpenSpec change folder
 
-This skill runs a two-subagent review of an OpenSpec change folder before commit. It's the formalisation of a pattern we've found valuable: an independent consistency check plus an independent verbosity/guardrails check, with results synthesised back to the user.
+This skill runs a three-subagent review of an OpenSpec change folder before commit. It's the formalisation of a pattern we've found valuable: an independent consistency check, an independent verbosity/guardrails check, and an independent structural-lens audit (the 7 lenses from `review-document` applied to the change-folder docs). Results are synthesised back to the user.
 
 ## When to invoke
 
@@ -60,9 +60,9 @@ Before launching subagents, read the artifacts and `openspec/config.yaml` and CL
 
 This brief is your input to both subagents so they ground their review in the agreed design, not just the artifact text.
 
-## Step 5: Launch both subagents in parallel
+## Step 5: Launch all three subagents in parallel
 
-Use the `Agent` tool with `subagent_type: general-purpose` and `model: sonnet`. Both calls go in **one message** for parallel execution.
+Use the `Agent` tool with `subagent_type: general-purpose` and `model: sonnet`. All three calls go in **one message** for parallel execution.
 
 ### Subagent 1 — Consistency review
 
@@ -160,9 +160,47 @@ Cap response at 700 words. Lead with the 3-5 highest-leverage findings; group ad
 Do NOT write or edit files. Don't flag everything you could nitpick — only ones where applying the fix would meaningfully improve the doc for either audience.
 ```
 
+### Subagent 3 — Structural lens audit
+
+```
+You are running a structural lens audit on <N> OpenSpec artifacts using the 7 lenses from the `review-document` skill. Your job is to identify structural failures that the consistency review (Subagent 1) and the over/under-shooting review (Subagent 2) will miss.
+
+Read these files in order:
+<list of absolute file paths>
+
+Background (what the design SHOULD be, per the user's locked decisions):
+<the brief from Step 4>
+
+Apply each of the 7 lenses:
+
+1. **Multi-altitude perspective** — does each doc say the same thing at multiple abstraction levels appropriate to its audience? Specs are deliberately single-altitude (the contract); design has alternatives + recommendation (multi-altitude); plans (if present) have multi-altitude §1.
+
+2. **Bullet structure** — for any list of 2+ items with distinct sub-ideas, are they bold-header + sub-bullets with one idea each? Or run-on prose with semicolons / embedded code mid-sentence?
+
+3. **Reference cleanliness** — any forward references (`see §N`) within a doc? Dead-link footnotes (e.g., `(Decision N)` without inlined content)? Cross-doc references that should be inlined for clarity?
+
+4. **Don't state the obvious** — any restatement of canonical project docs (testing.md cadence, agent training data, library standards) that adds no signal?
+
+5. **Canonical home** — is each fact in exactly ONE doc? Find facts duplicated across spec/design/tasks; for each, suggest which doc is the canonical home (contracts → spec, decisions → design, slice plans → plan files).
+
+6. **Directive language where guardrails matter** — guardrail items using permissive wording ("X waits for…") instead of directive ("DO NOT add X")? Look especially for YAGNI directives that read as suggestions.
+
+7. **Verbatim cross-doc anchors** — spec scenario IDs / titles used verbatim across docs? Symbol names exact across spec / design / tasks / plans?
+
+For each finding, output one bullet:
+- File and section/line
+- Lens triggered (L1–L7)
+- What's wrong, one sentence
+- Proposed fix, one sentence (match `review-document`'s 5 rewrite operations: Restructure, Sharpen, Consolidate, Inline, Subordinate code to English)
+
+Cap response at 600 words. Group findings by lens. If a lens has no findings, say so explicitly ("L4 — clean, no obvious restatements").
+
+Do NOT write or edit files.
+```
+
 ## Step 6: Synthesise findings
 
-Once both subagents return, present a unified summary to the user. Categorise every finding into one of three buckets:
+Once all three subagents return, present a unified summary to the user. Categorise every finding into one of three buckets:
 
 - **Apply** — high-confidence mechanical fixes (contradictions, stale references, missing "state after" lines, broken cross-refs). State which file each fix touches.
 - **Surface for decision** — judgment calls (drop a requirement? restructure a commit?). Each gets a one-sentence summary plus your recommendation.
@@ -183,7 +221,7 @@ Apply approved fixes. Do not re-run the subagent review unless the user explicit
 
 ## Cost
 
-~30-60 seconds elapsed (two Sonnet subagents in parallel). ~50-70k tokens combined across both subagents. One-time cost per pre-commit checkpoint, not per edit.
+~30-60 seconds elapsed (three Sonnet subagents in parallel — parallel execution means three doesn't take much longer than two). ~75-100k tokens combined across the three. One-time cost per pre-commit checkpoint, not per edit.
 
 ## Related skills
 
@@ -193,6 +231,7 @@ Apply approved fixes. Do not re-run the subagent review unless the user explicit
 - `openspec-verify-change` — verifies implementation matches artifacts (post-implementation).
 - `openspec-archive-change` — finalises a change after implementation is complete.
 - `verify-plan` — analogous review pattern for plan files (uses three parallel agents).
+- `review-document` — the standalone version of Subagent 3's lens audit. Invoke directly on any single doc (spec, design, plan, tasks, README, ADR, SKILL.md) for the 7-lens polish pass; this skill bundles it into the pre-commit review across the change folder.
 
 ## Lifecycle
 

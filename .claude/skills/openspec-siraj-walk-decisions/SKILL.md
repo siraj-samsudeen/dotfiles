@@ -180,7 +180,12 @@ These are implementation details accepted without full Format A walkthrough.
 
 ## Step 6 — propose a review
 
-After design.md is written, suggest running `openspec-siraj-review-change` before committing the change folder. The pre-commit review catches cross-doc inconsistencies that the walkthrough alone won't find.
+After design.md is written, suggest two polish steps before committing the change folder:
+
+1. **`review-document`** on design.md — the structural lens pass. Catches forward references, dead-link footnotes (e.g., `(Decision N)` without inlined content), run-on Recommendation paragraphs, smaller-choices duplication, and the seven structural lens issues generally. Run this FIRST — fixes are local to design.md.
+2. **`openspec-siraj-review-change`** — cross-doc consistency audit (spec ↔ design ↔ tasks). Catches contradictions, stale references, scenario-to-commit mapping integrity. Run SECOND — once design.md is structurally clean, cross-doc audit isn't noisy.
+
+Both catch different failure modes; the structural pass before the cross-doc audit means cross-doc findings aren't drowned out by formatting noise.
 
 ## Don'ts
 

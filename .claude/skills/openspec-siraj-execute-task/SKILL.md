@@ -228,49 +228,43 @@ Step 3 (Verify) after producing code in the main working tree.
 
 ### Curated mode
 
-1. **Pre-check.** Plan + supporting docs (spec, design, testing.md)
-   must be committed to `origin/main` — git worktrees inherit from the
-   tracking ref, not from the dirty working tree. If uncommitted docs
-   exist:
+Delegates the subagent dance + comparison rendering to
+[`parallel-implement-compare`](../parallel-implement-compare/SKILL.md).
+This skill provides the OpenSpec-specific orchestration around it:
+pre-flight, prompt template, post-comparison apply/verify/commit.
+
+1. **Pre-flight.** Plan + supporting docs (spec, design, testing.md)
+   must be committed to `origin/main` (worktrees inherit from there).
+   If uncommitted docs exist:
    > "Curated mode needs the plan + docs committed and pushed first.
    > Commit + push these now? (y/n)"
    Wait for approval. Use `git push origin main` after commit.
 
-2. **Stash impl.** Stash any uncommitted impl in the working tree with
-   a descriptive label (`git stash push -u -m "siraj-impl-pre-curated"`).
+2. **Invoke `parallel-implement-compare`** with:
+   - **Models:** `["sonnet", "opus"]` (the curated default).
+   - **Pre-flight check:** "plan + supporting docs committed to origin/main."
+   - **Report orientation:** `"winner-pick"`.
+   - **Prompt template:** see Subagent Prompt Template below.
 
-3. **Launch in parallel.** Two `Agent` tool calls in the SAME message
-   so they execute concurrently:
-   - Sonnet: `model: "sonnet"`, `isolation: "worktree"`, `run_in_background: true`.
-   - Opus: `model: "opus"`, `isolation: "worktree"`, `run_in_background: true`.
-   - Identical prompts (see Subagent Prompt Template below).
+3. **Receive comparison report.** Sequenced reveal happens inside the
+   composable skill — Sonnet's report arrives first, then Opus, then
+   the side-by-side comparison.
 
-4. **Sequenced reveal.** When the FIRST subagent finishes, immediately
-   show its report (files touched, RED/GREEN results, coverage,
-   deviations). Annotate that the second is still running. Continue in
-   the main chat (user can ask questions, edit other files) while
-   waiting for the second.
-
-5. **Compare.** When BOTH finish, produce a side-by-side comparison:
-   - One section per file (`__init__.py`, `cli.py`, `core.py`, etc.).
-   - Column order: **Sonnet → Opus → Recommendation**.
-   - For each file: full content side-by-side + analysis of
-     differences + recommended pick + rationale.
-
-6. **User picks.** User chooses wholesale winner OR hand-picks per
+4. **User picks.** User chooses wholesale winner OR hand-picks per
    file. Wait for the answer; never pick silently.
 
-7. **Apply.** Copy picked code from the chosen worktree(s) into the
-   main repo via `cp` (explicit paths, not `rsync -a`).
+5. **Apply.** Copy picked code from the chosen worktree(s) into the
+   main repo via `cp` with explicit paths (not `rsync -a`).
 
-8. **Verify in main repo.** Run RED→GREEN→coverage in the main repo
+6. **Verify in main repo.** Run RED→GREEN→coverage in the main repo
    (verifies the picked code passes outside the worktree).
 
-9. **Commit.** Standard Step 5 ask-before-commit flow (still
-   user-approved).
+7. **Commit.** Standard Step 5 ask-before-commit flow.
 
-10. **Cleanup.** `git stash drop`, `git worktree remove -f -f` both
-    worktrees, `git worktree prune`, delete the worktree branches.
+8. **Cleanup.** `git stash drop`, `git worktree remove -f -f` both
+   worktrees, `git worktree prune`, delete the worktree branches.
+   (These commands appear at the bottom of the comparison report from
+   the composable skill — copy them.)
 
 ### Single subagent mode
 
