@@ -23,9 +23,15 @@
 - [Feedback: Always uv run feather](feedback_uv_run_feather.md) — never bare `feather`; global install may lack new deps
 - [Feedback: Build in user-workflow order](feedback_workflow_driven_build_order.md) — for CLI tools, build features in the order a user runs them end-to-end; workflow order is the only order testable end-to-end
 - [Feedback: Rewrite test policy](feedback_test_policy_rewrite.md) — in the code-reorg worktree: write tests fresh (not port), no strict TDD ritual, enforce 100% line+branch coverage
-- [OpenSpec config.yaml is canonical](openspec_config_is_canonical.md) — all per-artifact preferences for OpenSpec work live in `openspec/config.yaml`; new spec-driven feedback goes there, not chat memory
+- [openspec-siraj-flow skill is canonical](openspec_siraj_flow_is_canonical.md) — all OpenSpec convention content (pipeline, numbering, titles, tasks-shape, refs) lives in the orchestrator skill; project-local conventions.md and config.yaml were deleted as redundant
 - [add-feather-init is the verb template](add_feather_init_is_template.md) — the first verb's design (core/cli split, spec-driven errors, per-file rules, output streams) is the convention every later verb inherits; deviation requires explicit one-line justification
 - [Workflow: subagent reviews after major OpenSpec doc work](workflow_subagent_reviews.md) — after substantial rewrites, launch two parallel Sonnet subagents (consistency + improvements), include the scenario→commit mapping check
 - [Namespace: custom OpenSpec skills use openspec-siraj-*](feedback_openspec_siraj_namespace.md) — custom skills authored by user use `openspec-siraj-<verb>` prefix to separate from upstream openspec-* plugin family
 - [Feedback: one block at a time](feedback_one_block_at_a_time.md) — long reviews/critiques presented one ≤1-page block at a time; stop and wait for feedback between blocks
+- [Feedback: Curated is the default for execute-task](feedback_curated_default_for_execute_task.md) — openspec-siraj-execute-task defaults to Curated (Sonnet+Opus parallel); never auto-pick a winner even under auto-mode
+- [Feedback: plan files + test-first ordering](feedback_plan_files_and_test_first.md) — mini-plans go to openspec/changes/<change>/plans/commit-N-<slug>.md and lead with the test list, not impl deliverables
+- [Feedback: no empty __init__.py markers](feedback_no_empty_init_py.md) — rely on PEP 420 implicit namespace packages; only write __init__.py when it carries code
+- [Feedback: explain code for a junior dev](feedback_explain_for_junior_dev.md) — before (or at minimum right after) writing code, walk through each library/fixture/pattern junior-dev-grade with "why-not-the-alternative" notes
 - [User timezone](user_timezone.md) — India (IST, Asia/Kolkata, UTC+5:30); system clock may differ
+- [Feedback: always propose fix alongside criticism](feedback_always_propose_fix.md) — every issue flagged in a review must include the proposed replacement text, not just a description of what to change
+- [Feedback: git targeted squash](feedback_git_targeted_squash.md) — use amend + cherry-pick for non-tip squash; full base-reset only when reorganizing the entire commit sequence
