@@ -35,3 +35,4 @@
 - [User timezone](user_timezone.md) — India (IST, Asia/Kolkata, UTC+5:30); system clock may differ
 - [Feedback: always propose fix alongside criticism](feedback_always_propose_fix.md) — every issue flagged in a review must include the proposed replacement text, not just a description of what to change
 - [Feedback: git targeted squash](feedback_git_targeted_squash.md) — use amend + cherry-pick for non-tip squash; full base-reset only when reorganizing the entire commit sequence
+- [Feedback: pilot commits 1+2 first](feedback_pilot_commits_first.md) — for bulk rewrites across sibling sections, apply to first 2 only, pause for review before scaling
