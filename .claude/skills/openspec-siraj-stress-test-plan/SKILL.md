@@ -72,7 +72,7 @@ next un-implemented commit in the most-recently-modified OpenSpec
 change folder.
 
 > "Stress-testing the plan at
-> `openspec/changes/<change>/plans/commit-N-<slug>.md` against scenarios
+> `openspec/changes/<change>/plans/<N>-<slug>.md` against scenarios
 > `<list>`. Ready?"
 
 Wait for go.

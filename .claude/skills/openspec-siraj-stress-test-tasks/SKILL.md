@@ -124,7 +124,7 @@ applying clearly-correct fixes over asking the user about trivialities.
   edge-case noise; verify before applying).
 - **Convergent format critique** — promote any unanimous structural finding
   into the `openspec-siraj-flow` skill (canonical home for tasks.md
-  commit-block shape, numbering, scenario titles, etc.) as a refinement of
+  per-commit shape, numbering, scenario titles, etc.) as a refinement of
   the relevant section.
 
 ### Surface for decision

@@ -24,7 +24,7 @@ This skill formalises the design-walkthrough rhythm from feather-etl's `add-feat
 ## What this skill does NOT do
 
 - Does not author `spec.md` (hand-edited per orchestrator conventions).
-- Does not author `tasks.md` (hand-edited per the six-section shape in `openspec-siraj-flow`).
+- Does not author `tasks.md` (hand-edited per the tasks.md per-commit shape in `openspec-siraj-flow`).
 - Does not validate cross-doc consistency (that's `openspec-siraj-review-change`).
 - Does not commit anything — Step 5 writes `design.md`; user commits.
 
@@ -214,4 +214,4 @@ A full walkthrough for ~8 big decisions typically takes 30-60 minutes of convers
 
 ---
 
-**Next:** `/review-document` on `design.md` (structural lens pass — Step 6 above), then hand-author `tasks.md` per the six-section commit-block shape in `openspec-siraj-flow`, then `/openspec-siraj-review-change`. See `openspec-siraj-flow` for the full pipeline.
+**Next:** `/review-document` on `design.md` (structural lens pass — Step 6 above), then hand-author `tasks.md` per the tasks.md per-commit shape in `openspec-siraj-flow`, then `/openspec-siraj-review-change`. See `openspec-siraj-flow` for the full pipeline.

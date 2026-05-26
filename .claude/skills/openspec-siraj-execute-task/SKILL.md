@@ -23,7 +23,7 @@ unreviewed work from landing.
 
 ## Where this fits
 
-Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-walk-plan` authors the per-commit plan and `review-document` (and optionally `openspec-siraj-stress-test-plan`) polish it. Consumes the plan file at `openspec/changes/<change>/plans/commit-N-<slug>.md`. See `openspec-siraj-flow` for the full pipeline diagram, sibling-skills graph, and disambiguation between this skill and `/openspec-siraj:apply` (which this skill replaces) or `/openspec-siraj:verify` (which is a post-implementation CLI gate).
+Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-walk-plan` authors the per-commit plan and `review-document` (and optionally `openspec-siraj-stress-test-plan`) polish it. Consumes the plan file at `openspec/changes/<change>/plans/<N>-<slug>.md`. See `openspec-siraj-flow` for the full pipeline diagram, sibling-skills graph, and disambiguation between this skill and `/openspec-siraj:apply` (which this skill replaces) or `/openspec-siraj:verify` (which is a post-implementation CLI gate).
 
 ## When to use
 
@@ -158,12 +158,12 @@ to disk under the change folder so the user can review in their editor
 and so it survives archive:
 
 ```
-openspec/changes/<change>/plans/commit-N-<slug>.md
+openspec/changes/<change>/plans/<N>-<slug>.md
 ```
 
-- `N` is the commit number (matches the `## Commit N — …` heading in `tasks.md`).
+- `N` is the section/commit number (matches the `## N. <subject>` heading in `tasks.md`).
 - `<slug>` is a short kebab-case version of the commit subject (e.g.,
-  `commit-1-feather-yaml-in-cwd`).
+  `1-feather-yaml-in-cwd`).
 - Create `plans/` if it does not exist.
 
 Then in chat: print a lightweight **Preflight** (≤15 lines) pointing at
@@ -180,7 +180,7 @@ the test list; impl follows because the tests demand it.
 ### Plan file format
 
 ```markdown
-# Commit N — <subject>
+# N. <subject>
 
 Spec scenarios: <list> · Status: drafted (RED not yet run)
 
@@ -217,7 +217,7 @@ Spec scenarios: <list> · Status: drafted (RED not yet run)
 ### Preflight format (chat, ≤15 lines)
 
 ```
-**Commit N — <subject>** — plan: `openspec/changes/<change>/plans/commit-N-<slug>.md`
+**N. <subject>** — plan: `openspec/changes/<change>/plans/<N>-<slug>.md`
 
 Tests (test-first per testing.md §2):
 - <test_function_name> (<spec-ref>)
@@ -327,7 +327,7 @@ mode so the comparison is apples-to-apples):
 > the feather-etl repo. Your worktree is `<worktree-path>`.
 >
 > ## Read these files first (in order)
-> 1. `openspec/changes/<change>/plans/commit-N-<slug>.md` — primary brief.
+> 1. `openspec/changes/<change>/plans/<N>-<slug>.md` — primary brief.
 > 2. `openspec/changes/<change>/specs/<capability>/spec.md` — scenarios.
 > 3. `docs/testing.md` — cadence (vertical slicing, test-first batch).
 > 4. `openspec/changes/<change>/design.md` — decisions referenced by plan.
@@ -490,7 +490,7 @@ Do not auto-run either.
 | Use curated mode for trivial Haiku-tier tasks | Match mode to task — single-subagent with Haiku is right for small refactors |
 | Launch curated subagents without committing the plan first | Pre-commit plan + supporting docs and push to `origin/main` (worktrees inherit from `origin/main`, not the dirty working tree) |
 | Auto-pick a winner in auto-mode | Auto-mode keeps Curated as the default; it does NOT change the "wait for user's pick" gate |
-| Keep the mini-plan in chat only | Always write it to `openspec/changes/<change>/plans/commit-N-<slug>.md`; chat carries a Preflight pointer |
+| Keep the mini-plan in chat only | Always write it to `openspec/changes/<change>/plans/<N>-<slug>.md`; chat carries a Preflight pointer |
 | List impl deliverables first, tests last | Lead with the test list; impl is what the tests force into existence (testing.md §2) |
 | Tick before verification passes | Verification is non-optional |
 | Commit without explicit user approval | Always ask, even if context "obviously" wants a commit |

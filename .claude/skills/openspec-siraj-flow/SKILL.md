@@ -88,7 +88,7 @@ STAGE 3 — Walk design decisions
 
 STAGE 4 — Author tasks.md (manual)
         edit tasks.md by hand
-        (six-section commit-block shape per §tasks.md commit-block shape)
+        (per §tasks.md per-commit shape)
 
 STAGE 5 — Pre-implementation gates
         /openspec-siraj-review-change
@@ -102,7 +102,7 @@ STAGE 5 — Pre-implementation gates
 
 STAGE 6 — Per-commit loop (repeat for each commit in tasks.md)
         /openspec-siraj-walk-plan
-        → plans/commit-N-<slug>.md       (8-section shape)
+        → plans/<N>-<slug>.md            (8-section shape)
                     │
                     ▼
         /review-document on the plan
@@ -135,7 +135,7 @@ STAGE 7 — Verify + archive
 | Verb | Why avoided |
 |---|---|
 | `/openspec-siraj:apply` | Run-to-blocker loop. **Replaced** by `openspec-siraj-execute-task`'s per-checkbox gates. |
-| `/openspec-siraj:propose` | Auto-generates `design.md` + `tasks.md` in shapes that don't follow Format A or the six-section shape — you just rewrite them. |
+| `/openspec-siraj:propose` | Auto-generates `design.md` + `tasks.md` in shapes that don't follow Format A or the per-commit shape — you just rewrite them. |
 | `/openspec-siraj:ff` | Same — fast-forward variant of propose. |
 | `/openspec-siraj:continue` | Walks artifact-by-artifact in the CLI default shape; the siraj skills do this with richer structure. |
 
@@ -157,10 +157,10 @@ verb:
 | `openspec/` exists, no `changes/<X>/` | `/openspec-siraj:new <name>` |
 | `proposal.md` only, no `specs/<cap>/spec.md` | Hand-edit `spec.md` per §Numbering |
 | `proposal.md + spec.md` exist, no `design.md` | `/openspec-siraj-walk-decisions` |
-| `design.md` exists, no `tasks.md` | Hand-author `tasks.md` per §tasks.md commit-block shape |
+| `design.md` exists, no `tasks.md` | Hand-author `tasks.md` per §tasks.md per-commit shape |
 | `tasks.md` exists, not yet reviewed | `/openspec-siraj-review-change` |
 | Reviewed, not yet stress-tested | `/openspec-siraj-stress-test-tasks` |
-| Stress-tested, no `plans/commit-1-*.md` | `/openspec-siraj-walk-plan` |
+| Stress-tested, no `plans/1-*.md` | `/openspec-siraj-walk-plan` |
 | Plan exists, not yet polished | `/review-document` then (optional) `/openspec-siraj-stress-test-plan` |
 | Plan ready, no implementation | `/openspec-siraj-execute-task` |
 | All commits done | `/openspec-siraj:verify` → `:archive` → `:sync` |
@@ -193,10 +193,10 @@ openspec/
         <capability>/
           spec.md             ← hand-authored; numbering per §Numbering
       design.md               ← /openspec-siraj-walk-decisions writes
-      tasks.md                ← hand-authored; shape per §tasks.md commit-block shape
+      tasks.md                ← hand-authored; shape per §tasks.md per-commit shape
       plans/
-        commit-1-<slug>.md    ← /openspec-siraj-walk-plan writes
-        commit-2-<slug>.md
+        1-<slug>.md             ← /openspec-siraj-walk-plan writes
+        2-<slug>.md
         ...
   specs/
     <capability>/
@@ -205,6 +205,40 @@ openspec/
 
 A change folder is the unit of work. One change = one PR's worth of
 behavior. Multiple changes can be in flight in parallel.
+
+---
+
+## Git commit conventions
+
+Each step in the pipeline lands as one commit. Commit messages name the
+change and the artifact (or per-commit operation):
+
+| Pipeline step | Commit message |
+|---|---|
+| Proposal | `<change-name>: proposal` |
+| Spec | `<change-name>: spec` |
+| Design | `<change-name>: design` |
+| Tasks | `<change-name>: tasks` |
+| Per-commit plan (walk-plan output) | `<change-name>: plan for <N>. <section subject>` |
+| Per-commit implementation (execute-task output) | `<change-name>: implementation for <N>. <section subject>` |
+
+Where `<N>` is the tasks.md section number and `<section subject>`
+mirrors the `## N. <subject>` heading verbatim. Example:
+
+```
+add-feather-init: proposal
+add-feather-init: spec
+add-feather-init: design
+add-feather-init: tasks
+add-feather-init: plan for 1. feather.yaml in CWD
+add-feather-init: implementation for 1. feather.yaml in CWD
+add-feather-init: plan for 2. feather.yaml idempotency
+add-feather-init: implementation for 2. feather.yaml idempotency
+```
+
+Squash any rework / typo fixes into the home commit before pushing
+(`git commit --fixup=<sha>` + `git rebase -i --autosquash`) so the
+final history reads as one commit per pipeline step.
 
 ---
 
@@ -345,80 +379,92 @@ in the same spec.
 
 ---
 
-## tasks.md commit-block shape
+## tasks.md per-commit shape
 
-Each commit in `tasks.md` follows a six-section shape after the H2
-title. The shape answers five questions for the implementing agent:
-*what behaviour ships*, *which tests prove it*, *why this grouping*,
-*what files land*, *where to read for how*, *what is intentionally
-deferred*.
+Each `## N. <subject>` section in `tasks.md` IS one git commit (§N maps
+1:1 to the Nth commit of the change; section subject mirrors the
+commit subject per §Git commit conventions). The section answers four
+questions for the implementing agent: *what behaviour ships*, *what
+load-bearing pattern lands*, *which tests + impl prove it*, and *how
+does each governing design decision apply to this commit specifically*.
 
-The cadence (RED → impl → GREEN → coverage) lives in each project's
-`docs/testing.md` and does NOT appear in commit blocks — restating it
-per commit is noise.
+The standing cadence (write tests → RED → impl → GREEN → coverage)
+lives in each project's `docs/testing.md` §2 and does NOT appear
+per-commit — restating it would be noise.
 
 ### The shape
 
 ```
-## Commit N — <short subject>
+## N. <subject>
 
-New behaviour: <one declarative sentence — the slice outcome>
+**Before:** <one sentence — pre-commit visible state>
+**After:** <one sentence — post-commit visible state, the slice outcome>
 
-Spec scenarios (= tests; names mirror titles per docs/testing.md):
-- Na. <scenario title verbatim>
-- Nb. <scenario title verbatim>
+<one paragraph naming the load-bearing pattern / skeleton / channel
+this commit introduces; use **bold** for the key concept; reference
+later commits via §M notation>
 
-Notes:
-- <test hints, slice-metadata clarifications, partial-state observations>
+### Tasks
+- [ ] N.1 Write test for <spec-ref> — <verbatim scenario title from spec.md>.
+- [ ] N.2 Write test for <spec-ref> — <verbatim scenario title from spec.md>.
+- [ ] N.M Implement <high-level impl shape> so N.1 + N.2 pass.
 
-Implementation outline:
-- <file/component-level deliverable> (— Decision N if local)
-- <file/component-level deliverable>
+### Design decisions/hints
 
-Design pointers:
-- <topical headline> — Decision N / Req N / Smaller choice N
-- <topical headline> — Decision N
-
-Out of scope (lands later):
-- <deferred thing> → Commit M (Req/Decision pointer)
+- <constraint or implementation hint, in plain English>. (Decision N)
+- <another constraint>. (Decision N — "sub-label" or spec Req N)
 ```
 
 ### Rules
 
-1. **`New behaviour:`** is one declarative sentence. If two sentences
-   are needed, the slice is probably two commits.
-2. **`Spec scenarios:`** lists verbatim from `spec.md`. Test names
-   mirror these titles — the block IS the test list. Do not duplicate
-   as a separate `Tests:` block.
-3. **`Notes:`** is optional. Non-obvious context only: test design
-   hints, partial-state observations, test harness conventions on the
-   first commit that establishes them. Resist using Notes for restating
-   the banner or the scenarios.
-4. **`Implementation outline:`** is file/component-level and
-   architecturally self-contained. A reader on the first commit should
-   grasp the introduced shape without reading design.md first — name
-   the orchestration pattern, not just individual file edits.
-5. **`Design pointers:`** uses topical headlines (not file paths)
-   pointing at Decisions / Requirements / Smaller choices. Each bullet
-   pairs a concern with where-to-read.
-6. **`Out of scope:`** makes deferrals explicit so an agent does not
-   speculatively over-build. Each bullet names what's deferred, the
-   commit that will land it, and the relevant Req/Decision. Omit the
-   section if nothing is deferred.
-7. **No `- [ ] 1.1 Write tests` checklist inside the commit block.**
-   The commit itself is the unit of work; the cadence is in
-   testing.md.
+1. **H2 heading** mirrors the git commit subject. Format: `## N. <subject>`
+   (NO `Commit N — ` prefix). `N` matches the Nth commit of this change;
+   the same subject appears in the commit message per §Git commit conventions.
+2. **Before/After paragraph** captures the visible behaviour delta in
+   two sentences — one each, prefixed `**Before:**` and `**After:**`.
+3. **Pattern paragraph** (optional) names what's load-bearing that THIS
+   commit introduces — the verb skeleton, the skip-if-exists pattern,
+   the source-detection helper, the silent-skip variant, etc. One
+   short paragraph; bold the key concept. Skip when nothing beyond
+   the scenarios is notable.
+4. **`### Tasks` subsection.** One checkbox per spec scenario in
+   `Write test for <spec-ref> — <verbatim title from spec.md>.` form,
+   plus one impl row in `Implement <high-level shape> so N.1 + N.2 pass.`
+   form. For commits with no spec scenarios (e.g. a smoke-test commit),
+   the impl row stands alone.
+5. **`### Design decisions/hints` subsection.** Bullets that spell out
+   per-commit interpretations of `design.md` Decisions and `spec.md`
+   Requirements in plain English. Each bullet ends with an anchor
+   `(Decision N)`, `(Decision N — "sub-label")`, or `(spec Req N)`
+   pointing back to where to read the full text.
+6. **Out of scope (optional, rare).** Add one `**Out of scope this
+   commit:**` line ONLY when neighbouring commits' scopes could
+   realistically bleed in. Default is to omit — sibling §headings and
+   the pattern paragraph fence the scope implicitly.
+7. **No restating of the standing cadence.** Don't echo "RED → GREEN
+   → coverage" in commit blocks. That's a project-level invariant in
+   `docs/testing.md` §2.
 
 ### Why this shape
 
-A traditional checklist forces the reader to re-derive design rationale
-and slice scope from a flat sequence. The six-section shape separates
-concerns: scenarios carry the contract, Implementation outline carries
-the slice boundary, Design pointers carry the architectural index,
-Out of scope carries the negative space. Multi-model stress-testing
-(Sonnet / Opus / Haiku reading the same tasks.md) showed convergent
-improvements in plan quality and reduction of guesswork once this shape
-replaced flat checklists.
+`tasks.md` is the **orientation layer** — the planning agent for each
+commit reads `proposal.md`, `specs/<cap>/spec.md`, and `design.md`
+alongside it, so `tasks.md` does not restate them. What it uniquely
+owns is per-commit **slicing interpretation**: which scenarios pin
+this commit's contract, and how each governing design Decision lands
+in THIS commit specifically.
+
+The split between `### Tasks` (action items, OpenSpec parser-visible,
+implementing-agent-driven) and `### Design decisions/hints` (constraint
+bullets, planning-agent-driven) gives each subsection one job: Tasks
+answer "what do I tick when done?", Design decisions/hints answer
+"what's the implementation contract?". The earlier combined
+"Implementation outline + Design pointers + Notes" shape mixed action
+and reference in one list, which made both jobs harder to scan.
+
+Multi-model stress-testing (Sonnet / Opus reading the same `tasks.md`
+and authoring plans) showed convergent plan quality once tests, impl,
+and decision-impact were each in their own visually-distinct subsection.
 
 ---
 
@@ -431,7 +477,7 @@ replaced flat checklists.
 | (hand-edit `spec.md`) | 2 | Author the spec per numbering + title rules above |
 | `openspec-siraj-walk-decisions` | 3 | Walks design decisions in Format A → `design.md` |
 | `review-document` | 3, 6 | 7-lens structural pass on any agent-produced doc |
-| (hand-edit `tasks.md`) | 4 | Author per six-section commit-block shape above |
+| (hand-edit `tasks.md`) | 4 | Author per §tasks.md per-commit shape above |
 | `openspec-siraj-review-change` | 5 | 3-subagent audit: consistency / right-sizing / structural lenses |
 | `openspec-siraj-stress-test-tasks` | 5 | N-agent plan fanout; finds tasks.md gaps; auto-applies convergent fixes |
 | `openspec-siraj-walk-plan` | 6 | Authors per-commit plan files (canonical 8-section shape) |

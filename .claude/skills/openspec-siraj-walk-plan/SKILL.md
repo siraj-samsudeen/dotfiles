@@ -2,7 +2,7 @@
 name: openspec-siraj-walk-plan
 description: >
   Author or walk through a per-commit plan file for an OpenSpec change.
-  Plan files live at openspec/changes/<change>/plans/commit-N-<slug>.md
+  Plan files live at openspec/changes/<change>/plans/<N>-<slug>.md
   and define the canonical 8-section shape that openspec-siraj-execute-task
   consumes. Use this skill whenever Siraj asks to draft, walk, refine, or
   revise a per-commit plan. Trigger on phrasing like "draft the plan for
@@ -42,7 +42,7 @@ materially affects what agents produce.
 ## When NOT to use
 
 - Authoring `tasks.md` (commit blocks across the change) — hand-edited
-  per the six-section commit-block shape in `openspec-siraj-flow`.
+  per the tasks.md per-commit shape in `openspec-siraj-flow`.
 - Authoring `spec.md` or `design.md` — separate concerns
   (`openspec-siraj-walk-decisions` for design; spec is hand-edited per
   the numbering / title rules in `openspec-siraj-flow`).
@@ -63,7 +63,7 @@ Every per-commit plan follows this shape. Sections appear in this order.
 Sections §6–§8 are template stubs that fill in over the commit's life.
 
 ```
-# Commit N — <short subject>
+# N. <subject>
 
 ## 1. Full picture           ← multi-altitude orientation (8 sub-perspectives, see below)
 ## 2. Key terms              ← codebase-specific glossary; NOT Python language features
@@ -197,7 +197,7 @@ Each term gets a bold header + sub-bullets, one idea per bullet:
 ```
 
 If a term recurs from a previous commit's plan, link back rather than
-restating: `"See Commit N's plan for the `_stamp_*` pattern; same shape."`
+restating: `"See §N's plan for the `_stamp_*` pattern; same shape."`
 
 If this commit introduces no new terms, skip §2 — leave the header with
 `_No new terms this commit._` as the body.

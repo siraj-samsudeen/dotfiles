@@ -47,7 +47,7 @@ If any of the four is missing, note it and continue with what's present.
 
 The skill should adapt to what the project actually uses. Discover (don't assume):
 
-- **OpenSpec config**: `openspec/config.yaml` — include if present. (Optional; the openspec CLI works without it. Project-level conventions live in `openspec-siraj-flow` skill — that's the canonical home for numbering, scenario titles, tasks.md commit-block shape, etc.)
+- **OpenSpec config**: `openspec/config.yaml` — include if present. (Optional; the openspec CLI works without it. Project-level conventions live in `openspec-siraj-flow` skill — that's the canonical home for numbering, scenario titles, tasks.md per-commit shape, etc.)
 - **CLAUDE.md** (or `AGENTS.md`, `GEMINI.md`): the repo-wide agent instructions. Always include if present.
 - **PRD**: many projects don't have one. Look for `docs/prd/PRD-*.md`, `docs/PRD-*.md`, `docs/prd.md`, or any reference in CLAUDE.md. Include only if found.
 - **Testing conventions**: `docs/testing.md` or equivalent. Include if found.
