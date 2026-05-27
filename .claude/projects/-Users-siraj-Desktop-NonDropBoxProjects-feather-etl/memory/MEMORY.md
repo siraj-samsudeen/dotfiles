@@ -28,7 +28,9 @@
 - [Workflow: subagent reviews after major OpenSpec doc work](workflow_subagent_reviews.md) — after substantial rewrites, launch two parallel Sonnet subagents (consistency + improvements), include the scenario→commit mapping check
 - [Namespace: custom OpenSpec skills use openspec-siraj-*](feedback_openspec_siraj_namespace.md) — custom skills authored by user use `openspec-siraj-<verb>` prefix to separate from upstream openspec-* plugin family
 - [Feedback: one block at a time](feedback_one_block_at_a_time.md) — long reviews/critiques presented one ≤1-page block at a time; stop and wait for feedback between blocks
-- [Feedback: Curated is the default for execute-task](feedback_curated_default_for_execute_task.md) — openspec-siraj-execute-task defaults to Curated (Sonnet+Opus parallel); never auto-pick a winner even under auto-mode
+- [Feedback: skip trivial-block confirmations](feedback_skip_trivial_block_confirmations.md) — during section-by-section walks, only pause for blocks with real divergence; trivial blocks roll into the next response
+- [Feedback: three meta-rules for doc authoring](feedback_three_meta_rules_for_doc_authoring.md) — intent over counts, two-audience test (implementing agent OR human reviewer), AI over-lists by default; verbosity is the default and tightness is the discipline
+- [Feedback: Curated is the default for execute-plan](feedback_curated_default_for_execute_plan.md) — openspec-siraj-execute-plan defaults to Curated (Sonnet+Opus parallel); never auto-pick a winner even under auto-mode
 - [Feedback: plan files + test-first ordering](feedback_plan_files_and_test_first.md) — mini-plans go to openspec/changes/<change>/plans/commit-N-<slug>.md and lead with the test list, not impl deliverables
 - [Feedback: no empty __init__.py markers](feedback_no_empty_init_py.md) — rely on PEP 420 implicit namespace packages; only write __init__.py when it carries code
 - [Feedback: explain code for a junior dev](feedback_explain_for_junior_dev.md) — before (or at minimum right after) writing code, walk through each library/fixture/pattern junior-dev-grade with "why-not-the-alternative" notes
@@ -36,3 +38,4 @@
 - [Feedback: always propose fix alongside criticism](feedback_always_propose_fix.md) — every issue flagged in a review must include the proposed replacement text, not just a description of what to change
 - [Feedback: git targeted squash](feedback_git_targeted_squash.md) — use amend + cherry-pick for non-tip squash; full base-reset only when reorganizing the entire commit sequence
 - [Feedback: pilot commits 1+2 first](feedback_pilot_commits_first.md) — for bulk rewrites across sibling sections, apply to first 2 only, pause for review before scaling
+- [Feedback: plan is the executor's source of truth](feedback_plan_is_source_of_truth.md) — resolve plan↔tasks.md duplication by trimming tasks.md; §1.1 is intentionally a mixed exec summary

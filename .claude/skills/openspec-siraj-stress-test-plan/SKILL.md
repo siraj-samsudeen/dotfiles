@@ -6,12 +6,12 @@ description: >
   winner-picking). Use when a plan is locked but you want empirical
   evidence it does what it says before committing the implementation.
   Distinct from `openspec-siraj-stress-test-tasks` (agents produce
-  PLANS from tasks.md, find tasks gaps) and `openspec-siraj-execute-task`
+  PLANS from tasks.md, find tasks gaps) and `openspec-siraj-execute-plan`
   Curated mode (agents produce CODE you commit). Trigger on phrasing
   like "stress-test the plan for commit N", "is the plan ready for
   implementation", "run a plan bake-off", or invoke after
-  `openspec-siraj-walk-plan` produces a fresh plan and you want to
-  validate it before invoking execute-task. Defaults to the
+  `openspec-siraj-create-plan` produces a fresh plan and you want to
+  validate it before invoking execute-plan. Defaults to the
   most-recently-modified change folder.
 ---
 
@@ -29,18 +29,18 @@ choice that matters. **Convergent successes** are sanity checks (no
 action).
 
 **The output is a plan-gap report**, NOT picked code. The code is
-throwaway. The user reads the report → invokes `openspec-siraj-walk-plan`
+throwaway. The user reads the report → invokes `openspec-siraj-create-plan`
 to refine the plan based on findings → re-runs this skill until the
-report is clean → invokes `openspec-siraj-execute-task` for actual
+report is clean → invokes `openspec-siraj-execute-plan` for actual
 production execution.
 
-**Where this fits:** Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-walk-plan` + `review-document` polish a per-commit plan, before `openspec-siraj-execute-task` consumes it for production code. Optional, but recommended for load-bearing commits. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill, `verify-plan` (parallel text review of a plan), `openspec-siraj-stress-test-tasks` (tasks.md gap-finding), and `openspec-siraj-execute-task` Curated mode (production winner-picking).
+**Where this fits:** Stage 6 of the openspec-siraj pipeline — runs after `openspec-siraj-create-plan` + `review-document` polish a per-commit plan, before `openspec-siraj-execute-plan` consumes it for production code. Optional, but recommended for load-bearing commits. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill, `verify-plan` (parallel text review of a plan), `openspec-siraj-stress-test-tasks` (tasks.md gap-finding), and `openspec-siraj-execute-plan` Curated mode (production winner-picking).
 
 ---
 
 ## When to use
 
-- After `openspec-siraj-walk-plan` produces a fresh plan and you want
+- After `openspec-siraj-create-plan` produces a fresh plan and you want
   empirical validation before committing the implementation.
 - Before any load-bearing commit where you'd regret a YAGNI violation
   or scope creep landing on `main`.
@@ -51,7 +51,7 @@ production execution.
 ## When NOT to use
 
 - For trivial commits where the comparison overhead isn't earned (small
-  refactor, single-line additions — invoke `openspec-siraj-execute-task`
+  refactor, single-line additions — invoke `openspec-siraj-execute-plan`
   in Single-subagent mode with Haiku instead).
 - For tasks.md gaps — use `openspec-siraj-stress-test-tasks`.
 - For static plan review only — use `verify-plan`.
@@ -79,7 +79,7 @@ Wait for go.
 
 ### Step 2 — Pre-flight
 
-Same pre-flight as `openspec-siraj-execute-task` Curated mode: plan +
+Same pre-flight as `openspec-siraj-execute-plan` Curated mode: plan +
 supporting docs (spec, design, testing.md) must be committed to
 `origin/main`. The subagents will read these from `origin/main`-derived
 worktrees, NOT from the dirty working tree.
@@ -101,7 +101,7 @@ With:
 - **Pre-flight check:** "plan + supporting docs committed to origin/main."
 - **Report orientation:** `"gap-find"`.
 - **Prompt template:** the OpenSpec subagent prompt from
-  `openspec-siraj-execute-task` Curated mode (identical so a polished
+  `openspec-siraj-execute-plan` Curated mode (identical so a polished
   plan that holds in Curated mode also holds here).
 
 ### Step 4 — Receive the gap-find report
@@ -117,7 +117,7 @@ Three outcomes:
 **(a) Clean report — no convergent failures, no divergences.**
 
 > "Stress-test passed. The plan held — both agents produced functionally
-> identical strict-YAGNI code. Safe to invoke `openspec-siraj-execute-task`
+> identical strict-YAGNI code. Safe to invoke `openspec-siraj-execute-plan`
 > Curated mode for production commit."
 
 Cleanup the worktrees (commands at bottom of the comparison report).
@@ -125,19 +125,19 @@ Cleanup the worktrees (commands at bottom of the comparison report).
 **(b) Convergent failures present.**
 
 > "<N> convergent failure(s). Both agents <did wrong thing>. This is a
-> plan-clarity issue, not an agent issue. Invoke `openspec-siraj-walk-plan`
+> plan-clarity issue, not an agent issue. Invoke `openspec-siraj-create-plan`
 > to refine §<N> of the plan: <specific suggestion>. After refining,
 > re-run stress-test."
 
-The user invokes walk-plan, you re-run. Iterate until clean.
+The user invokes create-plan, you re-run. Iterate until clean.
 
 **(c) Divergent outcomes present.**
 
 > "<N> divergent outcome(s). <Model A> did <X>; <Model B> did <Y>. The
 > plan didn't pin this choice. Either pin it in §<N> of the plan (via
-> walk-plan), or accept either output as valid."
+> create-plan), or accept either output as valid."
 
-User decides per divergence — pin it via walk-plan, or accept both.
+User decides per divergence — pin it via create-plan, or accept both.
 
 ### Step 6 — Cleanup
 
@@ -148,13 +148,13 @@ of the report — copy them. Stash drop, worktree remove, branch delete.
 
 ## What this skill does NOT do
 
-- **Pick a winner.** The code is throwaway. Use `execute-task` Curated
+- **Pick a winner.** The code is throwaway. Use `execute-plan` Curated
   mode for picking + committing.
 - **Commit anything.** Stress-test runs are exploratory; no commit
   hits `main`.
-- **Modify the plan.** Plan refinement is `openspec-siraj-walk-plan`'s
+- **Modify the plan.** Plan refinement is `openspec-siraj-create-plan`'s
   job. This skill only produces the gap report.
-- **Loop automatically.** Each stress-test → walk-plan → stress-test
+- **Loop automatically.** Each stress-test → create-plan → stress-test
   cycle is user-driven. The skill doesn't auto-iterate.
 
 ---
@@ -176,9 +176,9 @@ task complexity suggests otherwise.
 ## Anti-patterns
 
 - **Treating stress-test output as code to commit.** This skill is for
-  PLAN VALIDATION, not implementation. Use `execute-task` for the latter.
-- **Iterating without walk-plan in between.** If a stress-test surfaces
-  gaps, invoke `walk-plan` to refine BEFORE re-running. Re-running
+  PLAN VALIDATION, not implementation. Use `execute-plan` for the latter.
+- **Iterating without create-plan in between.** If a stress-test surfaces
+  gaps, invoke `create-plan` to refine BEFORE re-running. Re-running
   against the same plan produces the same gaps.
 - **Skipping the pre-flight.** Worktrees read from `origin/main`. If
   the plan isn't committed there, agents read stale state.
@@ -192,6 +192,6 @@ task complexity suggests otherwise.
 
 ---
 
-**Next:** if the stress-test surfaces convergent failures or divergences, push back to `/openspec-siraj-walk-plan` to refine the plan, then re-run this skill until clean. Once clean, invoke `/openspec-siraj-execute-task` (Curated mode) for the production commit. See `openspec-siraj-flow` for the full Stage 6 pipeline.
+**Next:** if the stress-test surfaces convergent failures or divergences, push back to `/openspec-siraj-create-plan` to refine the plan, then re-run this skill until clean. Once clean, invoke `/openspec-siraj-execute-plan` (Curated mode) for the production commit. See `openspec-siraj-flow` for the full Stage 6 pipeline.
 
 Skip this skill for trivial commits; invoke it on load-bearing slices.

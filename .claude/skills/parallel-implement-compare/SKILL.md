@@ -3,7 +3,7 @@ name: parallel-implement-compare
 description: >
   Run N subagents in parallel against the same prompt in isolated git
   worktrees, then produce a side-by-side comparison of their outputs.
-  Composable mechanic invoked by openspec-siraj-execute-task (Curated
+  Composable mechanic invoked by openspec-siraj-execute-plan (Curated
   mode), openspec-siraj-stress-test-plan, and any caller that wants
   multiple model voices on the same task. Use directly when Siraj asks
   "fan out N agents on this", "compare what Sonnet and Opus do for X",
@@ -34,7 +34,7 @@ Centralizing the mechanic here keeps both callers DRY.
 
 ## When to use
 
-- Caller is `openspec-siraj-execute-task` Curated mode — needs N=2 production-quality outputs to pick from.
+- Caller is `openspec-siraj-execute-plan` Curated mode — needs N=2 production-quality outputs to pick from.
 - Caller is `openspec-siraj-stress-test-plan` — needs N=2 or N=3 outputs to read for divergences.
 - Direct invocation: Siraj says "fan out N agents on this" or "run a 2-agent comparison."
 
@@ -181,7 +181,7 @@ Sanity check — parts of the plan that held cleanly. No action needed.
 - <topic>: both agents produced <correct thing>.
 
 ## Recommendation
-<Push back to walk-plan to fix convergent failures + ambiguities. Re-run after polish.>
+<Push back to create-plan to fix convergent failures + ambiguities. Re-run after polish.>
 ```
 
 ### Step 7 — Hand back to caller
@@ -215,7 +215,7 @@ This skill does NOT prescribe prompt content. The caller is responsible for:
 - Constraints (YAGNI directive, floor-not-wall, language conventions).
 - The structured report-back format the caller expects.
 
-See `openspec-siraj-execute-task` Curated mode for an example OpenSpec-style prompt.
+See `openspec-siraj-execute-plan` Curated mode for an example OpenSpec-style prompt.
 
 **Identical prompt for all N agents.** The comparison only makes sense when every agent receives the same instructions; differences in output reflect model voice, not prompt skew.
 

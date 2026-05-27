@@ -1,6 +1,6 @@
 ---
 name: openspec-siraj-stress-test-tasks
-description: Stress-test a locked tasks.md against a simulated implementer before any code is written. Dispatches N parallel Plan-agents (1/2/3 model fan-out, default 2 = Sonnet + Haiku) to produce implementation plans for all commits and surface real gaps — points where the implementer would have to guess. Convergent gaps (flagged by ≥2 agents) and sharp single-model gaps from Sonnet/Opus get auto-applied to source docs or tasks.md; low-priority and Haiku-only items are surfaced for the user only when judgment matters. Use after `openspec-siraj-walk-decisions` produces design.md + tasks.md and after `openspec-siraj-review-change` clears, before `openspec-siraj-execute-task` begins implementation. Also invoke when the user says "stress-test the tasks", "are the tasks ready for implementation", "/openspec-siraj-stress-test-tasks". Distinct from `openspec-siraj-review-change` (which audits cross-doc consistency, not implementability). Defaults to the most-recently-modified change folder.
+description: Stress-test a locked tasks.md against a simulated implementer before any code is written. Dispatches N parallel Plan-agents (1/2/3 model fan-out, default 2 = Sonnet + Haiku) to produce implementation plans for all commits and surface real gaps — points where the implementer would have to guess. Convergent gaps (flagged by ≥2 agents) and sharp single-model gaps from Sonnet/Opus get auto-applied to source docs or tasks.md; low-priority and Haiku-only items are surfaced for the user only when judgment matters. Use after `openspec-siraj-create-design` produces design.md + tasks.md and after `openspec-siraj-review-change` clears, before `openspec-siraj-execute-plan` begins implementation. Also invoke when the user says "stress-test the tasks", "are the tasks ready for implementation", "/openspec-siraj-stress-test-tasks". Distinct from `openspec-siraj-review-change` (which audits cross-doc consistency, not implementability). Defaults to the most-recently-modified change folder.
 ---
 
 # Stress-test tasks.md against a simulated implementer
@@ -10,7 +10,7 @@ implementing." It asks the question `openspec-siraj-review-change` does not:
 *given everything written, can an implementing agent produce a correct plan,
 or does it still have to guess?* If the implementer would guess, the gap
 belongs in a source doc or as a pointer in tasks.md — better surfaced now
-than discovered during execute-task.
+than discovered during execute-plan.
 
 **Where this fits:** Stage 5 of the openspec-siraj pipeline — second of two pre-implementation gates. Runs after `openspec-siraj-review-change` clears, before per-commit work begins. See `openspec-siraj-flow` for the full pipeline diagram and disambiguation between this skill (tasks.md implementability), review-change (cross-doc consistency), and stress-test-plan (per-commit plan clarity).
 
@@ -18,7 +18,7 @@ than discovered during execute-task.
 
 - `openspec-siraj-review-change` has cleared and the change is otherwise ready to implement.
 - The user says "stress-test the tasks", "are the tasks ready for implementation", or invokes the skill explicitly.
-- Proactively after review-change clears; phrase the suggestion as *"Review passed. Want me to stress-test against a simulated implementer before you start execute-task?"* — take a no gracefully.
+- Proactively after review-change clears; phrase the suggestion as *"Review passed. Want me to stress-test against a simulated implementer before you start execute-plan?"* — take a no gracefully.
 
 ## When NOT to use
 
@@ -183,7 +183,7 @@ Re-run `openspec-siraj-review-change` if any of:
   might now contradict.
 
 If none of the above triggers fire, the apply phase is the last gate
-before `openspec-siraj-execute-task`.
+before `openspec-siraj-execute-plan`.
 
 ## What this skill does not do
 
@@ -193,7 +193,7 @@ before `openspec-siraj-execute-task`.
   `openspec-verify-change`).
 - Does not check cross-doc consistency (that's
   `openspec-siraj-review-change` — orthogonal lens, different findings).
-- Does not author tasks.md (that's `openspec-siraj-walk-decisions` plus
+- Does not author tasks.md (that's `openspec-siraj-create-design` plus
   user editing).
 - Does not run A/B format experiments — the tasks.md shape is fixed in
   `openspec-siraj-flow` (canonical home). A/B was a one-time meta-exercise;
@@ -211,4 +211,4 @@ One-time per implementation push, not per edit.
 
 ---
 
-**Next:** Stage 6 of the pipeline begins — `/openspec-siraj-walk-plan` to author the per-commit plan for commit 1. See `openspec-siraj-flow` for the full Stage 6 loop (walk-plan → review-document → stress-test-plan → execute-task, repeated per commit).
+**Next:** Stage 6 of the pipeline begins — `/openspec-siraj-create-plan` to author the per-commit plan for commit 1. See `openspec-siraj-flow` for the full Stage 6 loop (create-plan → review-document → stress-test-plan → execute-plan, repeated per commit).

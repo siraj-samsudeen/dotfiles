@@ -21,7 +21,7 @@ review pass that catches those failure modes before a document is
 considered final.
 
 It's the **sibling** of authoring-specific skills (e.g.,
-`openspec-siraj-walk-plan`, future `spec-walkthrough` if/when it exists).
+`openspec-siraj-create-plan`, future `spec-walkthrough` if/when it exists).
 Authoring skills give structure-from-scratch; this skill is the polish
 layer that sits on top.
 

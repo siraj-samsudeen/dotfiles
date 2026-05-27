@@ -2,8 +2,8 @@
 name: openspec-siraj-flow
 description: >
   The OpenSpec-Siraj pipeline overview. Canonical orchestrator for the
-  openspec-siraj-* family of skills (walk-decisions, walk-plan,
-  review-change, stress-test-tasks, stress-test-plan, execute-task) plus
+  openspec-siraj-* family of skills (create-design, create-plan,
+  review-change, stress-test-tasks, stress-test-plan, execute-plan) plus
   the /openspec-siraj:* CLI commands (new, verify, archive, sync, etc.).
   Use this skill to orient on the full pipeline (proposal → spec →
   design → tasks → per-commit plans → execution → verify → archive), to
@@ -35,7 +35,7 @@ families of verbs cooperate:
 (project-level brainstorm → 15-section spec → mini-plan + execute). Use
 feather-flow when there's no spec yet and you're exploring. Use this
 pipeline when behavior is precise enough to spec, and you want the
-review gates (walk-decisions / review-change / stress-tests) that catch
+review gates (create-design / review-change / stress-tests) that catch
 ambiguity before it becomes code.
 
 ---
@@ -74,21 +74,25 @@ STAGE 1 — Create the change folder
         → openspec/changes/<X>/proposal.md       (scaffold)
         → openspec/changes/<X>/specs/<cap>/spec.md   (skeleton)
 
-STAGE 2 — Author spec (manual)
-        edit spec.md by hand
-        (numbering + scenario titles per §Numbering + §Scenario title shape)
+STAGE 2 — Author spec
+        /openspec-siraj:continue  (or invoke via /openspec-siraj-next)
+        → openspec/changes/<X>/specs/<cap>/spec.md
+        (OpenSpec produces the spec; user reviews + redirects per
+         §Numbering + §Scenario title shape conventions if needed)
 
 STAGE 3 — Walk design decisions
-        /openspec-siraj-walk-decisions
+        /openspec-siraj-create-design
         → design.md (Format A — Question / Alternatives / Recommendation)
                     │
                     ▼
         /review-document on design.md
         (7-lens structural polish)
 
-STAGE 4 — Author tasks.md (manual)
-        edit tasks.md by hand
-        (per §tasks.md per-commit shape)
+STAGE 4 — Author tasks.md
+        /openspec-siraj:continue  (or invoke via /openspec-siraj-next)
+        → openspec/changes/<X>/tasks.md
+        (OpenSpec produces tasks.md in the thin shape — see
+         §tasks.md per-commit shape; no post-transformation)
 
 STAGE 5 — Pre-implementation gates
         /openspec-siraj-review-change
@@ -100,8 +104,8 @@ STAGE 5 — Pre-implementation gates
                     │
                     ▼  (maybe re-run review-change if many edits landed)
 
-STAGE 6 — Per-commit loop (repeat for each commit in tasks.md)
-        /openspec-siraj-walk-plan
+STAGE 6 — Per-section loop (repeat for each ## N. <subject> in tasks.md)
+        /openspec-siraj-create-plan
         → plans/<N>-<slug>.md            (8-section shape)
                     │
                     ▼
@@ -109,14 +113,24 @@ STAGE 6 — Per-commit loop (repeat for each commit in tasks.md)
                     │
                     ▼
         /openspec-siraj-stress-test-plan
-        (optional — load-bearing commits only; pushes back to walk-plan)
+        (optional — load-bearing sections only; pushes back to create-plan)
                     │
                     ▼
-        /openspec-siraj-execute-task
-        (per-checkbox gate loop; Curated = Sonnet+Opus parallel default)
+        git commit (plan)
+        "<change>: plan for <N>. <subject>"
+        (plan file only; user-approved; landed by create-plan §Commit)
                     │
                     ▼
-        git commit (user-approved)
+        /openspec-siraj-execute-plan
+        (per-section flow: write all §N tests → RED → write impl →
+         GREEN → coverage → tick all §N boxes; halts at pre-flight
+         if the plan isn't committed yet; Curated = Sonnet+Opus
+         parallel default)
+                    │
+                    ▼
+        git commit (impl)
+        "<change>: implementation for <N>. <subject>"
+        (impl files + tasks.md ticks; user-approved)
 
 STAGE 7 — Verify + archive
         /openspec-siraj:verify
@@ -134,14 +148,13 @@ STAGE 7 — Verify + archive
 
 | Verb | Why avoided |
 |---|---|
-| `/openspec-siraj:apply` | Run-to-blocker loop. **Replaced** by `openspec-siraj-execute-task`'s per-checkbox gates. |
-| `/openspec-siraj:propose` | Auto-generates `design.md` + `tasks.md` in shapes that don't follow Format A or the per-commit shape — you just rewrite them. |
-| `/openspec-siraj:ff` | Same — fast-forward variant of propose. |
-| `/openspec-siraj:continue` | Walks artifact-by-artifact in the CLI default shape; the siraj skills do this with richer structure. |
+| `/openspec-siraj:apply` | Run-to-blocker loop. **Replaced** by `openspec-siraj-execute-plan`'s per-section flow with explicit user approval at the plan-commit (via create-plan) and impl-commit (via execute-plan) gates. |
+| `/openspec-siraj:propose` | Auto-generates ALL artifacts in one step; conflicts with the one-at-a-time discipline. Use `/openspec-siraj-next` instead, which delegates to `:continue` artifact-by-artifact. |
+| `/openspec-siraj:ff` | Same — fast-forward variant of `:propose`. |
 
-`/openspec-siraj:bulk-archive` and `/openspec-siraj:onboard` are
-situational — bulk-archive for cleanup, onboard for a new collaborator's
-tour. Neither is part of the regular flow.
+`/openspec-siraj:continue` is the **default produce-the-next-artifact verb** that `openspec-siraj-next` delegates to for spec.md and tasks.md authoring. It is NOT in the user-facing autocomplete (hidden via the project-local `commands-archive/` move) because `next` is the canonical entry; users type `/openspec-siraj-next`, not `:continue` directly.
+
+`/openspec-siraj:bulk-archive`, `/openspec-siraj:onboard`, and `/openspec-siraj:sync` are situational — bulk-archive for cleanup, onboard for a new collaborator's tour, sync for moving delta specs after archive. None is part of the regular per-change flow; all three are hidden from autocomplete by default.
 
 ---
 
@@ -155,15 +168,18 @@ verb:
 |---|---|
 | No `openspec/` at all | `/openspec-siraj:new <name>` |
 | `openspec/` exists, no `changes/<X>/` | `/openspec-siraj:new <name>` |
-| `proposal.md` only, no `specs/<cap>/spec.md` | Hand-edit `spec.md` per §Numbering |
-| `proposal.md + spec.md` exist, no `design.md` | `/openspec-siraj-walk-decisions` |
-| `design.md` exists, no `tasks.md` | Hand-author `tasks.md` per §tasks.md per-commit shape |
-| `tasks.md` exists, not yet reviewed | `/openspec-siraj-review-change` |
-| Reviewed, not yet stress-tested | `/openspec-siraj-stress-test-tasks` |
-| Stress-tested, no `plans/1-*.md` | `/openspec-siraj-walk-plan` |
-| Plan exists, not yet polished | `/review-document` then (optional) `/openspec-siraj-stress-test-plan` |
-| Plan ready, no implementation | `/openspec-siraj-execute-task` |
-| All commits done | `/openspec-siraj:verify` → `:archive` → `:sync` |
+| `proposal.md` only, no `specs/<cap>/spec.md` | `/openspec-siraj:continue` (delegated by `/openspec-siraj-next`; produces spec.md) |
+| `proposal.md + spec.md` exist, no `design.md` | `/openspec-siraj-create-design` (siraj override — Format A walk-through) |
+| `design.md` exists, no `tasks.md` | `/openspec-siraj:continue` (delegated by `/openspec-siraj-next`; produces tasks.md in thin shape) |
+| `tasks.md` exists, not yet reviewed | `/openspec-siraj-review-change` (optional) |
+| Reviewed, not yet stress-tested | `/openspec-siraj-stress-test-tasks` (optional — rare past format-finalization) |
+| Stress-tested, no `plans/<N>-*.md` for next unticked section | `/openspec-siraj-create-plan` |
+| Plan exists for next section, not yet polished | `/review-document` then (optional) `/openspec-siraj-stress-test-plan` |
+| Plan polished but not yet committed | create-plan §Commit the plan step (one-file commit, plan only) |
+| Plan committed, no implementation for that section | `/openspec-siraj-execute-plan` |
+| All sections done (all `tasks.md` boxes ticked) | `/openspec-siraj:verify` → `:archive` → `:sync` |
+
+**Don't memorise the table** — invoke `/openspec-siraj-next`, which reads disk state and prints the orientation banner naming the next verb. The table is the truth `next` executes against.
 
 Banner shape:
 
@@ -192,10 +208,10 @@ openspec/
       specs/
         <capability>/
           spec.md             ← hand-authored; numbering per §Numbering
-      design.md               ← /openspec-siraj-walk-decisions writes
+      design.md               ← /openspec-siraj-create-design writes
       tasks.md                ← hand-authored; shape per §tasks.md per-commit shape
       plans/
-        1-<slug>.md             ← /openspec-siraj-walk-plan writes
+        1-<slug>.md             ← /openspec-siraj-create-plan writes
         2-<slug>.md
         ...
   specs/
@@ -219,8 +235,8 @@ change and the artifact (or per-commit operation):
 | Spec | `<change-name>: spec` |
 | Design | `<change-name>: design` |
 | Tasks | `<change-name>: tasks` |
-| Per-commit plan (walk-plan output) | `<change-name>: plan for <N>. <section subject>` |
-| Per-commit implementation (execute-task output) | `<change-name>: implementation for <N>. <section subject>` |
+| Per-commit plan (create-plan output) | `<change-name>: plan for <N>. <section subject>` |
+| Per-commit implementation (execute-plan output) | `<change-name>: implementation for <N>. <section subject>` |
 
 Where `<N>` is the tasks.md section number and `<section subject>`
 mirrors the `## N. <subject>` heading verbatim. Example:
@@ -381,90 +397,41 @@ in the same spec.
 
 ## tasks.md per-commit shape
 
-Each `## N. <subject>` section in `tasks.md` IS one git commit (§N maps
-1:1 to the Nth commit of the change; section subject mirrors the
-commit subject per §Git commit conventions). The section answers four
-questions for the implementing agent: *what behaviour ships*, *what
-load-bearing pattern lands*, *which tests + impl prove it*, and *how
-does each governing design decision apply to this commit specifically*.
+`tasks.md` is the **thin index** — one section per git commit, each section just a heading + the checkbox list of test+impl tasks for that commit. **NO per-commit detail** (Before/After, pattern paragraphs, design decisions/hints, scope guards, "Lands…" framing). All that depth lives in the per-commit plan file at `plans/<N>-<slug>.md` and is regenerable from spec + design — see `openspec-siraj-create-plan`.
 
-The standing cadence (write tests → RED → impl → GREEN → coverage)
-lives in each project's `docs/testing.md` §2 and does NOT appear
-per-commit — restating it would be noise.
+This is upstream OpenSpec's `:continue` default output shape; the siraj pipeline accepts it as-is and does NOT post-transform. No `create-tasks` custom skill exists; `:continue` is enough.
+
+The standing cadence (write tests → RED → impl → GREEN → coverage) lives in each project's `docs/testing.md` §2 and does NOT appear per-commit — restating it would be noise.
 
 ### The shape
 
 ```
 ## N. <subject>
 
-**Before:** <one sentence — pre-commit visible state>
-**After:** <one sentence — post-commit visible state, the slice outcome>
-
-<one paragraph naming the load-bearing pattern / skeleton / channel
-this commit introduces; use **bold** for the key concept; reference
-later commits via §M notation>
-
-### Tasks
 - [ ] N.1 Write test for <spec-ref> — <verbatim scenario title from spec.md>.
 - [ ] N.2 Write test for <spec-ref> — <verbatim scenario title from spec.md>.
 - [ ] N.M Implement <high-level impl shape> so N.1 + N.2 pass.
-
-### Design decisions/hints
-
-- <constraint or implementation hint, in plain English>. (Decision N)
-- <another constraint>. (Decision N — "sub-label" or spec Req N)
 ```
+
+Per commit: one `## N. <subject>` heading, blank line, K checkbox rows. That's the whole shape.
 
 ### Rules
 
-1. **H2 heading** mirrors the git commit subject. Format: `## N. <subject>`
-   (NO `Commit N — ` prefix). `N` matches the Nth commit of this change;
-   the same subject appears in the commit message per §Git commit conventions.
-2. **Before/After paragraph** captures the visible behaviour delta in
-   two sentences — one each, prefixed `**Before:**` and `**After:**`.
-3. **Pattern paragraph** (optional) names what's load-bearing that THIS
-   commit introduces — the verb skeleton, the skip-if-exists pattern,
-   the source-detection helper, the silent-skip variant, etc. One
-   short paragraph; bold the key concept. Skip when nothing beyond
-   the scenarios is notable.
-4. **`### Tasks` subsection.** One checkbox per spec scenario in
-   `Write test for <spec-ref> — <verbatim title from spec.md>.` form,
-   plus one impl row in `Implement <high-level shape> so N.1 + N.2 pass.`
-   form. For commits with no spec scenarios (e.g. a smoke-test commit),
-   the impl row stands alone.
-5. **`### Design decisions/hints` subsection.** Bullets that spell out
-   per-commit interpretations of `design.md` Decisions and `spec.md`
-   Requirements in plain English. Each bullet ends with an anchor
-   `(Decision N)`, `(Decision N — "sub-label")`, or `(spec Req N)`
-   pointing back to where to read the full text.
-6. **Out of scope (optional, rare).** Add one `**Out of scope this
-   commit:**` line ONLY when neighbouring commits' scopes could
-   realistically bleed in. Default is to omit — sibling §headings and
-   the pattern paragraph fence the scope implicitly.
-7. **No restating of the standing cadence.** Don't echo "RED → GREEN
-   → coverage" in commit blocks. That's a project-level invariant in
-   `docs/testing.md` §2.
+1. **H2 heading** mirrors the git commit subject. Format: `## N. <subject>` (NO `Commit N — ` prefix). `N` matches the Nth commit of this change; the same subject appears in the commit message per §Git commit conventions.
+2. **Test rows** name the spec ref (e.g., `init.1a`) + paste the scenario title verbatim from `spec.md` (no paraphrase). One row per scenario the commit pins.
+3. **Impl row** uses one-noun granularity for what changes — function name, pattern name, or short description. End with `so N.1 + N.2 pass.` to reference the test rows. For commits with no spec scenarios (e.g. a smoke-test commit), the impl row stands alone.
+4. **No `### Tasks` subheading.** Checkboxes sit directly under the H2 — the parser doesn't care, the reader doesn't need it, and the upstream `:continue` default doesn't produce one.
+5. **No per-commit narrative.** Before/After, "Lands…" framing, design decisions/hints, pattern paragraphs, scope guards — all of these live in the plan file (`plans/<N>-<slug>.md`), NOT in `tasks.md`. Plans get the depth; tasks.md gets the index.
+6. **No restating of the standing cadence.** Don't echo "RED → GREEN → coverage" in commit blocks. That's a project-level invariant in `docs/testing.md` §2.
+7. **Cross-doc references** use slug-based form for scenarios/requirements, numeric form only for design.md Decisions — but those refs belong in the plan file, not tasks.md. See `[[skill-authoring]]` §"Cross-doc reference convention" for the policy.
 
 ### Why this shape
 
-`tasks.md` is the **orientation layer** — the planning agent for each
-commit reads `proposal.md`, `specs/<cap>/spec.md`, and `design.md`
-alongside it, so `tasks.md` does not restate them. What it uniquely
-owns is per-commit **slicing interpretation**: which scenarios pin
-this commit's contract, and how each governing design Decision lands
-in THIS commit specifically.
+Empirically validated via stress tests: planning agents (Sonnet + Opus, 4 runs) reconstructed rich per-commit plans from stripped tasks.md (commit header + checkboxes only) + spec + design + the canonical plan-shape skill. "Before/After paragraphs", "Lands…/Introduces…" framing, and "Design decisions/hints" sub-sections in tasks.md were ALL reconstructible by the planning agent — duplication was paying no rent.
 
-The split between `### Tasks` (action items, OpenSpec parser-visible,
-implementing-agent-driven) and `### Design decisions/hints` (constraint
-bullets, planning-agent-driven) gives each subsection one job: Tasks
-answer "what do I tick when done?", Design decisions/hints answer
-"what's the implementation contract?". The earlier combined
-"Implementation outline + Design pointers + Notes" shape mixed action
-and reference in one list, which made both jobs harder to scan.
+Implication: when duplication exists between tasks.md and the per-commit plan, TRIM tasks.md. The plan is the implementing agent's source of truth; tasks.md is cross-commit checkbox traceability only.
 
-Multi-model stress-testing (Sonnet / Opus reading the same `tasks.md`
-and authoring plans) showed convergent plan quality once tests, impl,
-and decision-impact were each in their own visually-distinct subsection.
+See [[skill-authoring]] §"Tasks.md is the index; plan is the source of truth" for the broader principle this section enforces.
 
 ---
 
@@ -472,21 +439,21 @@ and decision-impact were each in their own visually-distinct subsection.
 
 | Skill / verb | Stage | One-line job |
 |---|---|---|
+| `openspec-siraj-next` | meta | Single entry point — reads disk state, picks the next verb, prints orientation banner, waits for user's go |
 | `/openspec-siraj:explore` | 0 | Think through ideas before committing to a change |
 | `/openspec-siraj:new` | 1 | Creates `openspec/changes/<X>/` with proposal + skeleton spec |
-| (hand-edit `spec.md`) | 2 | Author the spec per numbering + title rules above |
-| `openspec-siraj-walk-decisions` | 3 | Walks design decisions in Format A → `design.md` |
+| `/openspec-siraj:continue` | 2, 4 | Produces spec.md (Stage 2) and tasks.md (Stage 4) — delegated by `next` because no siraj custom override exists for these artifacts |
+| `openspec-siraj-create-design` | 3 | Walks design decisions in Format A → `design.md` (siraj override of `:continue`'s default decisions section) |
 | `review-document` | 3, 6 | 7-lens structural pass on any agent-produced doc |
-| (hand-edit `tasks.md`) | 4 | Author per §tasks.md per-commit shape above |
 | `openspec-siraj-review-change` | 5 | 3-subagent audit: consistency / right-sizing / structural lenses |
 | `openspec-siraj-stress-test-tasks` | 5 | N-agent plan fanout; finds tasks.md gaps; auto-applies convergent fixes |
-| `openspec-siraj-walk-plan` | 6 | Authors per-commit plan files (canonical 8-section shape) |
-| `openspec-siraj-stress-test-plan` | 6 | N-agent code fanout; reads divergences as plan-gap signals; pushes back to walk-plan |
-| `openspec-siraj-execute-task` | 6 | Per-checkbox gate loop, Curated default (Sonnet+Opus parallel worktrees) |
+| `openspec-siraj-create-plan` | 6 | Authors per-commit plan files (canonical 8-section shape) |
+| `openspec-siraj-stress-test-plan` | 6 | N-agent code fanout; reads divergences as plan-gap signals; pushes back to create-plan |
+| `openspec-siraj-execute-plan` | 6 | Per-section flow (write all §N tests → RED → impl → GREEN → coverage → tick all §N boxes → commit), Curated default (Sonnet+Opus parallel worktrees); halts at pre-flight if §N's plan isn't committed |
 | `/openspec-siraj:verify` | 7 | Validates implementation matches artifacts |
 | `/openspec-siraj:archive` | 7 | Finalizes the change |
 | `/openspec-siraj:sync` | 7 | Moves delta specs into `openspec/specs/` |
-| `parallel-implement-compare` | 6 | Composable mechanic invoked by stress-test-plan and execute-task Curated mode |
+| `parallel-implement-compare` | 6 | Composable mechanic invoked by stress-test-plan and execute-plan Curated mode |
 
 ### Disambiguation between similar-sounding skills
 
@@ -497,7 +464,7 @@ alternatives:
 |---|---|---|---|
 | `openspec-siraj-review-change` | Cross-doc consistency (spec ↔ design ↔ tasks contradictions, stale refs, scenario→commit mapping) | After tasks.md is hand-authored, before stress-testing | Findings categorized as Apply / Surface for decision / Dismiss |
 | `openspec-siraj-stress-test-tasks` | Implementability of tasks.md (would an agent know what to do, or have to guess?) | After review-change clears, before per-commit work begins | Per-commit plans + gap-find report; convergent gaps auto-applied |
-| `openspec-siraj-stress-test-plan` | Per-commit plan clarity (does an agent following the plan land strict-YAGNI correct code?) | After walk-plan + review-document polish the plan; load-bearing commits only | Convergent failures + divergences as plan-refinement signals (NOT winner-picking) |
+| `openspec-siraj-stress-test-plan` | Per-commit plan clarity (does an agent following the plan land strict-YAGNI correct code?) | After create-plan + review-document polish the plan; load-bearing commits only | Convergent failures + divergences as plan-refinement signals (NOT winner-picking) |
 
 Two more often-confused pairs:
 
@@ -532,9 +499,9 @@ if multiple recent candidates.
 | Auto-invoke the next verb after one completes | Always stop. The user owns the loop; they say "go" to continue |
 | Restate the pipeline diagram inside each sub-skill's SKILL.md | This orchestrator is the canonical home; sub-skills point here |
 | Restate the numbering / title / tasks-shape conventions inside each sub-skill | Same — canonical home is here |
-| Use `/openspec-siraj:apply` for production work | Use `openspec-siraj-execute-task` (per-checkbox gates) instead |
-| Use `/openspec-siraj:propose` or `:ff` to bootstrap a change | They auto-generate `design.md` + `tasks.md` in the wrong shapes; you'll rewrite them. Use `:new` then walk-decisions + hand-author tasks.md |
+| Use `/openspec-siraj:apply` for production work | Use `openspec-siraj-execute-plan` (per-section flow with explicit user approval at plan-commit and impl-commit gates) instead |
+| Use `/openspec-siraj:propose` or `:ff` to bootstrap a change | They auto-generate ALL artifacts at once, conflicting with the one-at-a-time discipline. Use `/openspec-siraj-next` instead — it delegates to `:new` + `:continue` (for spec/tasks) + `create-design` (for design) one artifact at a time |
 | Confuse review-change with stress-test-tasks | They run in sequence; see disambiguation table |
-| Treat stress-test-plan as winner-picking | Orientation is gap-finding; the code is throwaway; refinement goes back to walk-plan |
-| Tick a checkbox before verification passes | Per execute-task's gate loop, verification is non-negotiable |
+| Treat stress-test-plan as winner-picking | Orientation is gap-finding; the code is throwaway; refinement goes back to create-plan |
+| Tick a checkbox before verification passes | Per execute-plan's per-section flow, tick all §N boxes only after GREEN + coverage pass — verification is non-negotiable |
 | Pick a Curated-mode winner silently under auto-mode | Always render the side-by-side and wait for the user's explicit pick |

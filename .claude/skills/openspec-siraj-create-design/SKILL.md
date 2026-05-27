@@ -1,9 +1,9 @@
 ---
-name: openspec-siraj-walk-decisions
+name: openspec-siraj-create-design
 description: Walk through OpenSpec design decisions one at a time using Format A — Question / Alternatives with pros and cons / Recommendation. Identifies material implementation choices the spec leaves open, drills into each with interactive pushback, and accumulates them into design.md. Includes a "smaller choices" mode for low-impact decisions that the user wants to accept in bulk without drill-in. Use when authoring design.md for a new OpenSpec change after the spec is locked, when the user says "walk me through the design decisions", "let's design [the verb/feature]", "what design choices do we have", or pauses on an OpenSpec change with no design.md yet. Defaults to the most recently modified change folder if no name is given.
 ---
 
-# Walk decisions for an OpenSpec change in Format A
+# Create design for an OpenSpec change in Format A
 
 This skill formalises the design-walkthrough rhythm from feather-etl's `add-feather-init` session: surface every material implementation choice the spec leaves open, drill into each one as its own decision (Format A — Question / Alternatives with pros and cons / Recommendation), invite pushback, lock the outcome, and accumulate them into a clean `design.md`.
 
@@ -12,7 +12,7 @@ This skill formalises the design-walkthrough rhythm from feather-etl's `add-feat
 ## When to use
 
 - A new OpenSpec change has a locked `spec.md` and needs `design.md` authored.
-- The user says "walk me through the design decisions", "let's design [the verb]", "what design choices do we have", or "/openspec-siraj-walk-decisions".
+- The user says "walk me through the design decisions", "let's design [the verb]", "what design choices do we have", or "/openspec-siraj-create-design".
 - Proactively: after spec authoring wraps, suggest *"Spec is locked. Want me to walk through the design decisions one at a time in Format A?"* — take a no gracefully.
 
 ## When NOT to use
@@ -98,7 +98,7 @@ For each decision in the confirmed order:
 1. **Present in Format A.** Always three sections:
    - **The question** (one paragraph: what we're deciding and why it matters). Include why-this-matters consequences — what changes if we pick wrong, what later verbs inherit.
    - **Alternatives** (real options, each labeled, with concise pros AND cons). At least 2 alternatives. Don't manufacture straw-man options just to have a third.
-   - **Recommendation** (which one + 2-3 specific reasons + name the trade-offs being accepted). Optionally a "what this locks" code sketch when the implementer needs concrete guidance.
+   - **Recommendation** (which one + specific reasons that survived audit — count is an output, not a target + name the trade-offs being accepted). Optionally a "what this locks" code sketch when the implementer needs concrete guidance.
 
 2. **Explicitly invite pushback.** End the decision with something like *"Confirm Option X and I'll bring the next decision. Or push back on any pro/con, or propose a different option."*
 
