@@ -7,16 +7,20 @@ case "$1" in
     ITEM="Connect to RCT.in"
     ;;
   disconnect)
-    ITEM="Disconnect from RCT.in"
+    ITEM="Disconnect RCT.in"
     ;;
   status)
-    STATUS=$(osascript -e 'tell application "System Events" to tell process "FortiTray" to return name of every menu item of menu 1 of menu bar item 1 of menu bar 1')
-    if echo "$STATUS" | grep -q "Disconnect"; then
-      echo "connected"
+    if STATUS=$(osascript -e 'tell application "System Events" to tell process "FortiTray" to return name of every menu item of menu 1 of menu bar item 1 of menu bar 1' 2>&1); then
+      if echo "$STATUS" | grep -q "Disconnect"; then
+        echo "connected"
+      else
+        echo "disconnected"
+      fi
+      exit 0
     else
-      echo "disconnected"
+      echo "error: $STATUS" >&2
+      exit 2
     fi
-    exit 0
     ;;
   *)
     echo "Usage: rama-vpn connect|disconnect|status"

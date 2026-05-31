@@ -67,6 +67,10 @@ Concrete first action. Usually: "read these files, then <do X>."
 
 Items explicitly NOT to tackle, with pointers to where they live instead.
 
+## Suggested skills
+
+Skills the next agent should invoke for this task (e.g. `/diagnose` for the bug, `/to-issues` to file follow-ups). Omit if none apply.
+
 ## References
 
 - Issues, specs, principles, related conversations.
@@ -75,6 +79,7 @@ Items explicitly NOT to tackle, with pointers to where they live instead.
 ## Curation rules
 
 - **No user-local paths.** Never reference `~/Dropbox/...`, `/Users/<name>/...`, or any other machine-specific path. Handoff docs must be portable — a teammate cloning the repo on their machine should find everything they need. If a vault principle is load-bearing, fold its essential content into a repo doc first (e.g., `docs/conventions/...`), then link the repo doc.
+- **Redact secrets.** Never write API keys, passwords, tokens, connection strings with credentials, or PII into the handoff. Reference the secret's location (env var name, vault entry) instead of its value.
 - **Pointer beats inline** (for repo-local paths only). "See `docs/conventions/code-layout.md`" beats repeating the content.
 - **Include decisions, not debates.** Summarize conclusions; skip the meta back-and-forth that produced them.
 - **Cite concrete file paths and line ranges** where useful.

@@ -31,3 +31,12 @@ rama-vpn status        # Prints "connected" or "disconnected"
 - Requires FortiTray to be running (it always is on this machine at login)
 - No password prompt — credentials are saved in FortiClient
 - Profile: RCT.in / IPSec / server 59.92.69.63
+- **Requires the host terminal (iTerm) to have Accessibility permission** —
+  System Settings → Privacy & Security → Accessibility. Without it, every command
+  fails with osascript error -1719 and `status` silently misreports "disconnected".
+  A macOS or iTerm update can reset this grant; re-enable iTerm if commands start failing.
+- Menu labels are asymmetric: `Connect to RCT.in` (with "to") vs `Disconnect RCT.in`
+  (no "from"). If FortiClient changes them, a click fails with -1728 while `status`
+  still works — re-read the live labels with the osascript in the `status` branch.
+- `connect`/`disconnect` take a few seconds (IPSec negotiation); poll `status`
+  until it flips rather than reading it once immediately after.
