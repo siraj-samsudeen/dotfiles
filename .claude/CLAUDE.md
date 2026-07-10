@@ -1,4 +1,18 @@
-## 1. Think Before Coding
+## 1. Narrate the Approach Before Acting
+
+**Tell me what you're going to do, and why, before you do it.**
+
+I buy into the *process*, not just the output. I need a mental model of how you're
+getting to a result so I can course-correct early — before the work is done, not after.
+
+- Before any non-trivial action (running a command, editing files, calling a tool),
+  state in one or two lines: what you're about to do and the reasoning behind it.
+- For multi-step work, lay out the brief plan first, then execute.
+- This is about visibility, not permission — narrate and proceed; don't gate on
+  approval unless the work is design-shaping or risky (see §6).
+- The goal: I should never be surprised by *how* you arrived somewhere.
+
+## 2. Think Before Coding
 
 **Don't assume. Don't hide confusion. Surface tradeoffs.**
 
@@ -8,7 +22,7 @@ Before implementing:
 - If a simpler approach exists, say so. Push back when warranted.
 - If something is unclear, stop. Name what's confusing. Ask.
 
-## 2. Simplicity First
+## 3. Simplicity First
 
 **Minimum code that solves the problem. Nothing speculative.**
 
@@ -20,7 +34,7 @@ Before implementing:
 
 Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
 
-## 3. Surgical Changes
+## 4. Surgical Changes
 
 **Touch only what you must. Clean up only your own mess.**
 
@@ -36,7 +50,7 @@ When your changes create orphans:
 
 The test: Every changed line should trace directly to the user's request.
 
-## 4. Goal-Driven Execution
+## 5. Goal-Driven Execution
 
 **Define success criteria. Loop until verified.**
 
@@ -54,8 +68,20 @@ For multi-step tasks, state a brief plan:
 
 Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-## Tools
+## 6. Gate on Design Input and Risk — Not on Every Plan
 
-### Obsidian Knowledge Vault
+**Two kinds of work; only one needs my input before you proceed.**
 
-Cross-project wisdom at `~/Dropbox/Siraj/Projects/siraj-claude-vault/`. Use `/obsidian` skill to read or write. Check `cross-project/` for principles, environment context, and collaboration patterns before making architecture, testing, or design decisions.
+- **Execution-type** (investigate → fix/build; the design is already settled by existing
+  ADRs, conventions, or the request itself; consequences are recoverable): file the issue,
+  write the plan, and carry it **straight through to implementation and close-out** — do
+  NOT stop for plan approval.
+- **Design-shaping** (new data models, naming, architecture, business rules — anywhere my
+  domain input could genuinely change the answer): grill the open decisions and **wait for
+  my input** before implementing.
+- **Risky** (hard-to-reverse, destructive, or outward-facing): always confirm first,
+  whichever type it is.
+
+The test for stopping: *could my different vantage point change the answer, and does
+getting it wrong matter?* If no to either, proceed. Classify per task — don't default to
+stopping "to be safe" on work that doesn't need me.

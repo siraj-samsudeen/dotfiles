@@ -1,0 +1,98 @@
+- [#215/#298 box deploy: model landed, substrate=containers](project_box_deploy_215_298.md) — ADR 0036 deploy/box/ on main (git-clone INTERIM); target=OCI containers #298; box=SAP+ESSL only
+- [#514 PowerBI sales/stock rethink — control-tower LIVE](project_powerbi_rethink_514.md) — CEO's 4 PBI reports → one dark board-pack HTML deck, live (#516)
+- [#475 report field-gap program — gaps 4/5 LIVE](project_report_field_gaps_475.md) — 1,130 dashboards inventoried; item_master + ap/ar aging on main (#486); HR gap 2 #480; **reuse #347/#348 conformed dims**
+- [#465 ESSL attendance — NO ingestion; silver+gold LANDED](project_attendance_punches_465.md) — punches already in StyleHR → **never re-ingest ESSL**; #481 punches + #490 compliance on main; pair by SEQUENCE; attendance_status=capture-source; #520 dup closed
+- [#439 SM 360° scorecard LIVE (Slices A–D)](project_sm360_scorecard_439.md) — live scorecard on dash.jeyarama.com, pillars scored from gold; auth via gold.access_grants (#532); deploy trap FIXED; shift_coverage/Compliance/grievance frozen
+- [#397 StyleHR MIS grid flatten LANDED](project_stylehr_attendance_summary_397.md) — StyleHR's OWN MIS grid flattened store×date (PR #531), NOT reconciled to canonical (#274); `pfa` unconfirmed; recon maps 34/67 stores
+- [#191 demand-side gold-only build LANDED](project_demand_side_gold_build_191.md) — PR #485 gold for 5 systems + HR + Zakya SKU; dives NOT repointed (deferred #474); GoFrugal ingestion gap + PTP garbage flagged
+- [#474 layer access-control LANDED (ADR 0049)](project_layer_access_474.md) — ATTACH rights per share; layer_access_registry seed (MD username); enforcement GRANDFATHERED/deferred (#477)
+- [#478 report rationalization — one registry](project_report_rationalization_478.md) — docs/reports/report_registry.csv: 1,281 rows (#483); ceo_decision=pending
+- [Merge to main before chips; ADR# claimed on main](reference_worktree_adr_and_chip_hygiene.md) — spawn_task chips branch off main (merge deps first); MD shares RESTRICTED+grants; motherduck_token key is lowercase
+- [#482 ESSL↔StyleHR punch recon — ROOT CAUSE](project_essl_stylehr_recon_482.md) — StyleHR structurally drops **outsourced/agency workforce** (only master-registered emps); remediation=HR/device hygiene
+- [#441 canonical FY2627 budget LIVE](project_canonical_budget_441.md) — silver_core.sales_target + gold.sales_budget_vs_actuals; store×year×month×4-level; **basis GROSS ~5.5% high (#469)**
+- [Show worked examples before a decision question](feedback_show_examples_before_decision_question.md) — concrete example grid from real data BEFORE asking A/B/C
+- [#458 P&L budget fact LIVE](project_pl_budget_458.md) — silver_core.profit_and_loss_budget + gold vs-actuals (#466); ADR 0048; store×month×pl_line; ex-GST; #447 driver engine
+- [SAP #287 CEO morning report — design drafted](project_sap_morning_report_287.md) — freshness-first; READ Railway PG control plane not stale MD grids; contract in #287 comment
+- [dbt run timing in dbt_control.main.run_results](reference_dbt_run_results_md_table.md) — execution_time_s per node; area via target_relation LIKE; resource_type='model' (#70)
+- [sap_bronze box log + control-grid parsing contract](reference_sap_bronze_log_and_grid_contract.md) — drive/giant_drain/spool log formats (UTC); completeness via partition_summary; grids in Railway PG
+- [Show DQ details, never bury as a follow-up line](feedback_show_dq_details_never_bury.md) — print actual codes+counts+window inline; carry a DQ test
+- [silver_ptp.conform #386 — 3-instance conform LIVE](project_ptp_conform_386.md) — TN/KL/Kannammal unified; UNION BY NAME + EXCLUDE/REPLACE; ADR 0043
+- [#537 PTP bronze curated to merge-only allow-list](project_ptp_bronze_curation_537.md) — 36-table KEEP_TABLES (ADR-537); merge-only never replace; wipe POST-DEPLOY; unblocks #517
+- [Consumer source: prefer gold > silver > bronze](feedback_consumer_source_prefer_gold_over_silver_over_bronze.md) — never read bronze if the fact exists higher; else BUILD the silver/gold fact
+- [Silver fixes DQ; gold does none](feedback_silver_fixes_dq_not_gold.md) — bronze=faithful, SILVER=corrected in-layer, gold=marts only
+- [Ask only when your vantage could change the answer](feedback_ask_only_when_vantage_changes_answer.md) — decide low-consequence calls yourself; ask only where Siraj's domain knowledge might override
+- [SAP #121 overnight drain: watchdog + kill-loop](project_sap_overnight_drain_watchdog.md) — overnight_giants.sh + sap-drain-guard.timer; "grid frozen + rc=1 lease errors" = oversized >7d seed → kill-loop
+- [Run local dbt via dbt_runner/.venv/bin/dbt](reference_rama_dw_local_dbt.md) — ~/.local/bin/dbt is dbt-fusion (no duckdb); dbt_runner venv + --project-dir + token from rill/.env
+- [silver_core.category_master (#261) + #366 SAP names](project_category_master_261.md) — MATKL→Div/Subdiv/Cat/Subcat (ADR 0033); category_hierarchy=business overlay (#277)
+- [gold.sales_wide #380 — named merch hierarchy LIVE](project_sales_wide_380.md) — ADR 0042; bill_key #356 fix; MD giant full-refresh hits lease limit → ALTER for renames
+- [#554 return-key collision FIXED (ADR 554)](project_return_key_554.md) — return_no recycles → return_key on ret_pk built in SILVER (ADR 554: composite keys silver-built); gold txn_key; #561/#562
+- [Name for self-evidence + AI-legibility, not jargon](feedback_naming_self_evident_ai_legible.md) — Subdivision/Subcategory over Class/Subclass; record aliases in ADR+CONTEXT
+- [silver_sap.inventory stock models (#243)](project_sap_silver_inventory.md) — on-hand=SUM(NSDM stock_qty) by MATNR×WERKS (ADR 0015); negatives=#244
+- [Daily pipeline health check (#206)](project_daily_pipeline_health_check.md) — gold.freshness → run_events → layer _loaded_at + run_results (source-down vs transform)
+- [rama_dw deployment topology](reference_rama_dw_deployment_topology.md) — push origin main → Railway auto-deploy (watch-path gated); deploy.sh=secrets only; only SAP+ESSL on box
+- [StyleHR bronze MIGRATED to Railway (#413)](project_stylehr_railway_413.md) — service stylehr-bronze sfo, 3 static IPs, cron 30 4; box timer retired
+- [Railway static IPs + CLI ops](reference_railway_static_ip_and_cli_ops.md) — 3 region-bound egress IPs to whitelist; Railway MCP REMOVED → `railway` CLI is THE path; root-dir=dashboard-only
+- [#204 Postgres control-plane rollout](project_control_plane_204_status.md) — gofrugal+zakya LIVE on Railway PG; ADRs 0028–0030; cutover = reconcile EVERY stateful control.* table
+- [Load cost: incremental by default](feedback_load_cost_incremental_default.md) — ADR 0032: NEVER a scheduled full-refresh of a marker-having table
+- [Control-plane query model + bronze dup safety](reference_control_plane_query_model.md) — control.<ext>_grid = completeness oracle; NEVER bulk-delete landing.* (#238)
+- [Constrained-resource: read-once + fill-window](feedback_constrained_resource_two_sided.md) — never re-read a constrained source AND never leave its window idle; HANA is the bottleneck
+- [Persist hand-gathered ops knowledge to docs/agents/](feedback_persist_handgathered_ops_knowledge.md) — infra/deploy knowledge → docs/agents/, not just the transcript
+- [A rule lives in ONE place; everything else points](feedback_single_source_rules.md) — never restate a rule in CLAUDE.md + skill + memory; canonical home by audience, pointers elsewhere
+- [Run heavy SAP work ON THE BOX](feedback_run_sap_work_on_the_box.md) — Mac↔HANA VPN-flaky; nohup on box, monitor via MD; clear ~/.dlt/pipelines before clean --refresh
+- [Be critical on operational-safety](feedback_destructive_ops_and_recoverable_design.md) — destructive ops → stop+options+confirm; fix the mechanism; verify the authoritative signal
+- [rama-vpn controllable from Bash](reference_rama_vpn_control.md) — connect/disconnect/status work; confirm before dropping a live tunnel
+- [CEO issues = requirements, not design](feedback_ceo_requirements_not_design.md) — rbchandran issues relay ChatGPT designs; take the business need, own the data model
+- [Silver keeps header + line separate](feedback_silver_no_flatten_header_line.md) — model header & lines separately; flatten into one fact only at Gold
+- [Curation: classify per-table](feedback_curation_no_mechanical_defaults.md) — analyze each table properly; review only genuinely ambiguous ones
+- [rama_dw env & run](reference_rama_dw_env_and_run.md) — HANA in .env.local, MD token rill/.env; **hdbcli takes `?` not `%s`**; SSH probes = write a FILE
+- [sap-bronze deploy box rmail@192.168.2.76](reference_sap_bronze_deploy_box.md) — AlmaLinux, key rama_deploy_ed25519, app ~/sap_bronze, secrets .env.run; reaches HANA directly; pkill/XDG ssh gotchas inside
+- [sap-bronze throughput is HANA-read-bound](reference_sap_bronze_throughput.md) — off-peak 1.6–4.8k/s; merge≈2× append; arrow blocked by Decimal scale-drift; #118
+- [SAP date-cursor giants can't use dlt incremental](reference_sap_header_ride_dedup_cliff.md) — low-res date-cursor giants cliff; refresh via backfill-trailing; cursor RESOLUTION is the divider
+- [Bronze curation is profiling-driven](feedback_bronze_curation_profiling_driven.md) — keep a field iff key/watermark/deletion OR alive in client 200; ADR 0010
+- [The "tableau rule": defaults + override](feedback_tableau_rule_defaults.md) — 80% default + easy override; reuse prior ADRs; resolve fact-questions yourself
+- [Propose defaults, don't gate on TODO(human)](feedback_propose_defaults_dont_gate.md) — pick thresholds/cadences with rationale; overridable config isn't a blocking decision
+- [Impl workflow: issue → grill → plan → code](feedback_always_file_issue_and_plan_before_coding.md) — plan-FIRST not approval-always; execution-type work runs straight through post-plan (§6)
+- [Grill design + capture rationale in plan](feedback_grill_design_then_capture_rationale_in_plan.md) — for design-shaping decisions: alternatives+why INTO the plan; don't manufacture grills for settled designs
+- [Grill: ONE question at a time](feedback_grill_batch_all_questions.md) — one at a time with a recommendation; do NOT batch (reversed 2026-06-24)
+- [Grill question format: A/B/C or y/n](feedback_grill_question_format.md) — answerable in one keystroke; never vague "Do you agree?"
+- [Post issue drafts to GitHub, not local MD](feedback_post_to_github_not_local.md) — `gh issue create --body-file`, never docs/issue-drafts.md
+- [File retroactive issues as dated-comment history](feedback_github_issue_as_history.md) — issue body = plan; dated comments reconstruct the chronology
+- [Write interpretation, not just facts](feedback_write_interpretation_not_just_facts.md) — explain what a finding means for a human, not just raw numbers
+- [Done = code + commit + deploy + update issue](feedback_implementation_closeout_loop.md) — land each slice fully without being asked
+- [Follow-ups: plan Out-of-scope / impl→chip](feedback_followup_items_filed_at_closeout.md) — planning follow-ups `Follow-up:` filed at close-out; impl-time tangents → spawn_task chip
+- [Commit messages: per-issue context lines](feedback_commit_reference_issues_with_context.md) — each `Refs #N` gets a sentence on how the commit relates
+- [Push after commit when work is complete](feedback_push_after_commit.md) — completed work → push immediately (`Closes #N` fires on push)
+- [Zakya backfill: one day at a time](feedback_zakya_backfill_one_day.md) — each day separately (from==to), never multi-day; resumable ~17-min units
+- [Worktree useless for untracked cleanup](feedback_worktree_useless_for_untracked_cleanup.md) — fresh worktrees lack `??` files; check `git status` before EnterWorktree
+- [Worktree file links resolve against main root](feedback_worktree_file_links_resolve_main_root.md) — bare `docs/…` links to worktree-only files error; use full worktree path until merged
+- [Zakya rebranded to Zoho POS](project_zakya_rebrand_zoho_pos.md) — same product; api.zakya.in/inventory/v1 + zohoapis.in/pos/v1 coexist
+- [Rama VPN reaches BOTH SQL Server and Zoho](feedback_vpn_blocks_zoho_api.md) — full-tunnel but FortiGate permits internet egress; single pipeline
+- [Don't use AskUserQuestion when user is reading](feedback_no_askuserquestion_when_reading.md) — the modal hides text; plain-text prompts during walkthroughs
+- [GoFrugal bronze is field-curated](project_gofrugal_bronze_curated_not_full.md) — drop dead/constant/dup fields at bronze; keep-list per feed (#48)
+- [GoFrugal erp_ref_code = SAP item code](reference_gofrugal_erp_ref_code_is_sap.md) — keep it; item_code is GoFrugal-internal
+- [MotherDuck MCP routing](reference_motherduck_mcp_routing.md) — mcp__motherduck-jeyarama for rama_dw; UUID-named (fa37d000) is a different account
+- [dbt run_results: tests land in my_db](reference_dbt_run_results_tests_my_db.md) — test target_relation always my_db.dbt_test__audit.*; split monitoring by a layer CASE
+- [Zakya Tenderwise Dive → gold.tender_lines (#180)](project_zakya_tenderwise_payment_dive.md) — gold-only; silver invoice_tender_lines + gst_treatment; #411/#412
+- [Model the atomic fact, rewrite the consumer onto it](feedback_model_atomic_fact_rewrite_consumer.md) — build the lowest-grain gold fact + rewrite the report onto it (ADR 0017)
+- [Gold-only Dive: materialize _wide as a TABLE](gotcha_gold_only_dive_materialize_wide_as_table.md) — a Dive on a gold VIEW auto-requires the silver shares behind it (#180)
+- [MotherDuck planner bug on JSON `=` WHERE](reference_motherduck_json_where_planner_bug.md) — `_payload->>'k'='x'` throws spurious cast error; filter by date-cast only
+- [Always clean up merged branches/worktrees](feedback_cleanup_merged_branches.md) — after merge delete remote + local (`-D`) + worktree; never the live session's own
+- [Tailscale mesh #229](project_tailscale_mesh_229.md) — box sap-box=100.109.150.99 LIVE subnet router; `ssh rmail@100.109.150.99` works (VPN-drop fallback); ADR 0031
+- [#121/#286/#295 SAP finance silver LIVE](project_sap_116b_partition_bootstrap.md) — spool cutover + append-only silver (acdoca 135M/bseg 106M); bseg DISABLED; macOS sed no `\b` use perl
+- [Loading box→MotherDuck: chunk small files](reference_md_load_chunking_from_box.md) — ~240KB/s + MD deadline → ~500k-row Arrow slices, resumable
+- [my_db→DW migration: gold-only dive migration](project_mydb_migration.md) — CEO's ~143 dives onto gold-only conformed star; epic #191; artifacts docs/migration/
+- [#249 store-dimension standardization](project_store_dimension_249.md) — ADR 0032 (plant canonical, store=view); slice 2 StyleHR recon PR #264
+- [SAP plant master = bronze_sap.master.t001w](reference_sap_plant_master_t001w.md) — 58 plants; plant_type from name1+vlfkz; entity/region from vkorg NOT regio
+- [#307 reference-data editing surface on Teable Cloud](project_reference_data_teable_307.md) — 4 tables live, base bsel9E8xTO9V3ZrOxmV; MD sync=step-2
+- [Teable Cloud REST API access](reference_teable_api_access.md) — root app.teable.ai/api; **browser User-Agent required (Cloudflare 1010)**; token=Railway secret
+- [Worktree: never cd to the main checkout for git](feedback_worktree_dont_cd_to_main_checkout.md) — git runs in the SHARED checkout → commits on wrong branch; use abs paths for main resources
+- [Worktree sync reverts uncommitted edits](feedback_worktree_sync_reverts_uncommitted.md) — cowork worktrees reset to HEAD within seconds; apply-and-commit in ONE bash call
+- [#436 report server LIVE at dash.jeyarama.com](project_report_server_436.md) — corporate Internal OAuth (#450/#451); rendered-HTML-is-the-cache, 0 MD reads/view
+- [Build the tracer when Siraj says "I want to see first"](feedback_build_tracer_show_dont_finalize.md) — ship the visible slice, park forks explicitly (stubbed), re-open after
+- [Wrap-up: auto-execute obvious saves, gate only disagreement](feedback_wrapup_auto_execute_obvious.md) — fact-recording saves go through + inform; gate live-behavior, outward comms, judgment
+- [Rill Cloud CANCELLED 2026-07-09 (#508)](project_rill_cancelled_508.md) — sunset 08-01; access_grants (#377)+seeds SURVIVE; enforcement→#455; [[project_rill_access_control_363]]
+- [Brainstorm style: grill one question at a time, with visuals](feedback_brainstorm_style.md) — set context before each design question; visual companion pre-approved (never re-ask consent)
+- [Demystify jargon — map to familiar terms](feedback_demystify_jargon.md) — lead with the plain-English equivalent ("facets = filters"); use the user's vocabulary
+- [feather discover stays alive serving the schema viewer](feedback_feather_discover_ui_server.md) — not a hang; results durable in schema_*.json + state file before the HTTP server starts
+- [Legacy /opt/DownloadSetup ETL fully stopped 2026-06-17](project_legacy_zakya_loader_stopped.md) — SAP #143 / GoFrugal #144 / Zakya #145; ⚠️ SAP parity NOT met; `.62` frozen but consumers still read it
+- [#248 matdoc 4× stock fix + dlt merge-key LESSON](project_matdoc_248_stock_fix.md) — MDOC/MDOC_CP need the 4-tuple key; repair-table + silver dedup (PR #282); NEVER change a dlt merge_key on a live table

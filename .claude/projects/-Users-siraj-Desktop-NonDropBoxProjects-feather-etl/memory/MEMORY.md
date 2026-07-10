@@ -1,4 +1,5 @@
 - [Project Context](project_context.md) — feather-etl replaces dlt+sqlmesh+dagster; Slices 1-3 verified, mode merged, V7/V8 next
+- [Operate rewrite catalog](project_operate_rewrite_catalog.md) — 2026-07-06 requirements synthesis (client repos + pre-rewrite record) uncommitted on docs/operate-requirements worktree, awaiting review; decisions D1–D13 locked (SQLite control store, no Postgres, dlt out, GoFrugal pilot, modes removed)
 - [User Profile](user_profile.md) — Data platform builder, cost-conscious, prefers simplicity and human-readable config
 - [Architecture: Local Staging](arch_local_staging.md) — Local DuckDB staging before MotherDuck to save cost
 - [Architecture: Mode System](arch_mode_system.md) — dev/prod/test mode controls target schema, column filtering, gold materialization
@@ -23,14 +24,14 @@
 - [Feedback: Always uv run feather](feedback_uv_run_feather.md) — never bare `feather`; global install may lack new deps
 - [Feedback: Build in user-workflow order](feedback_workflow_driven_build_order.md) — for CLI tools, build features in the order a user runs them end-to-end; workflow order is the only order testable end-to-end
 - [Feedback: Rewrite test policy](feedback_test_policy_rewrite.md) — in the code-reorg worktree: write tests fresh (not port), no strict TDD ritual, enforce 100% line+branch coverage
-- [openspec-siraj-flow skill is canonical](openspec_siraj_flow_is_canonical.md) — all OpenSpec convention content (pipeline, numbering, titles, tasks-shape, refs) lives in the orchestrator skill; project-local conventions.md and config.yaml were deleted as redundant
+- [siraj-openspec-flow skill is canonical](openspec_siraj_flow_is_canonical.md) — all OpenSpec convention content (pipeline, numbering, titles, tasks-shape, refs) lives in the orchestrator skill; project-local conventions.md and config.yaml were deleted as redundant
 - [add-feather-init is the verb template](add_feather_init_is_template.md) — the first verb's design (core/cli split, spec-driven errors, per-file rules, output streams) is the convention every later verb inherits; deviation requires explicit one-line justification
 - [Workflow: subagent reviews after major OpenSpec doc work](workflow_subagent_reviews.md) — after substantial rewrites, launch two parallel Sonnet subagents (consistency + improvements), include the scenario→commit mapping check
-- [Namespace: custom OpenSpec skills use openspec-siraj-*](feedback_openspec_siraj_namespace.md) — custom skills authored by user use `openspec-siraj-<verb>` prefix to separate from upstream openspec-* plugin family
+- [Namespace: custom OpenSpec skills use siraj-openspec-*](feedback_openspec_siraj_namespace.md) — renamed from openspec-siraj-* (siraj-first escapes the openspec-* glob + gitignore); now project-scoped in feather-etl/.claude/skills with user-scope symlinks
 - [Feedback: one block at a time](feedback_one_block_at_a_time.md) — long reviews/critiques presented one ≤1-page block at a time; stop and wait for feedback between blocks
 - [Feedback: skip trivial-block confirmations](feedback_skip_trivial_block_confirmations.md) — during section-by-section walks, only pause for blocks with real divergence; trivial blocks roll into the next response
 - [Feedback: three meta-rules for doc authoring](feedback_three_meta_rules_for_doc_authoring.md) — intent over counts, two-audience test (implementing agent OR human reviewer), AI over-lists by default; verbosity is the default and tightness is the discipline
-- [Feedback: Curated is the default for execute-plan](feedback_curated_default_for_execute_plan.md) — openspec-siraj-execute-plan defaults to Curated (Sonnet+Opus parallel); never auto-pick a winner even under auto-mode
+- [Feedback: Curated is the default for execute-plan](feedback_curated_default_for_execute_plan.md) — siraj-openspec-execute-plan defaults to Curated (Sonnet+Opus parallel); never auto-pick a winner even under auto-mode
 - [Feedback: plan files + test-first ordering](feedback_plan_files_and_test_first.md) — mini-plans go to openspec/changes/<change>/plans/commit-N-<slug>.md and lead with the test list, not impl deliverables
 - [Feedback: no empty __init__.py markers](feedback_no_empty_init_py.md) — rely on PEP 420 implicit namespace packages; only write __init__.py when it carries code
 - [Feedback: explain code for a junior dev](feedback_explain_for_junior_dev.md) — before (or at minimum right after) writing code, walk through each library/fixture/pattern junior-dev-grade with "why-not-the-alternative" notes
@@ -39,3 +40,6 @@
 - [Feedback: git targeted squash](feedback_git_targeted_squash.md) — use amend + cherry-pick for non-tip squash; full base-reset only when reorganizing the entire commit sequence
 - [Feedback: pilot commits 1+2 first](feedback_pilot_commits_first.md) — for bulk rewrites across sibling sections, apply to first 2 only, pause for review before scaling
 - [Feedback: plan is the executor's source of truth](feedback_plan_is_source_of_truth.md) — resolve plan↔tasks.md duplication by trimming tasks.md; §1.1 is intentionally a mixed exec summary
+- [Feedback: dev workflow tracking](feedback_dev_workflow_tracking.md) — issues = backlog only; specced work = OpenSpec change + branch + PR; full rules in docs/workflow.md
+- [Reference: Typer optional positional](dep_typer_optional_positional.md) — optional positional args need typer.Argument(default=None); bare `= None` becomes a --flag
+- [Onion rebuild](project_onion_rebuild.md) — 2026-07-07: orphan branch onion-main, L1 committed; layer plan in LAYERS.md; old main to be discarded (flip pending)

@@ -177,8 +177,6 @@ co-authorship when Claude generated the work.
 
 ## Related
 
-- Environment overview: `cross-project/context-environment.md` in the
-  Obsidian vault (basic command, points back at this skill for details).
 - Related lesson: `cross-project/lessons-hard-won.md` — "Git Pathspec
   Globs Don't Unstage in Dotfiles Bare Repo." Read once if you are doing
   anything non-trivial with staging/unstaging ranges.

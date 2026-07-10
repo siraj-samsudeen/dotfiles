@@ -1,0 +1,36 @@
+---
+name: project_rill_access_control_363
+description: "RILL RETIRED (#508, cancelled 2026-07-09, sunset 2026-08-01) — report server (#436/#455) supersedes. Grants engine (gold.access_grants #377) SURVIVES in MotherDuck; #369 category axis NOT built and now delivery-agnostic; enforcement moves to #455"
+metadata:
+  node_type: memory
+  type: project
+  originSessionId: dd4c1ca3-fe59-4bca-aaf6-f72a7892b074
+---
+
+**⛔ RILL RETIRED — 2026-07-09 (#508).** Rill Cloud subscription cancelled; access until **2026-08-01** sunset. CEO found the bespoke HTML reports far richer → report-server prototype (#436, dash.jeyarama.com) proved out → Rill dropped. **Rill is effectively dark** (only real principals ever put on it: Shiva + a mock user; CEO/Bala aside) → at teardown the RLS can just be dropped and **all data opened, no exposure risk**. **What survives:** the grants **data model** — `gold.access_grants` (#377), the org seeds, `vw_primary_posting` — all live in MotherDuck, delivery-agnostic. **New enforcement home = the report server's OAuth layer (#455)**, which already builds on `gold.access_grants` (deferred `ALLOWED_EMAILS → gold.access_grants` sync). **What dies at sunset:** the `rill/` project + Cloud auto-deploy, the `sales.yaml` `row_filter`, the Rill MCP, the Rill dashboards (#309/#270/#416). **NOT torn down now** — ~20+ days of subscription remain, Rill stays operational through 2026-08-01 for experimentation; teardown plan recorded as a comment on **#508** (the Rill teardown home). Cleanup done this session: deleted the empty `review-revert-rb-unreviewed` branch/worktree; #508 rewritten as a single chronological record; pivot notes on #377 + #369.
+
+--- historical (pre-retirement) context below ---
+
+Rill Cloud access control for org **JeyaRama**, project **rama-dw**. Region RLS (#363, ADR 0040) → generalized into a **data-driven grants engine (#377, ADR 0041)**, **LIVE and confirmed** (Bala/Shiva logged in, see their region, no error, 2026-07-03). Deploy = `git push origin main` → Rill auto-deploys `rill/`. Fact is now **`gold.sales_wide`** (#380; grants compatible — same `store_code`/`region`).
+
+**THE ENGINE (live):**
+- **`gold.access_grants`** (dbt `models/core/access_grants.sql`, materialized **TABLE in `gold`**) — one row per `(principal_email, scope_type, scope_value, role, grant_source)`. Hierarchy leaf-expanded in dbt. Only **resolved** principals (identity_status=resolved AND email≠'') produce grants → fail-closed. **Currently 15 KL store + 3 region grants** (everything else pending → 0).
+- **`sales.yaml` row_filter** reads **bare `access_grants`** (same gold catalog), email-keyed, region+store axes AND-ing, `{{ if .user.admin }} true` bypass, `EXISTS(any grant)` fail-closed.
+- **⚠️ GOTCHA (caused a live outage):** a **cross-catalog** row_filter subquery (`silver_core.access_grants` from Rill's gold connection) **reconciles clean but errors at query time for non-admins**. Fix = mapping table in the fact's own catalog, bare name. `docs/agents/gotchas/rill-row-filter-cross-catalog-subquery-fails-at-query-time.md`. **Reconcile-Idle ≠ working; only a real non-admin login proves it.**
+- Connector `rill/connectors/motherduck.yaml`: **removed the `my_db` ATTACH** (only parked saree_sales used it) so `rill start` builds locally for mock_user testing.
+
+**SEEDS** (`dbt_runner/dbt/seeds/access_control/`, → silver_core; `dbt_runner/.venv/bin/dbt … --profiles-dir .`, token rill/.env):
+- `access_principal.csv` (153) — identity spine; **emp_code = StyleHR tie**. **Merch identities BACKFILLED** (CEO gave emp_code+email for ~120 buyers/catheads/business-heads + 3 cluster mgrs) but all **pending** → inert until #369 wires category grants. **Infra rows preserved:** 3 region_viewer (rbchandran@/shiva@/simiyon@, resolved — these ARE the live region grants; do NOT drop) + 8 TN SMs (pending). KL SMs = resolved (sm.<code>@jeyarama.com, mailboxes not yet created by IT). Multi-role people = one row per (person×role), unified by email (grants UNION+DISTINCT → union of scopes; verified all 10 multi-role emp_codes have 1 consistent email). **#369 DQ to clean:** 2 malformed emails (`mahesh m inf@jcrc.in`, `sudalai mani@jcrc.in`); case-dup rows (Kasan/kasan 1525, Semon/semon 1167); emp_code **4309 (invmgr@theramachandran.com) = category_head in BOTH KL & TN** (3 name spellings) — confirm cross-region vs mis-tag.
+- `store_master_kl.csv` (16) — KL store→cluster→SM. KL code (ATK)→sales store_code (1501) via `stylehr_plant_recon` abbreviation→stylehr_store_code (+EKL→1503, VAM→1509).
+- `store_master_tn.csv` (8) — **TN from plant_master JCT/JRPL** (CEO: NOT StyleHR). TN plant_code (1001-1008) **IS** the sales store_code — no crosswalk.
+- `category_ownership_kl.csv` (29), `buyer_subcategory_map.csv` (1371), `buyer_category_tn.csv` (492 TN F&L buyer→cathead by name).
+
+**Role→scope (CEO two ladders):** geography (store_manager→cluster_manager→regional_coo→directors) + merchandise (buyer→category_head→**per-region** division_business_head→regional_coo→directors). Allen=regional_coo KL; Bala=director (all regions; currently a KL region_viewer test-stub, restore later); Rajesh Khurana=division_business_head Grocery per-region (`division ∩ region`).
+
+**NEXT STEPS — REDIRECTED (Rill dead; enforcement now on the report server #455):**
+- **#369 category axis is NOT built and no longer builds on Rill.** The *data work* stands (delivery-agnostic): reconcile 3 overlapping category sources + #366 names into `subcategory`/`division` grants — (a) `buyer_subcategory_map` (code, both regions), (b) `category_ownership_kl` (v3 MC/subdivision, KL, status/business_head), (c) `buyer_category_tn` (name-based TN F&L). Join names→codes via **#366** `category_business_map`; leaf-expand → subcategory grants, add to `gold.access_grants`. But the *enforcement* target is now #455's report-server scoping, NOT a Rill `row_filter`. **#369 DQ still to clean:** 2 malformed emails (`mahesh m inf@jcrc.in`, `sudalai mani@jcrc.in`); case-dup rows (Kasan/kasan 1525, Semon/semon 1167); emp_code 4309 (invmgr@theramachandran.com) = category_head in BOTH KL & TN.
+- **`vw_primary_posting`** (StyleHR-derived employee→floor/section/TL/DM/SM; Kattakada acceptance, governance HR-SM-004) — survives, feeds the report-server access model. Files in ~/Downloads: `Kattakada Store TL & DM Mail Id.xlsx`, `KTK SEC_DATA_0307.xls`. Also `Sub Category FInalize.xls` (unread).
+- **Rill sunset teardown — DEFERRED to 2026-08-01, not now.** Rill stays live ~20 days for experimentation. At sunset: drop `sales.yaml` row_filter + open all data, pull down `rill/` project + auto-deploy + Rill MCP + the Rill dashboards (#309/#270/#416, design already copied to report server #436). Teardown plan recorded on **#508** (comments).
+- SM-email onboarding + Bala director access are now report-server concerns (#455), not Rill org-guest onboarding.
+
+Issues: [#377](https://github.com/JeyaramaGroup/data-warehouse/issues/377) (store-org, DONE+confirmed); [#369](https://github.com/JeyaramaGroup/data-warehouse/issues/369) (category axis, next); #366 (name↔code); #380/sales_wide; ADR 0040/0041. Rill MCP `fb05e2f0…`; MD via `mcp__motherduck-jeyarama`. See [[project_sales_wide_380]], [[project_category_master_261]], [[reference_sap_plant_master_t001w]], [[reference_rama_dw_local_dbt]].

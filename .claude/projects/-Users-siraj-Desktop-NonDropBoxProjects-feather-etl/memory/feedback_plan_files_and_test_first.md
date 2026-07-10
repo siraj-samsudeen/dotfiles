@@ -1,13 +1,13 @@
 ---
 name: feedback-plan-files-and-test-first
-description: "openspec-siraj-execute-plan mini-plans live on disk under openspec/changes/<change>/plans/<N>-<slug>.md and lead with the test list, not impl deliverables"
+description: "siraj-openspec-execute-plan mini-plans live on disk under openspec/changes/<change>/plans/<N>-<slug>.md and lead with the test list, not impl deliverables"
 metadata: 
   node_type: memory
   type: feedback
   originSessionId: e4d75b8a-b7a9-4f37-9640-5a4ec13d4ba5
 ---
 
-Two locked rules for `openspec-siraj-execute-plan` mini-plans:
+Two locked rules for `siraj-openspec-execute-plan` mini-plans:
 
 1. **Plans are files, not chat text.** Each commit's mini-plan goes to `openspec/changes/<change>/plans/<N>-<slug>.md`. Chat carries a ≤15-line Preflight that points at the file. The file is the user's reviewable artifact (opened in editor); the Preflight is the altitude pointer.
 
