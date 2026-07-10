@@ -37,7 +37,6 @@
 - [Control-plane query model + bronze dup safety](reference_control_plane_query_model.md) — control.<ext>_grid = completeness oracle; NEVER bulk-delete landing.* (#238)
 - [Constrained-resource: read-once + fill-window](feedback_constrained_resource_two_sided.md) — never re-read a constrained source AND never leave its window idle; HANA is the bottleneck
 - [Persist hand-gathered ops knowledge to docs/agents/](feedback_persist_handgathered_ops_knowledge.md) — infra/deploy knowledge → docs/agents/, not just the transcript
-- [A rule lives in ONE place; everything else points](feedback_single_source_rules.md) — never restate a rule in CLAUDE.md + skill + memory; canonical home by audience, pointers elsewhere
 - [Run heavy SAP work ON THE BOX](feedback_run_sap_work_on_the_box.md) — Mac↔HANA VPN-flaky; nohup on box, monitor via MD; clear ~/.dlt/pipelines before clean --refresh
 - [Be critical on operational-safety](feedback_destructive_ops_and_recoverable_design.md) — destructive ops → stop+options+confirm; fix the mechanism; verify the authoritative signal
 - [rama-vpn controllable from Bash](reference_rama_vpn_control.md) — connect/disconnect/status work; confirm before dropping a live tunnel
