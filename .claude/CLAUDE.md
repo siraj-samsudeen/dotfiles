@@ -85,3 +85,17 @@ Strong success criteria let you loop independently. Weak criteria ("make it work
 The test for stopping: *could my different vantage point change the answer, and does
 getting it wrong matter?* If no to either, proceed. Classify per task — don't default to
 stopping "to be safe" on work that doesn't need me.
+
+(For a specific repo, the project CLAUDE.md's version of this gate is canonical for the
+team; this section is my cross-project default.)
+
+## 7. Single Source for Rules
+
+**A rule lives in exactly ONE place; every other surface points to it.**
+
+When a rule or convention could appear on multiple surfaces (this file, a project
+CLAUDE.md, a skill, memory), define it fully in one canonical home — chosen by audience:
+team-facing rules → the project repo; cross-project personal preferences → this file;
+per-project agent context → that project's memory. Everywhere else gets a one-line
+pointer naming the home, at most with a one-clause gist. When a rule changes, update the
+home and grep for stale restatements — duplicated rules drift independently.
