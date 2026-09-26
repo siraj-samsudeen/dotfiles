@@ -1,12 +1,12 @@
 ---
 name: code-walkthrough
 description: >
-  Walk through unfamiliar code with Siraj — structured, depth-first, and INTERACTIVE (one page at a time,
-  then he asks). Use whenever Siraj shares code, a file, or a dbt model and wants to understand it, review it,
-  trace it, or map its lineage. Trigger on casual phrasing too — "explain this", "what does this do", "walk me
-  through", "review this", "how does X get computed", "what's the lineage / what runs before-after this model",
-  or code pasted with no instruction. The skill picks one of FIVE modes (Overview · Walkthrough · Review · Trace
-  · Lineage), auto-detects from phrasing, confirms in one line, and serves ONE page at a time — never a wall.
+  Walk Siraj through code he wants to understand — a file, a snippet, a diff, or a dbt model — one
+  page at a time, with him driving. Use when he shares code and asks what it does or how it works,
+  asks to be walked through it, asks for a reading-level review of it, asks how a value gets computed,
+  asks what runs before or after a dbt model or which tables it touches, or pastes code with no
+  instruction. For reviewing a branch or PR against a repo's standards or specs, the repo's
+  code-review skills fit better.
 ---
 
 # Code Walkthrough Skill
@@ -16,21 +16,18 @@ just use it. He reads at depth. He will spot YAGNI. He will ask why something is
 as a smart practitioner who is new to a specific concept, not as a beginner.
 
 He does **not** want a wall of text dumped on him. He digests one page, then drives the next step himself.
-Follow the Law below exactly.
 
 ---
 
 ## The Law — one page, then stop
 
-This governs **every** mode. There are no exceptions.
+This governs every mode. It is Siraj's default, not a lock: if he asks for the whole thing at once, give it to him.
 
 1. **Detect the mode** from how Siraj phrased the request (table below).
 2. **Name it in one line**, offering the alternatives:
    > *Looks like a **review** — starting there. (say `overview` / `walkthrough` / `trace` / `lineage` to switch)*
 3. **Produce Page 1 only** — at most ~one screen — then **stop** and end with a short menu of where to go next.
 4. **Wait.** Never pre-emptively produce sections 2, 3, 4… Siraj asks; you expand one page at a time.
-
-The old "produce the full walkthrough in one go" behaviour is **retired**. One page, then he asks.
 
 ---
 
@@ -162,8 +159,9 @@ standard: **conclusion first, evidence on demand.**
 **Page 1:**
 - The Overview (brief — enough to anchor the change).
 - **Headline verdict** in one line: ship it / ship with nits / needs work / blocked.
-- **Ranked findings** — a short list, most-important first, each one line with a severity tag
+- **Ranked findings** — every finding, most-important first, each one line with a severity tag
   (`blocker` / `risk` / `nit` / `question`) and the location. ₹-impact or blast-radius where it applies.
+  If they don't all fit on the page, show the top ones and say how many more are waiting.
 - Footer: *Expand any finding for the detail and a suggested fix.*
 
 Then expand **one finding per turn** on ask: the code, why it's wrong or risky, the edge case it breaks, and a
@@ -232,8 +230,9 @@ Footer expansions, one page each: `[full ancestry]` · `[full descendants]` · `
 
 ## Reference Examples — the feather-etl CLI Walkthrough (May 2026)
 
-Three files in `references/` contain complete block-by-block walkthroughs. Read the relevant one before
-producing a Walkthrough, especially for similar patterns (CLI layers, dataclasses, test fixtures):
+Three files in `references/` are full walkthroughs of one Python CLI feature, each written in one go before
+paging existed. Consult one when you want the depth bar for a single expansion page on a similar pattern
+(CLI layers, dataclasses, test fixtures); they add nothing for SQL or dbt work:
 
 - `example-test-file-walkthrough.md` — the test file; Arrange/Act/Assert, fixture injection, CliRunner vs
   subprocess
@@ -242,7 +241,8 @@ producing a Walkthrough, especially for similar patterns (CLI layers, dataclasse
 - `example-cli-bridge-walkthrough.md` — the CLI bridge; the best single example of the full structure and the
   loop-closed table connecting tests to production lines
 
-These predate the mode split — read them for the *quality bar* of an expansion page, not the one-shot delivery.
+Match their depth *per block*, not their length or shape: under the Law each one is several pages, and their
+Key Terms maps run 8–10 terms where a page here carries 3–5.
 
 ## What made the feather-etl walkthrough work (keep doing this)
 

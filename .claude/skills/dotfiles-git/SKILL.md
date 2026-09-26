@@ -9,7 +9,7 @@ This skill covers the non-obvious mechanics of Siraj's dotfiles bare repo
 at `$HOME/.cfg`. Trigger it whenever you're about to run `git` against
 that repo, or when a dotfiles-related operation behaves unexpectedly.
 
-## Basics (same as cross-project/context-environment.md)
+## Basics
 
 - Bare repo: `$HOME/.cfg`
 - Work-tree: `$HOME`
@@ -42,19 +42,18 @@ other pattern is a `!` un-ignore for a specific path. A new file is
 invisible to the repo unless an existing `!` rule covers its path, OR
 you add a new `!` rule for it.
 
-Already-un-ignored trees (memorise these; they cover 95% of cases):
+The file itself is the inventory — read it rather than trusting a copy
+that drifts:
 
-- Shell: `.zshrc`, `.zshenv`, `.p10k.zsh`
-- Git: `.gitconfig`, `.gitignore`, `.cfg-ignore`
-- Tool configs: `.config/**`, `.psqlrc`, `.duckdbrc`, `.odbc.ini`,
-  `RectangleConfig.json`
-- Claude Code: `.claude/CLAUDE.md`, `.claude/settings.json`,
-  `.claude/agents/**`, `.claude/commands/**`, `.claude/hooks/**`,
-  `.claude/skills/**`, `.claude/skill-audit/**`,
-  `.claude/siraj-experiments/**`, `.claude/projects/*/memory/**`
-- Editors: `Library/Application Support/{Code,Cursor}/User/{settings,keybindings}.json`
+```bash
+grep -n '^!' ~/.cfg-ignore
+```
 
-Anything outside those needs a new `!<path>` line in `~/.cfg-ignore`
+Un-ignoring a nested path needs a `!` line for each parent directory too
+(`!.config/`, `!.config/mise/`, then the file): git never looks inside an
+ignored directory, so a lone `!.config/foo/bar` does nothing.
+
+A path no rule covers needs a new `!<path>` line in `~/.cfg-ignore`
 BEFORE `git add` will recognise it.
 
 ### Gotcha 3 — relative paths to `git add` break when CWD ≠ `$HOME`
@@ -109,9 +108,10 @@ This shows everything: tracked modifications, untracked files, and what
 git --git-dir=$HOME/.cfg --work-tree=$HOME diff --cached --name-only
 ```
 
-Use `--name-only`, NOT `--stat` — the `--stat` summary line has shipped
-unintended files in the past. See `cross-project/lessons-hard-won.md`
-"Git Pathspec Globs Don't Unstage in Dotfiles Bare Repo" for the incident.
+Use `--name-only`, not `--stat`: the `--stat` summary line can understate a
+large index, while `--name-only` lists every file. To unstage, name explicit
+paths (or `reset` and re-add) — a quoted pathspec glob passed to `git reset`
+can silently unstage nothing.
 
 ## Canonical "add a new path to track" sequence
 
@@ -177,6 +177,5 @@ co-authorship when Claude generated the work.
 
 ## Related
 
-- Related lesson: `cross-project/lessons-hard-won.md` — "Git Pathspec
-  Globs Don't Unstage in Dotfiles Bare Repo." Read once if you are doing
-  anything non-trivial with staging/unstaging ranges.
+- `~/Dropbox/Siraj/Projects/siraj-claude-vault/cross-project/lessons-hard-won.md`
+  — "Git Pathspec Globs Don't Unstage in Dotfiles Bare Repo" (the incident).

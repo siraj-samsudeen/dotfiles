@@ -1,14 +1,11 @@
 ---
 name: convert-jargon-to-beginner-friendly-terms
 description: >
-  Convert jargon into beginner-friendly terms for Siraj, and judge whether a name is SELF-EVIDENT -
-  no acronyms or house codes, readable by an industry veteran, understood by a newcomer on first
-  explanation and easily remembered, using terminology AI agents are trained on. Use when Siraj asks
-  what a term means, says a doc or codebase is thick with jargon he doesn't follow, asks for plainer
-  wording, or asks what something should be called - "what does X mean", "explain this in plain
-  English", "too much jargon", "rename this", "better name for", "what should we call this", "is this
-  self-evident". Also use when naming any column, value, flag, status or business-facing identifier,
-  and unprompted when Siraj is reading or writing something whose vocabulary would block a newcomer.
+  Decode jargon into plain terms for Siraj, and judge or propose names against his "self-evident"
+  naming standard. Use when he asks what a term means, finds a doc or codebase too jargon-heavy to
+  follow, wants plainer wording, or asks what something should be called or whether a name is
+  self-evident; when naming any column, value, flag, status or business-facing identifier; and
+  unprompted when something he is reading or writing uses vocabulary that would block a newcomer.
 ---
 
 # Convert Jargon to Beginner-Friendly Terms
@@ -39,11 +36,11 @@ You **propose and argue**. Siraj **decides**. Always land on a recommendation �
 
 **Grep the project glossary for every candidate before proposing it — mechanically, one term at a time.** Reading the glossary is not the check; a mature `CONTEXT.md` runs to hundreds of entries and skimming it will miss the collision. Run the candidate *and* the original through `grep -n` and read every hit.
 
-Skipping this once put four bad entries into a 359-entry glossary: `assortment` already meant a store's sq-ft line-of-business mix, `like-for-like` was already defined as *LFL base*, `sell-through` was already defined twice, `shrinkage` was an established SAP-movement term another metric depended on, and the repo's merchandise hierarchy was a specific 9-digit SAP code, not a generic four-level tree. Every one of those was findable with a single grep. **The older and larger the glossary, the more likely the right answer is "this is already named — use theirs."**
+Generic-sounding candidates are the ones most likely to be taken: in a mature glossary a plain word can already carry a specific meaning another metric depends on, or be defined twice, and every such collision is findable with a single grep. **The older and larger the glossary, the more likely the right answer is "this is already named — use theirs."**
 
 A term may also already be settled, and re-litigating a decision wastes his time and risks contradicting the repo. Decided vocabulary lives in `CONTEXT.md` at the repo root — `feather-flow/CONTEXT.md` for data-platform and monitoring terms, `rama_dw/CONTEXT.md` for retail. Both use the house format: `**Term**:` / definition / `_Avoid_: rejected candidates`. Write decisions back in that format, never as a table — prose has no width limit, diffs stay one line, and `grep -n '^\*\*'` gives the index for free.
 
-**This skill's own vocabulary obeys its own rules.** Every heading, column name and scale level here has to pass the six-months-later test: Siraj reads it half a year from now, with no memory of writing it, and knows what it means. Two or three plain words beat one compressed one. This has been got wrong three times — *nod* and *follow* as column headers, *cold* as a scale level, *qualify* as a verdict name — every time by compressing a clear idea into shorthand that only made sense to whoever coined it. When labelling anything in the output, spell it out.
+**This skill's own vocabulary obeys its own rules.** Every heading, column name and scale level here has to pass the six-months-later test: Siraj reads it half a year from now, with no memory of writing it, and knows what it means. Two or three plain words beat one compressed one; the usual failure is squeezing a clear idea into a one-word label that only made sense to whoever coined it. When labelling anything in the output, spell it out.
 
 ## What must not be translated
 
