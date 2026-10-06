@@ -92,9 +92,6 @@ setopt glob_dots                      # Include hidden files in glob patterns
 # Python: Use system-wide cache instead of project __pycache__
 export PYTHONPYCACHEPREFIX="$HOME/.cache/pycache/"
 
-# Elixir: Enable command history in IEx shell (use ↑/↓ arrows)
-export ERL_AFLAGS="-kernel shell_history enabled"
-
 # ============================================
 # SECRETS (tokens, API keys — not tracked in dotfiles)
 # ============================================
