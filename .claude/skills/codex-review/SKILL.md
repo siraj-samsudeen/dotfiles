@@ -52,6 +52,22 @@ suite (missing interpreter, DB, deps). Run the tests yourself, and don't read "n
 **It sends code to OpenAI.** The review uploads the diff and surrounding repo context. Siraj has
 approved this for all repos, including client and vendor code (09-Oct-2026) — no need to ask.
 
+## Not a git repo, or not a "code" task
+
+Codex reviews a git diff. Folder work (a Dropbox accounting folder, a file reorganisation) is
+often driven by scripts — matchers, parsers, register builders — and those scripts are code
+that needs review: on a Bisquared reorg, Codex found documents marked Matched without
+amount corroboration and statements silently dropped on PDF-extraction failure.
+
+- **Folder isn't a git repo** → build a scratch repo in your scratchpad: copy only the code
+  (scripts, configs) at its *before* state, `git init` + commit as the baseline, copy the
+  *after* state over it, then review with `--scope working-tree` from that directory. Leave
+  data files (statements, bills, workbooks) out — they're large, often private, and Codex
+  doesn't need them; it will note that it couldn't verify against data, so run the scripts
+  on the real data yourself.
+- **Pure moves/renames with no logic** → no Codex review needed (it's in the skip list).
+  Review the script that did the moving instead, if there is one.
+
 ## Before running
 
 Check there is something to review: `git status --short --untracked-files=all` for working-tree,
