@@ -38,6 +38,11 @@ real disconnect.
   62 M-row `dbo.Sales`) can outlast the tunnel and fail mid-run with connectorx
   `RuntimeError: Timed out in bb8`. Keep SQL pulls short / resumable; re-confirm before
   long runs.
+- **A dropped tunnel kills background SSH waiters with exit 255 — that is NOT the remote job
+  failing.** During #2107 (2026-08-12/13) the VPN dropped twice, and five background `ssh ... until
+  <done>; done` waiters reported `failed (exit 255)` while every remote run had in fact **succeeded**.
+  **Never conclude a box job failed from a waiter's exit code** — reconnect and re-read the job's own
+  log / control-plane row. Prefer `nohup` on the box + short polling over a long-lived blocking ssh.
 - **`scutil --nc status "VPN"` is unreliable** — it read `Disconnected` while the tunnel
   was actually up. Confirm connectivity with a **live `SELECT 1`**, not scutil (and never
   `grep -i connected`, which matches the substring inside "Dis**connected**").

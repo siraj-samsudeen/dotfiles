@@ -1,10 +1,11 @@
 ---
 name: project_sm360_scorecard_439
-description: SM 360° scorecard wired live from the warehouse (Slices A–D) — all MERGED to main but NOT deployed; report-server prod stuck on a stale commit
+description: SM 360° scorecard LIVE — healthy render is live=16/38 (KL-only ceiling); #1805 outage repaired 07-Aug-2026
 metadata: 
   node_type: memory
   type: project
   originSessionId: 3a3a6368-238e-4d28-9ce8-06b1fc79d694
+  modified: 2026-08-24T02:52:50.661Z
 ---
 
 #439 (epic #436, 3rd dashboard, first MULTI-STORE) — RB's JRBG Store Manager 360° Scorecard, token-injected live from gold. RB's JS SPA + scoring engine (`PILLARS`/`computeScores`/A-B-C-D) survive byte-identical; only hardcoded placeholders swapped for live inputs (`report_server/sm360/`, `build_template.py` = the one-off transform).
@@ -18,3 +19,5 @@ metadata:
 **LIVE on dash.jeyarama.com as of 2026-07-09** (deploy verified: render logs show render_sm360 producing master + KL/TN regions + 15 store variants + 18-principal manifest; serve guard google-oauth). Access-grants auth (#532) live: `ALLOWED_EMAILS`=2 admins (rbchandran, siraj), SMs admitted+scoped via `gold.access_grants`. `ACCESS_KEY` blanked (secret path dead).
 
 **Deploy trap that bit this session (now FIXED):** report-server built from stale branch `issue-436-dashboard-serving`, so main merges didn't deploy (prod stuck at 756c774). Fixed two ways: (1) interim — FF'd issue-436-dashboard-serving → main to trigger the deploy; (2) permanent — **Railway service Source branch flipped to `main`** (root `/report_server`, auto-deploy on). Future main merges now deploy normally. The old issue-436-dashboard-serving branch is now redundant (delete-able). Gotcha: `docs/agents/gotchas/report-server-deploys-from-issue-436-branch-not-main.md` (PR #536). A **302→/auth/login is NOT proof a page shipped** — verify via deploy render logs. See [[project_report_server_436]], [[reference_rama_dw_deployment_topology]].
+
+**#1805 outage + the live-count ceiling (07-Aug-2026, PR #1877 merged 23-Aug):** `live=0/38` for ~2 weeks — the #1626 bronze wipe (`users_user` + assignment bridge truncated by #1602-class load failures) froze `gold.hr.employee.store_code` at all-UNMAPPED; the renderer's whole fetch dict keys on that column, so nothing matched STORE_PLANT and every store silently served RB's frozen Apr snapshot. Repaired via the #1738 nullable adapter (Railway run restored all 459 tables) + dbt rebuild; prod verified `live=16/38`. **16/38 IS the healthy ceiling, not a defect:** StyleHR payroll covers only the KL entity (RCT) — zero TN employees are payroll_active, so the 14 TN stores in RB's array were never live-scorable (recon maps TN plants fine; payroll is the constraint). Open follow-ups: #1879 (renderer must fail loudly on live_n=0 instead of silently serving the frozen snapshot), #1880 (TN needs a payroll source before TN can live-score).

@@ -1,11 +1,22 @@
 ---
 name: project_mydb_migration
-description: "my_db→DW migration REFRAMED 2026-07-02: dive-driven, gold-only consumer layer; epic #191 + phases #300/#347-350"
+description: "NEVER use my_db/mydb_share as an analysis source — it is being deleted. Plus: my_db→DW migration, gold-only consumer layer; epic #191 + phases #300/#347-350"
 metadata:
   node_type: memory
   type: project
   originSessionId: cc12c3c5-6b8b-4dd0-bb12-5f49080dd224
 ---
+
+## ⛔ HARD RULE (Siraj, 2026-07-10): `mydb_share` / `my_db` / `jrpl*` are OFF-LIMITS for analysis
+
+**Never read `mydb_share.*` (or its `my_db` / `jrpl` / `jrpl_db` / `jrpl_mydb` aliases) to answer a
+data question, establish feasibility, or source a model.** The share is being **deleted**. Anything
+found only there is *not* "data we have" — it is scratch that vanishes. Treat a field as available
+only if it lives in **bronze / silver / gold**.
+
+When assessing "do we have X?", the ladder is: **gold → silver → bronze → (if absent) the source
+system itself** (SAP HANA, PTP, POS). If it exists only in `mydb_share`, record it as a **gap** and
+go find its true source. See [[feedback_consumer_source_prefer_gold_over_silver_over_bronze]].
 
 **REFRAMED 2026-07-02 (approved by Siraj).** Goal is NOT migrating my_db's 62 tables 1:1. It is moving the CEO's **~143 MotherDuck dives** onto a **gold-only consumer layer** — every dive attaches ONLY `gold` (never bronze, never my_db/jrpl shares, ideally not silver). `gold` = **conformed star** (signed facts + conformed dim VIEWS surfaced in gold, physically in silver_core). Demand-driven: build in gold only what a live dive needs → repoint → drop orphans.
 

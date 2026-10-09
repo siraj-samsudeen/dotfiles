@@ -16,10 +16,10 @@ project moved to `dbt_runner/dbt/` (ADR 0023).** As of 2026-06-26 the `dbt_runne
 console script runs **directly** (`dbt parse|compile|build`, dbt=1.11.11) — the earlier broken-shebang
 workaround (`python -m dbt.cli.main`) is no longer needed; the venv was rebuilt.
 
-Invocation (token: `rill/.env` holds it as lowercase `motherduck_token`, but profiles.yml needs env
+Invocation (token: `secrets/motherduck.env` holds `motherduck_token_read_write` — rill/.env is GONE (#2627/#2817); profiles.yml needs env
 `MOTHERDUCK_TOKEN` — must map it; works against a worktree project dir):
 ```
-export MOTHERDUCK_TOKEN=$(grep -iE '^[[:space:]]*motherduck_token=' rill/.env | head -1 | sed -E 's/^[^=]*=//; s/"//g')
+export MOTHERDUCK_TOKEN=$(grep -E '^motherduck_token_read_write=' secrets/motherduck.env | head -1 | cut -d= -f2-)
 MAIN/dbt_runner/.venv/bin/dbt build \
   --project-dir <wt>/dbt_runner/dbt --profiles-dir <wt>/dbt_runner/dbt --no-version-check --select <sel>
 ```

@@ -36,7 +36,6 @@ from the box**, so the SAP rewrite ([[project_sap_116b_partition_bootstrap]]) mu
   bulk-create of a header_ride table, do NOT seed its watermark by pulling — set the dlt incremental
   state directly, or accept a one-time bounded edge re-walk. (#251 abandoned the seed step; marc/mvke/
   rseg/mbewh watermarks are UNSET — the #121 rewrite owns seeding them properly.)
-- **Box access:** `ssh rmail@100.109.150.99` (Tailscale **mesh DOES have ssh now** — reliable fallback
-  when rama-vpn drops, which it does often) or `192.168.2.76` over VPN. Corrects
-  [[reference_sap_bronze_deploy_box]] / handoff_sap_rewrite.md ("mesh = no ssh" is outdated). Box loads
+- **Box access:** `rama-vpn connect`, then `ssh rmail@192.168.2.76` (Rama VPN only; Tailscale mesh
+  retired 2026-07-13). See [[reference_sap_bronze_deploy_box]]. Box loads
   via nohup survive VPN/session drops; monitor from fresh box `duckdb.connect`, not the MCP ([[reference_motherduck_mcp_routing]]).

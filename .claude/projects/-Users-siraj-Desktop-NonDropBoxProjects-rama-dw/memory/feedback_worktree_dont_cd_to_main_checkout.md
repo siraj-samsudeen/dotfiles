@@ -17,7 +17,21 @@ landed on local `main` (not my worktree branch), local `main` diverged, and a se
 checkout. Recovery took a cherry-pick onto fresh `origin/main`.
 
 **How to apply:** stay in the worktree cwd (the harness default) for all git work; reach main's
-gitignored resources (`.venv`, `rill/.env`, `secrets/`) by **absolute path**, don't `cd` into main.
+gitignored resources (`.venv`, `secrets/`) by **absolute path**, don't `cd` into main.
 Before "commit/merge/push", run `git worktree list` + `git branch --contains <sha>` to confirm where
 HEAD and your commits actually are. Never force-move `main` while another agent is active on the shared
-checkout. Related: [[feedback_worktree_file_links_resolve_main_root]], [[project-reference-data-teable-307]].
+checkout. 
+**It is not only git — `cd` into main sends FILE EDITS there too.** #2686 (26-Aug-2026): a probe
+needed main's gitignored `rill/.env`, so every Bash call opened with `cd <main>`. Three `docs/`
+files were then created/appended **in the main checkout on branch `main`**, while `perl -pi` ran in
+the worktree and silently no-op'd — the giveaway was `Can't open <newfile>: No such file`. Recovery:
+`cp` the three files into the worktree, `git checkout --` the two modified ones in main, `rm` the
+new one, leaving main's other untracked files (another agent's) alone.
+
+**How to apply (extended):** never open a command with `cd <main>` just to read a gitignored
+credential — read it by absolute path (`grep '^motherduck_token=' /abs/path/rama_dw/secrets/motherduck.env` — rill/.env is gone, #2627/#2817) and
+stay in the worktree cwd. Note the shell's cwd **persists between Bash calls**, so one stray `cd`
+silently redirects every later command. After any doc/code edit, `git status --short` in the
+worktree: if it shows nothing, you wrote somewhere else.
+
+Related: [[feedback_worktree_file_links_resolve_main_root]], [[project-reference-data-teable-307]].

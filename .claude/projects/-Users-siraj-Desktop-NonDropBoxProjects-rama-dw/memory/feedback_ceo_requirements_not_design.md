@@ -7,6 +7,11 @@ metadata:
   originSessionId: ff4fdd42-87f2-41ab-8096-b9919e27dede
 ---
 
+> **Scope:** this rule is about **rbchandran (RB), the CEO** — not every stakeholder. Line-of-business
+> owners are a different case: e.g. Home LOB is owned by **Harish Menon**, whose norms carry domain
+> authority. See [[project_stakeholder_harish_menon_home_lob]]. Check who authored a doc before
+> applying this rule to it.
+
 The CEO **rbchandran** files detailed, prescriptive GitHub issues (e.g. #104 epic with
 named silver facts/dims/db layout, #131 treasury architecture). He is **not a data-warehouse
 practitioner** — much of the design is relayed from ChatGPT. So treat his issues as the

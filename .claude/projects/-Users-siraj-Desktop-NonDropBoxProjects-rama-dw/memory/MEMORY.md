@@ -1,97 +1,164 @@
-- [#215/#298 box deploy: model landed, substrate=containers](project_box_deploy_215_298.md) — ADR 0036 deploy/box/ on main (git-clone INTERIM); target=OCI containers #298; box=SAP+ESSL only
-- [#514 PowerBI sales/stock rethink — control-tower LIVE](project_powerbi_rethink_514.md) — CEO's 4 PBI reports → one dark board-pack HTML deck, live (#516)
-- [#475 report field-gap program — gaps 4/5 LIVE](project_report_field_gaps_475.md) — 1,130 dashboards inventoried; item_master + ap/ar aging on main (#486); HR gap 2 #480; **reuse #347/#348 conformed dims**
-- [#465 ESSL attendance — NO ingestion; silver+gold LANDED](project_attendance_punches_465.md) — punches already in StyleHR → **never re-ingest ESSL**; #481 punches + #490 compliance on main; pair by SEQUENCE; attendance_status=capture-source; #520 dup closed
-- [#439 SM 360° scorecard LIVE (Slices A–D)](project_sm360_scorecard_439.md) — live scorecard on dash.jeyarama.com, pillars scored from gold; auth via gold.access_grants (#532); deploy trap FIXED; shift_coverage/Compliance/grievance frozen
-- [#397 StyleHR MIS grid flatten LANDED](project_stylehr_attendance_summary_397.md) — StyleHR's OWN MIS grid flattened store×date (PR #531), NOT reconciled to canonical (#274); `pfa` unconfirmed; recon maps 34/67 stores
-- [#191 demand-side gold-only build LANDED](project_demand_side_gold_build_191.md) — PR #485 gold for 5 systems + HR + Zakya SKU; dives NOT repointed (deferred #474); GoFrugal ingestion gap + PTP garbage flagged
-- [#474 layer access-control LANDED (ADR 0049)](project_layer_access_474.md) — ATTACH rights per share; layer_access_registry seed (MD username); enforcement GRANDFATHERED/deferred (#477)
-- [#478 report rationalization — one registry](project_report_rationalization_478.md) — docs/reports/report_registry.csv: 1,281 rows (#483); ceo_decision=pending
-- [Merge to main before chips; ADR# claimed on main](reference_worktree_adr_and_chip_hygiene.md) — spawn_task chips branch off main (merge deps first); MD shares RESTRICTED+grants; motherduck_token key is lowercase
-- [#482 ESSL↔StyleHR punch recon — ROOT CAUSE](project_essl_stylehr_recon_482.md) — StyleHR structurally drops **outsourced/agency workforce** (only master-registered emps); remediation=HR/device hygiene
-- [#441 canonical FY2627 budget LIVE](project_canonical_budget_441.md) — silver_core.sales_target + gold.sales_budget_vs_actuals; store×year×month×4-level; **basis GROSS ~5.5% high (#469)**
-- [Show worked examples before a decision question](feedback_show_examples_before_decision_question.md) — concrete example grid from real data BEFORE asking A/B/C
-- [#458 P&L budget fact LIVE](project_pl_budget_458.md) — silver_core.profit_and_loss_budget + gold vs-actuals (#466); ADR 0048; store×month×pl_line; ex-GST; #447 driver engine
-- [SAP #287 CEO morning report — design drafted](project_sap_morning_report_287.md) — freshness-first; READ Railway PG control plane not stale MD grids; contract in #287 comment
-- [dbt run timing in dbt_control.main.run_results](reference_dbt_run_results_md_table.md) — execution_time_s per node; area via target_relation LIKE; resource_type='model' (#70)
-- [sap_bronze box log + control-grid parsing contract](reference_sap_bronze_log_and_grid_contract.md) — drive/giant_drain/spool log formats (UTC); completeness via partition_summary; grids in Railway PG
-- [Show DQ details, never bury as a follow-up line](feedback_show_dq_details_never_bury.md) — print actual codes+counts+window inline; carry a DQ test
-- [silver_ptp.conform #386 — 3-instance conform LIVE](project_ptp_conform_386.md) — TN/KL/Kannammal unified; UNION BY NAME + EXCLUDE/REPLACE; ADR 0043
-- [#537 PTP bronze curated to merge-only allow-list](project_ptp_bronze_curation_537.md) — 36-table KEEP_TABLES (ADR-537); merge-only never replace; wipe POST-DEPLOY; unblocks #517
-- [Consumer source: prefer gold > silver > bronze](feedback_consumer_source_prefer_gold_over_silver_over_bronze.md) — never read bronze if the fact exists higher; else BUILD the silver/gold fact
-- [Silver fixes DQ; gold does none](feedback_silver_fixes_dq_not_gold.md) — bronze=faithful, SILVER=corrected in-layer, gold=marts only
-- [Ask only when your vantage could change the answer](feedback_ask_only_when_vantage_changes_answer.md) — decide low-consequence calls yourself; ask only where Siraj's domain knowledge might override
-- [SAP #121 overnight drain: watchdog + kill-loop](project_sap_overnight_drain_watchdog.md) — overnight_giants.sh + sap-drain-guard.timer; "grid frozen + rc=1 lease errors" = oversized >7d seed → kill-loop
-- [Run local dbt via dbt_runner/.venv/bin/dbt](reference_rama_dw_local_dbt.md) — ~/.local/bin/dbt is dbt-fusion (no duckdb); dbt_runner venv + --project-dir + token from rill/.env
-- [silver_core.category_master (#261) + #366 SAP names](project_category_master_261.md) — MATKL→Div/Subdiv/Cat/Subcat (ADR 0033); category_hierarchy=business overlay (#277)
-- [gold.sales_wide #380 — named merch hierarchy LIVE](project_sales_wide_380.md) — ADR 0042; bill_key #356 fix; MD giant full-refresh hits lease limit → ALTER for renames
-- [#554 return-key collision FIXED (ADR 554)](project_return_key_554.md) — return_no recycles → return_key on ret_pk built in SILVER (ADR 554: composite keys silver-built); gold txn_key; #561/#562
-- [Name for self-evidence + AI-legibility, not jargon](feedback_naming_self_evident_ai_legible.md) — Subdivision/Subcategory over Class/Subclass; record aliases in ADR+CONTEXT
-- [silver_sap.inventory stock models (#243)](project_sap_silver_inventory.md) — on-hand=SUM(NSDM stock_qty) by MATNR×WERKS (ADR 0015); negatives=#244
-- [Daily pipeline health check (#206)](project_daily_pipeline_health_check.md) — gold.freshness → run_events → layer _loaded_at + run_results (source-down vs transform)
-- [rama_dw deployment topology](reference_rama_dw_deployment_topology.md) — push origin main → Railway auto-deploy (watch-path gated); deploy.sh=secrets only; only SAP+ESSL on box
-- [StyleHR bronze MIGRATED to Railway (#413)](project_stylehr_railway_413.md) — service stylehr-bronze sfo, 3 static IPs, cron 30 4; box timer retired
-- [Railway static IPs + CLI ops](reference_railway_static_ip_and_cli_ops.md) — 3 region-bound egress IPs to whitelist; Railway MCP REMOVED → `railway` CLI is THE path; root-dir=dashboard-only
-- [#204 Postgres control-plane rollout](project_control_plane_204_status.md) — gofrugal+zakya LIVE on Railway PG; ADRs 0028–0030; cutover = reconcile EVERY stateful control.* table
-- [Load cost: incremental by default](feedback_load_cost_incremental_default.md) — ADR 0032: NEVER a scheduled full-refresh of a marker-having table
-- [Control-plane query model + bronze dup safety](reference_control_plane_query_model.md) — control.<ext>_grid = completeness oracle; NEVER bulk-delete landing.* (#238)
-- [Constrained-resource: read-once + fill-window](feedback_constrained_resource_two_sided.md) — never re-read a constrained source AND never leave its window idle; HANA is the bottleneck
-- [Persist hand-gathered ops knowledge to docs/agents/](feedback_persist_handgathered_ops_knowledge.md) — infra/deploy knowledge → docs/agents/, not just the transcript
-- [Run heavy SAP work ON THE BOX](feedback_run_sap_work_on_the_box.md) — Mac↔HANA VPN-flaky; nohup on box, monitor via MD; clear ~/.dlt/pipelines before clean --refresh
-- [Be critical on operational-safety](feedback_destructive_ops_and_recoverable_design.md) — destructive ops → stop+options+confirm; fix the mechanism; verify the authoritative signal
-- [rama-vpn controllable from Bash](reference_rama_vpn_control.md) — connect/disconnect/status work; confirm before dropping a live tunnel
-- [CEO issues = requirements, not design](feedback_ceo_requirements_not_design.md) — rbchandran issues relay ChatGPT designs; take the business need, own the data model
-- [Silver keeps header + line separate](feedback_silver_no_flatten_header_line.md) — model header & lines separately; flatten into one fact only at Gold
-- [Curation: classify per-table](feedback_curation_no_mechanical_defaults.md) — analyze each table properly; review only genuinely ambiguous ones
-- [rama_dw env & run](reference_rama_dw_env_and_run.md) — HANA in .env.local, MD token rill/.env; **hdbcli takes `?` not `%s`**; SSH probes = write a FILE
-- [sap-bronze deploy box rmail@192.168.2.76](reference_sap_bronze_deploy_box.md) — AlmaLinux, key rama_deploy_ed25519, app ~/sap_bronze, secrets .env.run; reaches HANA directly; pkill/XDG ssh gotchas inside
-- [sap-bronze throughput is HANA-read-bound](reference_sap_bronze_throughput.md) — off-peak 1.6–4.8k/s; merge≈2× append; arrow blocked by Decimal scale-drift; #118
-- [SAP date-cursor giants can't use dlt incremental](reference_sap_header_ride_dedup_cliff.md) — low-res date-cursor giants cliff; refresh via backfill-trailing; cursor RESOLUTION is the divider
-- [Bronze curation is profiling-driven](feedback_bronze_curation_profiling_driven.md) — keep a field iff key/watermark/deletion OR alive in client 200; ADR 0010
-- [The "tableau rule": defaults + override](feedback_tableau_rule_defaults.md) — 80% default + easy override; reuse prior ADRs; resolve fact-questions yourself
-- [Propose defaults, don't gate on TODO(human)](feedback_propose_defaults_dont_gate.md) — pick thresholds/cadences with rationale; overridable config isn't a blocking decision
-- [Impl workflow: issue → grill → plan → code](feedback_always_file_issue_and_plan_before_coding.md) — plan-FIRST not approval-always; execution-type work runs straight through post-plan (§6)
-- [Grill design + capture rationale in plan](feedback_grill_design_then_capture_rationale_in_plan.md) — for design-shaping decisions: alternatives+why INTO the plan; don't manufacture grills for settled designs
-- [Grill: ONE question at a time](feedback_grill_batch_all_questions.md) — one at a time with a recommendation; do NOT batch (reversed 2026-06-24)
-- [Grill question format: A/B/C or y/n](feedback_grill_question_format.md) — answerable in one keystroke; never vague "Do you agree?"
-- [Post issue drafts to GitHub, not local MD](feedback_post_to_github_not_local.md) — `gh issue create --body-file`, never docs/issue-drafts.md
-- [File retroactive issues as dated-comment history](feedback_github_issue_as_history.md) — issue body = plan; dated comments reconstruct the chronology
-- [Write interpretation, not just facts](feedback_write_interpretation_not_just_facts.md) — explain what a finding means for a human, not just raw numbers
-- [Done = code + commit + deploy + update issue](feedback_implementation_closeout_loop.md) — land each slice fully without being asked
-- [Follow-ups: plan Out-of-scope / impl→chip](feedback_followup_items_filed_at_closeout.md) — planning follow-ups `Follow-up:` filed at close-out; impl-time tangents → spawn_task chip
-- [Commit messages: per-issue context lines](feedback_commit_reference_issues_with_context.md) — each `Refs #N` gets a sentence on how the commit relates
-- [Push after commit when work is complete](feedback_push_after_commit.md) — completed work → push immediately (`Closes #N` fires on push)
-- [Zakya backfill: one day at a time](feedback_zakya_backfill_one_day.md) — each day separately (from==to), never multi-day; resumable ~17-min units
-- [Worktree useless for untracked cleanup](feedback_worktree_useless_for_untracked_cleanup.md) — fresh worktrees lack `??` files; check `git status` before EnterWorktree
-- [Worktree file links resolve against main root](feedback_worktree_file_links_resolve_main_root.md) — bare `docs/…` links to worktree-only files error; use full worktree path until merged
-- [Zakya rebranded to Zoho POS](project_zakya_rebrand_zoho_pos.md) — same product; api.zakya.in/inventory/v1 + zohoapis.in/pos/v1 coexist
-- [Rama VPN reaches BOTH SQL Server and Zoho](feedback_vpn_blocks_zoho_api.md) — full-tunnel but FortiGate permits internet egress; single pipeline
-- [Don't use AskUserQuestion when user is reading](feedback_no_askuserquestion_when_reading.md) — the modal hides text; plain-text prompts during walkthroughs
-- [GoFrugal bronze is field-curated](project_gofrugal_bronze_curated_not_full.md) — drop dead/constant/dup fields at bronze; keep-list per feed (#48)
-- [GoFrugal erp_ref_code = SAP item code](reference_gofrugal_erp_ref_code_is_sap.md) — keep it; item_code is GoFrugal-internal
-- [MotherDuck MCP routing](reference_motherduck_mcp_routing.md) — mcp__motherduck-jeyarama for rama_dw; UUID-named (fa37d000) is a different account
-- [dbt run_results: tests land in my_db](reference_dbt_run_results_tests_my_db.md) — test target_relation always my_db.dbt_test__audit.*; split monitoring by a layer CASE
-- [Zakya Tenderwise Dive → gold.tender_lines (#180)](project_zakya_tenderwise_payment_dive.md) — gold-only; silver invoice_tender_lines + gst_treatment; #411/#412
-- [Model the atomic fact, rewrite the consumer onto it](feedback_model_atomic_fact_rewrite_consumer.md) — build the lowest-grain gold fact + rewrite the report onto it (ADR 0017)
-- [Gold-only Dive: materialize _wide as a TABLE](gotcha_gold_only_dive_materialize_wide_as_table.md) — a Dive on a gold VIEW auto-requires the silver shares behind it (#180)
-- [MotherDuck planner bug on JSON `=` WHERE](reference_motherduck_json_where_planner_bug.md) — `_payload->>'k'='x'` throws spurious cast error; filter by date-cast only
-- [Always clean up merged branches/worktrees](feedback_cleanup_merged_branches.md) — after merge delete remote + local (`-D`) + worktree; never the live session's own
-- [Tailscale mesh #229](project_tailscale_mesh_229.md) — box sap-box=100.109.150.99 LIVE subnet router; `ssh rmail@100.109.150.99` works (VPN-drop fallback); ADR 0031
-- [#121/#286/#295 SAP finance silver LIVE](project_sap_116b_partition_bootstrap.md) — spool cutover + append-only silver (acdoca 135M/bseg 106M); bseg DISABLED; macOS sed no `\b` use perl
-- [Loading box→MotherDuck: chunk small files](reference_md_load_chunking_from_box.md) — ~240KB/s + MD deadline → ~500k-row Arrow slices, resumable
-- [my_db→DW migration: gold-only dive migration](project_mydb_migration.md) — CEO's ~143 dives onto gold-only conformed star; epic #191; artifacts docs/migration/
-- [#249 store-dimension standardization](project_store_dimension_249.md) — ADR 0032 (plant canonical, store=view); slice 2 StyleHR recon PR #264
-- [SAP plant master = bronze_sap.master.t001w](reference_sap_plant_master_t001w.md) — 58 plants; plant_type from name1+vlfkz; entity/region from vkorg NOT regio
-- [#307 reference-data editing surface on Teable Cloud](project_reference_data_teable_307.md) — 4 tables live, base bsel9E8xTO9V3ZrOxmV; MD sync=step-2
-- [Teable Cloud REST API access](reference_teable_api_access.md) — root app.teable.ai/api; **browser User-Agent required (Cloudflare 1010)**; token=Railway secret
-- [Worktree: never cd to the main checkout for git](feedback_worktree_dont_cd_to_main_checkout.md) — git runs in the SHARED checkout → commits on wrong branch; use abs paths for main resources
-- [Worktree sync reverts uncommitted edits](feedback_worktree_sync_reverts_uncommitted.md) — cowork worktrees reset to HEAD within seconds; apply-and-commit in ONE bash call
-- [#436 report server LIVE at dash.jeyarama.com](project_report_server_436.md) — corporate Internal OAuth (#450/#451); rendered-HTML-is-the-cache, 0 MD reads/view
-- [Build the tracer when Siraj says "I want to see first"](feedback_build_tracer_show_dont_finalize.md) — ship the visible slice, park forks explicitly (stubbed), re-open after
-- [Wrap-up: auto-execute obvious saves, gate only disagreement](feedback_wrapup_auto_execute_obvious.md) — fact-recording saves go through + inform; gate live-behavior, outward comms, judgment
-- [Rill Cloud CANCELLED 2026-07-09 (#508)](project_rill_cancelled_508.md) — sunset 08-01; access_grants (#377)+seeds SURVIVE; enforcement→#455; [[project_rill_access_control_363]]
-- [Brainstorm style: grill one question at a time, with visuals](feedback_brainstorm_style.md) — set context before each design question; visual companion pre-approved (never re-ask consent)
-- [Demystify jargon — map to familiar terms](feedback_demystify_jargon.md) — lead with the plain-English equivalent ("facets = filters"); use the user's vocabulary
-- [feather discover stays alive serving the schema viewer](feedback_feather_discover_ui_server.md) — not a hang; results durable in schema_*.json + state file before the HTTP server starts
-- [Legacy /opt/DownloadSetup ETL fully stopped 2026-06-17](project_legacy_zakya_loader_stopped.md) — SAP #143 / GoFrugal #144 / Zakya #145; ⚠️ SAP parity NOT met; `.62` frozen but consumers still read it
-- [#248 matdoc 4× stock fix + dlt merge-key LESSON](project_matdoc_248_stock_fix.md) — MDOC/MDOC_CP need the 4-tuple key; repair-table + silver dedup (PR #282); NEVER change a dlt merge_key on a live table
+- [⭐⭐ RESUME HERE: sales-target rollout #3783 — priority list (delete retired CDC pair → prod rebuild chunk 3 → end trial → access rights)](project_sales_target_rollout_3783.md) — trial live on dev; Siraj merges #3775 himself
+- [⛔ Target achievement = marts.sales.target_vs_actual_daily — NEVER flat-spread a monthly target](feedback_use_daily_target_never_flat_spread.md) — Siraj 07-Oct
+- [⛔ Scratchpad (/tmp) is PURGED within days — commit durable work to a repo branch the SAME session](gotcha_scratchpad_is_purged_move_work_to_repo.md) — lost all 05-Oct #3783 work by 08-Oct
+- [⭐ Settle routine design choices with Siraj's 3 principles + adopted rules (docs/business-rules/warehouse-decision-principles.md); ask only on conflict](feedback_apply_decision_principles.md) — 09-Oct
+- [⛔ Fable: ASK before every launch — the no-ask window for complex reviews ended 09-Oct 15:30 IST](feedback_ask_before_fable_review.md) — otherwise reviewer = a different non-Fable model
+- [MotherDuck shares can be TABLE/SCHEMA-level since 21-Aug-2026 (INCLUDE_PATTERN) — never say 'per database only'](reference_motherduck_table_level_shares.md) — Business/Enterprise tier
+- [⛔ Discuss requirements + design options BEFORE deciding, coding or merging](feedback_discuss_design_before_code_or_merge.md) — Siraj 05-Oct; outranks the execution-type gate
+- [⛔ Nothing into Featherbase prod until Siraj approves — stage in dev, review, then promote](feedback_stage_in_dev_promote_to_prod_on_approval.md) — 05-Oct; data diff/promotion mechanism TBD
+- [RB meeting 05-Oct: app shape "Retail Operations", hierarchy SM→FM→DM→TL, whole-store visibility, cross-selling](project_retail_operations_app_shape_rb_05oct.md) — requirements, not decisions
+- [⭐ Railway names RENAMED 03/04-Oct: jeyarama-etl, jeyarama-control-plane-db, --service jeyarama-feather-answers, jeyarama-cdc](reference_railway_names_04oct.md) — old names no longer resolve; read before any railway -s/--service
+- [⭐ October 2026 forecast (KL #4004, TN #4005): OUR forecast is the live target](project_forecasting_october_4004.md) — rev 4 live; #3901 automation live 02-Oct; cold build blocked by #4020; KL Puja shift #4033
+- [⛔ SAP: ONE job manager — never add timers, budgets, lock-skips or wait scripts](feedback_sap_one_job_manager_no_patch_scripts.md) — Siraj 04-Oct, #4094
+- [⭐ WIP 06-Oct 10:40: U+attendance DONE; Fable OOM→Mega window→#4135; #4090 decisions A/B/C pending — PENDING list](project_wip_02_03_oct_test_and_lane_overhaul.md) — read FIRST on resume
+- [⛔ git stash is SHARED across worktrees — a pop can apply another session's stash](gotcha_git_stash_is_shared_across_worktrees.md) — swap files via git show / git checkout instead
+- [⛔ Name the SENDER account + recipients and wait for yes before sending anything](feedback_confirm_sender_before_sending.md) — Outlook connector sends as Siraj@bisquared.com, not jeyarama; draft first
+- [Mail = styled HTML draft via the GMAIL connector as siraj@jeyarama.com (use background-color:, never background:; ALWAYS hand Siraj the Gmail viewUrl link); RB = "Hi Bala Anna,"](feedback_mail_drafts_in_outlook.md) — Siraj 06-Oct
+- [Merge as ready; CI/test fix FIRST; flag only risks and design changes](feedback_merge_as_ready_ci_fix_first.md) — Siraj 02-Oct: no per-merge permission, but never merge on pending CI
+- [Report style for RB/COO: stacked tables + Read: line, store short codes, honest both ways](feedback_report_style_answer_first_honest.md) — reuse the two-shop error/bias example
+- [⭐ Morning refresh runbook = #3748 comment 5774898777 — plus the 01-Oct Railway-approval outage](project_automated_refresh_runbook_3748.md) — since 02-Oct #3901 adds forecast_publish lane + unit P (planning) in the cold build; readiness has THREE disagreeing stores (#3987); NEVER wrap the tick in with_tick_lock; hand --cold-build needs the PUBLIC pg DSN; why only 2 services gate is UNRESOLVED
+- [#3876 / PR #3880 Zakya cone automation — MERGED 628ff043, runner UN-PARKED 21-Sep 16:40](project_zakya_cone_automation_3876.md) — worker + hot/cold tiers LIVE 22-Sep (#3890); see the refresh runbook
+- [#3841 marc/mvke — FIXED: PR #3843 merged 20-Sep, repair run 21-Sep, delta 0](project_sap_entity_grid_reseed_3841.md) — hi values are DERIVED per re-seed, never copied
+- [#3608 SAP loses rows readable AFTER the watermark — 4 mechanisms](project_sap_incremental_row_loss_3608.md) — PR #3850 MERGED (in #3810); lookback clean in prod; history NOT healed → #3871
+- [⛔ Read PR REVIEWS, not just CI — both my "ready" PRs carried BLOCKs](feedback_read_pr_reviews_not_just_ci.md) — check before every merge/deploy ask
+- [Before EACH merge in an authorized rollout: plan · impact · test, then verify](feedback_announce_impact_test_before_each_merge.md) — no per-step gate, but never skip the announcement
+- [etl-box keeps NO persistent systemd journal](gotcha_etl_box_has_no_persistent_journal.md) — ~/sap_bronze/logs/*.log is the only history
+- [#2878 must be SQUASH-merged — carries 26 Excel packs to prune](project_pr2878_squash_merge_excel_packs.md) — forecasting review branch; mart = `mart_forecasting`
+- [#3809 AX history → bronze_ax_retail — PR #3863 OPEN, walker proved on the box, full backfill NOT run](project_ax_history_backfill_3809.md) — code in the box worktree ~/ax-deploy; owner = service account ax_retail_extract
+- [A green crash rung can hide the defect — run the SUCCESSOR run](feedback_a_green_rung_can_hide_the_defect.md) — and a watcher timeout is not a death
+- [#3443 gold.warehouse_health MERGED 10-Sep — five pillars, published, never blocking](project_warehouse_health_surface_3443.md) — dev-only; NO prod build; dive written but UNSAVED (dive identity cannot see dev_gold)
+- [#3700 StyleHR specs NOT WRITTEN — evidence handed off on the issue](project_stylehr_specs_3700.md) — #3701 payslips down since 16-Sep
+- [#3453 the dev clone drifted from prod on column TYPE](project_dev_prod_type_divergence_3453.md) — "green on dev" no longer proves a prod build; blocks freshness on the most-read relation
+- [#3382 cashier_award_factors — FIXED, PR #3383 MERGED 09-Sep](project_cashier_award_factors_3382.md) — unit L state: #3874
+- [gold.health.freshness = the everyday freshness check](reference_gold_health_freshness_is_the_daily_check.md) · [#1821 GRN/PO fill-rate — UK's job STOPPED 05-Sep](project_grn_view_fill_rate_1821.md)
+- [silver_ptp reachable ONLY by its share URL](gotcha_silver_ptp_only_reachable_by_share_url.md) · [#3354 gold.main compat aliases — PR #3355 OPEN](project_gold_main_compat_views_3354.md)
+- [Retire old names by ALIAS + one-week notice, never a hard break](feedback_alias_and_notice_never_break_dives_or_powerbi.md) · [#3313 GoFrugal "drift" = scheme discount — FIXED, NOT BUILT](project_gofrugal_discount_basis_3313.md)
+- [#3225 Zakya invoices IMMUTABLE — corrections are sales returns](project_edge_repoll_lag_3225.md) · [#3222 SUPERSEDED 06-Sep](project_invoice_lines_backfill_3222.md)
+- [Re-read the issue + upstream PR state BEFORE each phase](feedback_reread_the_issue_and_upstream_pr_between_phases.md) · [⛔ gold VIEW over silver BREAKS Power BI — #3408 claim SUPERSEDED (#3679)](gotcha_gold_view_over_organization_silver_is_safe.md)
+- [`experimental` DB is UNSHARED — invisible to Dive-serving identity](gotcha_experimental_database_is_unshared.md) · [#3396 replenishment — PR #3434 MERGED 10-Sep](project_replenishment_frozen_3396.md) — prod hand-run owed
+- [RB's 14 authoritative Dives are the dependency set (#3410)](project_dive_keep_list_3410.md) · [Epic #3162 dbt rewrite — runner PARKED](project_dbt_rewrite_3162.md)
+- [#3224 one sales target — PR A #3289 / PR B #3290](project_target_consolidation_3224.md) — weekday basis = AVERAGE not sum
+- [code = human-readable, number = numeric](feedback_code_is_human_readable_number_is_numeric.md) · [Always show at least one real row](feedback_always_show_a_sample_row.md)
+- [#2826 one control plane COMPLETE](project_one_control_plane_2826.md) — open #3128 #3099
+- [A chip Siraj is working owns its area until it hands back](feedback_chip_owns_its_area_until_it_hands_back.md) · [Explain step by step BEFORE options](feedback_explain_step_by_step_before_options.md)
+- [Never pressure to resume parked prod](feedback_no_pressure_to_resume_prod_controlled_builds.md) · [ADRs are NOT fixed rules — check, then amend](feedback_adrs_are_not_fixed_rules.md)
+- [Epic #2983 SAP coverage CLOSED](project_sap_coverage_epic_2983.md) · [#3079 pg_md_cdc runtime MERGED](project_pg_md_cdc_runtime_3079.md)
+- [#2870 control-plane CDC SHIPPED](project_control_plane_cdc_2870.md) · [#2833 load-reconciliation SHIPPED](project_gold_load_reconciliation_2833.md) — checked_at is naive IST
+- [#3177 layer-access registry SHIPPED](project_layer_access_registry_3177.md) — open #3213 #3214 · [DuckDB caches the MotherDuck session PER PROCESS](gotcha_duckdb_caches_motherduck_session_per_process.md)
+- [#3316 dw_admin role LIVE](project_dw_admin_role_bronze_3316.md) — PR #3318 blocked by #3351 · [shared_with_me OMITS HIDDEN shares](gotcha_shared_with_me_omits_hidden_shares.md)
+- [railway.json is NOT authoritative; cron deploy does not run](gotcha_railway_json_not_honoured_and_cron_deploy_does_not_run.md) · [#2851 Featherbase CDC pilot SHIPPED](project_featherbase_cdc_pilot_2851.md)
+- [Split physics from policy when Siraj challenges a design](feedback_split_physics_from_policy.md) · [control.event has THREE status vocabularies](gotcha_control_event_vocabulary_is_per_extractor.md)
+- [openpyxl output makes Excel offer to repair](gotcha_openpyxl_excel_repair.md) — use xlsxwriter · [#3153 query monitor SUPERSEDED by #3364](project_warehouse_query_monitor_3153.md)
+- [query_history is RETAINED INDEFINITELY, not rolling](reference_motherduck_query_history.md) · [MotherDuck bills wall-clock compute AND failsafe storage](reference_motherduck_billing.md)
+- [⛔ query_history CANNOT reproduce a MotherDuck invoice](project_motherduck_invoice_reconciliation_3364.md) · [dbt FULL REBUILD = the `__dbt_backup` rename](gotcha_dbt_materialisation_from_query_history.md)
+- [Test the recollection he actually made](feedback_answering_a_different_question_reads_as_refutation.md) · [Epic #2400 FY25-26 budget-basis audit](project_fy2526_budget_basis_audit_2400.md)
+- [CEO-forwardable issues: ONE self-contained body](feedback_ceo_forwardable_issues.md) · [Cross-session routing: names collide](reference_cross_session_routing.md)
+- [Zakya Sales Summary anchor PULLED](project_zakya_sales_summary_anchor_2624.md) · [line-feed loss](project_zakya_line_feed_loss_2592.md)
+- [#2957 SHIPPED — Zoho report API serves a CACHED day](project_till_sessions_stale_cache_2957.md) — `source_not_settled` is non-terminal
+- [A check is not evidence until the base contains origin/main](feedback_a_check_is_not_evidence_until_the_base_contains_main.md)
+- [Zakya /export omits end-of-day invoices](gotcha_zakya_export_omits_end_of_day_invoices.md) · [extract "ok" can be a PHANTOM load](gotcha_zakya_extract_ok_can_be_a_phantom.md)
+- [Uday MIS field requests — 5 of 6 LIVE](project_uday_mis_field_requests.md) — org code=VKORG; SKU=barcode
+- [Renaming a dbt test leaves a RED tombstone](gotcha_dbt_test_rename_leaves_red_tombstone.md) — never prune
+- [dbt_runner has TWO targets (default dev)](gotcha_dbt_profiles_single_target_is_prod.md) — local prod token DELIBERATELY inert
+- [Verify a rule's premise actually occurs](feedback_verify_a_rules_premise_occurs.md)
+- [#534 StyleHR ownership COMPLETE](project_stylehr_split_brain_534.md) · [bronze RESOLVED](project_stylehr_bronze_1602_resolved.md) · [Railway #413](project_stylehr_railway_413.md) · [MIS grid #397](project_stylehr_attendance_summary_397.md)
+- [ADR 1041 warehouse layout ACCEPTED](project_warehouse_layout_1041.md) — gold=1 DB + subject schemas
+- [Reference sweeps must match BOTH spellings](feedback_reference_sweep_both_spellings.md) · [Filter in query, not baked into a mart](feedback_filter_in_query_not_baked_mart.md)
+- [Check ADR authorship before citing](feedback_verify_adr_provenance.md)
+- [#2702 retired dive CODE — dives themselves LIVE](project_dive_retirement_2702.md) · [#1037 replenishment REPOINT](project_replenishment_1037.md)
+- [MotherDuck dives: only OWNER can delete](gotcha_motherduck_dive_permissions.md) · [Mirror-dive repo copy OBSOLETE](gotcha_mirror_dive_repo_copy_is_stale.md) · [materialize _wide as TABLE](gotcha_gold_only_dive_materialize_wide_as_table.md)
+- [Verify the copy LIVE right before deleting each original](feedback_verify_copy_before_deleting_original.md)
+- [#215/#298 box deploy: substrate=containers](project_box_deploy_215_298.md) — box=SAP+ESSL only
+- [#465 ESSL punches already in StyleHR](project_attendance_punches_465.md) · [recon ROOT CAUSE #482](project_essl_stylehr_recon_482.md)
+- [#760 KL Negative SOH repoint PARKED](project_negative_soh_dive_repoint_760.md)
+- [#474 layer access-control LANDED (ADR 0049)](project_layer_access_474.md) · [#478 report rationalization](project_report_rationalization_478.md)
+- [Merge to main before chips; ADR# claimed on main](reference_worktree_adr_and_chip_hygiene.md)
+- [Show worked examples before a decision question](feedback_show_examples_before_decision_question.md) · [Build the tracer first](feedback_build_tracer_show_dont_finalize.md) · [Brainstorm style](feedback_brainstorm_style.md) · [Demystify jargon](feedback_demystify_jargon.md)
+- [#458 P&L budget fact LIVE](project_pl_budget_458.md) — store×month×pl_line; ex-GST
+- [dbt run timing in run_results](reference_dbt_run_results_md_table.md) · [tests in my_db](reference_dbt_run_results_tests_my_db.md)
+- [Show DQ details, never bury](feedback_show_dq_details_never_bury.md)
+- [silver_ptp.conform #386 LIVE](project_ptp_conform_386.md) · [merge-only allow-list #537](project_ptp_bronze_curation_537.md) · [PTP→Railway #517](project_ptp_railway_517.md)
+- [Consumer source: gold > silver > bronze](feedback_consumer_source_prefer_gold_over_silver_over_bronze.md) · [Silver fixes DQ; gold does none](feedback_silver_fixes_dq_not_gold.md)
+- [Ask only when your vantage could change the answer — technical choices are MINE, grill only business/scope](feedback_ask_only_when_vantage_changes_answer.md)
+- [Run local dbt via dbt_runner/.venv/bin/dbt](reference_rama_dw_local_dbt.md) — ~/.local/bin/dbt is dbt-fusion
+- [gold.sales_wide #380 LIVE](project_sales_wide_380.md) — giant full-refresh → ALTER
+- [Name for self-evidence + AI-legibility](feedback_naming_self_evident_ai_legible.md)
+- [silver_sap.inventory (#243)](project_sap_silver_inventory.md) · [finance silver LIVE](project_sap_116b_partition_bootstrap.md) · [overnight drain watchdog](project_sap_overnight_drain_watchdog.md)
+- [Railway services renamed 05-Sep](reference_railway_api_and_service_names.md) — deleting a service leaves its volume
+- [rama_dw deployment topology](reference_rama_dw_deployment_topology.md) · [static IPs + CLI ops](reference_railway_static_ip_and_cli_ops.md) · [railway CLI lies five ways](gotcha_railway_ssh_lies_three_ways.md)
+- [Load cost: incremental by default](feedback_load_cost_incremental_default.md)
+- [Control-plane query model + bronze dup safety](reference_control_plane_query_model.md) — NEVER bulk-delete landing.*
+- [Constrained-resource: read-once + fill-window](feedback_constrained_resource_two_sided.md) — HANA is the bottleneck
+- [Persist hand-gathered ops knowledge to docs/agents/](feedback_persist_handgathered_ops_knowledge.md) · [Run heavy SAP work ON THE BOX](feedback_run_sap_work_on_the_box.md)
+- [Be critical on operational-safety](feedback_destructive_ops_and_recoverable_design.md) — stop+options+confirm
+- [rama-vpn controllable from Bash](reference_rama_vpn_control.md) — confirm before dropping a live tunnel
+- [Harish Menon = Home LOB owner (NOT RB)](project_stakeholder_harish_menon_home_lob.md)
+- [CEO issues = requirements, not design](feedback_ceo_requirements_not_design.md) · [Silver keeps header + line separate](feedback_silver_no_flatten_header_line.md)
+- [rama_dw env & run](reference_rama_dw_env_and_run.md) — MD tokens in `secrets/motherduck.env`
+- [sap-bronze box = analytics@192.168.2.60](reference_sap_bronze_deploy_box.md) · [HANA-read-bound](reference_sap_bronze_throughput.md) · [date-cursor giants](reference_sap_header_ride_dedup_cliff.md) · [box log + grid contract](reference_sap_bronze_log_and_grid_contract.md)
+- [Bronze curation is profiling-driven](feedback_bronze_curation_profiling_driven.md) · [classify per-table](feedback_curation_no_mechanical_defaults.md) · [curation before algorithm](feedback_curation_before_algorithm.md)
+- [Tableau rule: defaults + override](feedback_tableau_rule_defaults.md) · [propose defaults, don't gate](feedback_propose_defaults_dont_gate.md)
+- [Impl workflow: issue → grill → plan → code](feedback_always_file_issue_and_plan_before_coding.md) · [every change gets its OWN issue](feedback_every_change_own_issue_even_polish.md)
+- [Grill: capture rationale in plan](feedback_grill_design_then_capture_rationale_in_plan.md) · [ONE question at a time](feedback_grill_batch_all_questions.md) · [A/B/C format](feedback_grill_question_format.md)
+- [Post issue drafts to GitHub](feedback_post_to_github_not_local.md) · [Retroactive issues as dated comments](feedback_github_issue_as_history.md) · [Business-facing titles](feedback_business_facing_issue_titles.md)
+- [Write interpretation, not just facts](feedback_write_interpretation_not_just_facts.md)
+- [Done = code + commit + deploy + update issue](feedback_implementation_closeout_loop.md) · [Follow-ups at closeout](feedback_followup_items_filed_at_closeout.md) · [Commit messages: per-issue context](feedback_commit_reference_issues_with_context.md)
+- [Zakya backfill: one day at a time](feedback_zakya_backfill_one_day.md)
+- [Worktree gotchas](feedback_worktree_dont_cd_to_main_checkout.md) — PULL DAILY · [sync reverts uncommitted](feedback_worktree_sync_reverts_uncommitted.md) · [useless for untracked cleanup](feedback_worktree_useless_for_untracked_cleanup.md) · [links resolve main root](feedback_worktree_file_links_resolve_main_root.md) · [dirty main checkout may be live](gotcha_dirty_main_checkout_may_be_live.md)
+- [#2159/#2161 Zakya recon CLOSED](project_zakya_recon_2159_2161.md) — SAP leg 2 not started
+- [Rama VPN reaches BOTH SQL Server and Zoho](feedback_vpn_blocks_zoho_api.md) · [No AskUserQuestion when user is reading](feedback_no_askuserquestion_when_reading.md)
+- [GoFrugal bronze lands the FULL payload](project_gofrugal_bronze_curated_not_full.md) — sold_mtr_qty ≠ sold_qty
+- [GoFrugal erp_ref_code = SAP item code](reference_gofrugal_erp_ref_code_is_sap.md)
+- [MotherDuck MCP routing](reference_motherduck_mcp_routing.md) · [planner bug on JSON `=` WHERE](reference_motherduck_json_where_planner_bug.md) · [NEVER use MD MCP](feedback_duckdb_cli_over_mcp_for_queries.md) · [catalog lags a write — a COUNT lies too; two-signal rule](gotcha_motherduck_catalog_lags_a_write.md)
+- [Model the atomic fact, rewrite the consumer onto it](feedback_model_atomic_fact_rewrite_consumer.md) — ADR 0017
+- [Always clean up merged branches/worktrees](feedback_cleanup_merged_branches.md) — never the live session's own
+- [Box→MotherDuck: chunk small files](reference_md_load_chunking_from_box.md)
+- [⛔ NEVER analyse from mydb_share](project_mydb_migration.md) — ladder = gold→silver→bronze→source
+- [#249 store-dimension standardization](project_store_dimension_249.md) · [SAP plant master = t001w](reference_sap_plant_master_t001w.md)
+- [#307 reference-data on Teable Cloud](project_reference_data_teable_307.md) · [API needs browser User-Agent](reference_teable_api_access.md)
+- [#436 report server LIVE](project_report_server_436.md) · [local replica #1674](project_report_server_replica_1674.md) · [Login gate domains](project_login_gate_domains_2108.md) · [access explorer #2250](project_access_explorer_2250.md) · [local report preview](reference_local_report_preview_2612.md) · [publish needs THREE syncs](gotcha_report_server_publish_order.md) · [seed does NOT reach report_server](gotcha_dbt_seed_does_not_reach_report_server.md)
+- [Wrap-up: auto-execute obvious saves](feedback_wrapup_auto_execute_obvious.md)
+- [Merge-only NEVER removes hard-deleted rows](reference_merge_only_never_removes_hard_deletes.md)
+- [Verify library defaults; don't assert](feedback_verify_library_defaults_dont_assert.md) · [Verify with the oracle that CAN falsify](feedback_verify_with_the_oracle_that_can_falsify.md)
+- ["Not in the system" needs a positive control](feedback_absence_claims_need_positive_control.md)
+- [Prove a refactor against a CONSTRUCTED old build](feedback_refactor_equivalence_diff_old_build_not_live_table.md)
+- [#770-#1009 Feather Answers LIVE](project_semantic_layer_bakeoff_770.md) — open #1009, #873/#874, #899, #864
+- [Malloyyo instance ops](reference_malloyyo_ops.md) · [Malloy: compiles ≠ serves](gotcha_malloy_imports_dont_export.md)
+- [Product naming ≠ warehouse naming rules](feedback_product_naming_scope.md) · [Don't quick-dismiss ecosystem tools](feedback_dont_dismiss_ecosystem_tools.md)
+- [A dangling citation is worse than none](feedback_dangling_citation_is_worse_than_none.md) · [Cite an issue → give its essence](feedback_summarize_issue_essence_when_citing.md)
+- [#2095 MERGED — price_band_edge is the one band definition](project_price_band_edges_2095.md) — #2091 owes ADR
+- [Rounding steps are category-shaped](feedback_rounding_step_is_apparel_shaped.md) · [`grep` is ugrep — sweep traps](gotcha_grep_is_ugrep_skips_binary.md)
+- [Finish the work — don't checkpoint mid-task](feedback_finish_the_work_dont_stop.md) — both-ways → toggle
+- [On inconsistency or an unstated choice: ASK with options](feedback_ask_on_inconsistency_dont_assume.md) — narrows "finish the work"
+- ["Launch a chip" = spawn_task](feedback_chip_means_spawn_task_not_background_agent.md) · [Test the RENDERED markup](feedback_test_the_rendered_output_not_the_function.md)
+- ["scope CTE only" is a lie](gotcha_scope_cte_only_is_a_lie.md)
+- [RB's Aug-target cluster: ruled, not built](project_rb_aug_target_cluster_unbuilt.md)
+- [Non-secret config in repo, not Railway env](feedback_config_in_repo_not_railway_env.md)
+- [Anomalies are inconsistency, not absence](feedback_anomaly_is_inconsistency_not_absence.md)
+- [Page JS needs HTTP, not file://](reference_browser_verification_traps.md) · [Open HTML in Chrome](feedback_open_html_deliverables_in_chrome.md) · [Sticky <th> traps](gotcha_sticky_th_and_overflow_css.md)
+- [Verify a report template with NO replica](reference_render_a_report_template_without_a_replica.md)
+- [Feather value playbook artifact — PRIVATE, never share](project_feather_value_playbook.md)
+- [MD write lease SUPERSEDED — duckling resize](gotcha_motherduck_write_lease_and_alter_column.md) · [Resize dbt duckling via REST — PUT needs {"config":…}](reference_duckling_resize_rest_api.md) — Mega for heavy runs, back to Jumbo/60 s
+- [EVERY convertible model → incremental, no "too small" exemption; walk through each separately](feedback_incremental_everything_convertible.md)
+- [Issue 3748: cheap units ALWAYS run daily — never ask, no "source moved?" skip](feedback_cheap_units_always_run.md)
+- [Refresh-unit status: inline per unit, one line per layer, "yesterday 9:36 pm"](feedback_unit_status_report_format.md)
+- [Known red dbt test → plain severity warn, NO hard-coded counts](feedback_known_red_test_plain_warn.md)
+- [DuckDB round() returns DOUBLE](feedback_money_round_returns_double.md) — cast ::decimal
+- [A closed DQ fix can be INERT](gotcha_closed_dq_fix_can_be_inert.md) — count the flag, don't trust the close
+- [DuckDB COPY reorders rows, flips CRLF](gotcha_duckdb_copy_reorders_and_flips_line_endings.md)
+- [Change a dep → relock in SAME commit](feedback_change_a_dep_means_relock_in_the_same_commit.md)
+- [#2818 dbt build blocked 6 days — SHIPPED](project_dbt_build_blocked_6_days_2818.md) — #2819 open
+- [Tables inline, CSV only on request](feedback_tables_inline_csv_only_on_request.md)
+- [Forecasting programme → EPIC #2949; #2854 CLOSED](project_sept_forecast_arbitration_2854.md) — PR #2878 awaits merge
+- [Do not invent vocabulary — reuse settled terms](feedback_dont_invent_vocabulary_reuse_settled_terms.md)
+- [#2973 KL NULL material_group — resolver SHIPPED](project_kl_null_material_group_2973.md) — history backfill GATED
+- [#3034 SHIPPED 04-Sep — realized SAP margin in silver](project_sap_realized_margin_3034.md) — #3040 gold, #3041 incremental
+- [#743/#3001 SAP landing — round-robin design pending](project_sap_rsp_conditions_743.md)
+- [Explain before changing programs; prove PK unique AND immutable](feedback_explain_before_changing_programs_no_workaround_duplicates.md)
+- [A follow-up issue is not done when consumers can't use the result](feedback_a_followup_issue_is_not_done_when_consumers_cant_use_it.md)
+- [#2979 SAP fleet re-curation IN PROGRESS](project_sap_bronze_recuration_2979.md) — re-pull plan needs Siraj's approval
+- [Post-nightly work = ONE committed queue, never clock timers](feedback_post_nightly_queue_not_clock_timers.md)
+- [sap_bronze tests are NOT in CI; `pytest | tail` masks red](gotcha_sap_bronze_tests_not_in_ci_and_tail_masks_pytest.md)
+- [Verify a fresh MotherDuck write with the RW token — read-scaling replicas lag per table](gotcha_motherduck_catalog_lags_a_write.md)
+- [Self-merging my PR trips the auto-mode classifier; hand box steps to Siraj as `ssh etl-box` commands](gotcha_self_merge_trips_auto_mode_classifier.md) — #3836
+- [#4164 admin training — answer keys in main checkout daily_monitoring/training, git-excluded, NEVER committed](project_admin_training_4164.md) — PR #4167 unmerged

@@ -84,9 +84,6 @@
       "Bash(npx vitest:*)",
       "Bash(git --git-dir=$HOME/.cfg --work-tree=$HOME diff --cached -- ~/.claude/siraj-experiments/feather-evolution/artifacts/skill-audit-lineage.md)",
       "Edit(/.claude/skills/templates/**)",
-      "Read(//Users/siraj/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/**)",
-      "Edit(/.claude/skills/brainstorming/**)",
-      "Edit(/.claude/skills/writing-plans/**)",
       "Bash(mkdir -p /Users/siraj/Dropbox/Siraj/Projects/siraj-claude-vault/cross-project/agent-overrides/commands)",
       "Bash(mkdir -p /Users/siraj/.claude/commands)",
       "Read(//Users/siraj/Dropbox/Siraj/Projects/siraj-claude-vault/cross-project/agent-overrides/**)",
@@ -110,19 +107,128 @@
       "/Users/siraj/.claude"
     ]
   },
-  "hooks": {},
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/siraj/.config/iterm2/cc-status"
+          }
+        ]
+      }
+    ]
+  },
+  "enableWorkflows": false,
   "statusLine": {
     "type": "command",
     "command": "jq -r '\"Context: \\(.context_window.used_percentage // 0 | floor)%\"'"
   },
   "enabledPlugins": {
-    "superpowers@claude-plugins-official": false,
-    "feature-dev@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": true,
     "playground@claude-plugins-official": true,
-    "frontend-design@claude-plugins-official": true
+    "codex@openai-codex": true
+  },
+  "extraKnownMarketplaces": {
+    "openai-codex": {
+      "source": {
+        "source": "github",
+        "repo": "openai/codex-plugin-cc"
+      }
+    }
   },
   "outputStyle": "default",
-  "effortLevel": "high",
+  "effortLevel": "medium",
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": false,
   "skipWorkflowUsageWarning": true,

@@ -18,3 +18,5 @@ How rama_dw services deploy (gathered by hand during #205, 2026-06-24). The head
 **On-prem (NOT GitHub-auto, by design):** only **`sap_bronze`** now runs on the box `rmail@192.168.2.76` (systemd timers; deploy = SSH + update + restart units). See [[reference_sap_bronze_deploy_box]]. (A Railway project named "sap-bronze" also exists under the iab-github workspace — authoritative sap runtime is the box per ADR 0011; treat that Railway project as unverified/possibly-legacy.) **`stylehr_bronze` LEFT the box for Railway** (2026-07-06, #413 / ADR 0045) — now a 5th Railway service `stylehr-bronze` (GitHub-connected, cron `30 4 * * *`, static outbound IPs, region `sfo`); the box timer is retired. SAP stays box-pinned (HANA gateway tunnel, not egress-IP-gated). See [[project_stylehr_railway_413]].
 
 Being written up properly in `docs/agents/deployment.md` (chip `task_49d0a69b`). Related: [[reference_rama_dw_env_and_run]], [[project_daily_pipeline_health_check]].
+
+**Rill: RETIRED 28-Aug-2026 (#2817)** — org deleted, repo `rill/` removed; any Rill CLI/deploy instruction above or elsewhere is historical.

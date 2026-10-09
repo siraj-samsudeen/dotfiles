@@ -34,3 +34,19 @@ reconcile vs bronze_sap #211) + 17 plumbing (drafts/counters/logs/config/`tat_me
 **Open DQ follow-ups (Kannan):** [[project_sales_wide_380]]-style — #387 blank-plant / Kannammal
 `2100` (org) vs plant `2101`; #388 VARCHAR-measure junk (invoice_qty). Related: design-silver-layer
 skill produced this; see [[feedback_show_dq_details_never_bury]].
+
+**Catalog names — the TN one was RENAMED, and the old name still misleads (2026-08-20, #2468).**
+The three live catalogs are `bronze_ptp_kerala`, **`bronze_ptp_tamilnadu`**, `bronze_ptp_kannammal`.
+The TN instance was once plain **`bronze_ptp`** (as this note said above); that catalog **no longer
+exists**. Querying it returns `Catalog "bronze_ptp" does not exist!`, which reads like PTP is
+missing rather than renamed — it cost a wrong diagnosis in the 2026-08-20 daily-loading sweep.
+Always enumerate with `show databases` before concluding a PTP catalog is absent
+([[feedback_absence_claims_need_positive_control]]).
+
+**#2468 LANDED (2026-08-20, PR #2470).** `daily-loading`'s `MD_CONTROL` swept only
+`bronze_ptp_tamilnadu`, so Kerala and Kannammal were **unmonitored** — including the "silence is the
+alarm" no-runs check, which only ever asked TN whether it had fired. Now one entry per instance
+(own dedup key, own no-runs check). Same fix corrected `reachability` from `local` to **`cloud`**:
+PTP moved to Railway in #517, so a PTP fix never needs box SSH/VPN, and the old tag would have sent
+whoever picked it up hunting for access they don't need. Dedup keys are now `ptp_<instance>/control/*`.
+

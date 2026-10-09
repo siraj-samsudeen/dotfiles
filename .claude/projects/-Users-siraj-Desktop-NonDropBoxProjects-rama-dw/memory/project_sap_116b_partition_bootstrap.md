@@ -219,7 +219,7 @@ keeps primitives. `--steps snapshot,bootstrap`, `--budget-minutes`, `--gate`, `-
   constraints is legal; only ALTER-ADD-with-constraint fails). **APPLIED to all 4 on MD** (verified
   via MCP: 3 cols present, marc/mvke/mbewh staging dropped). **rseg VALIDATED** (17,339 merged,
   3,189,678→3,193,010). marc/mvke/mbewh merge un-validated only because the box network degraded
-  (Tailscale relay-fallback, MD DEADLINE_EXCEEDED) — the fix is proven on rseg, will work when run.
+  (box network degraded, MD DEADLINE_EXCEEDED) — the fix is proven on rseg, will work when run.
   Also surfaced a CASCADE: rseg's stranded pending package re-failed ekpo/eket (same purchase pipeline)
   → fixed by the new `_quarantine_pending` (commit 612df15, drop_pending_packages on failure in
   run_load/run_windowed_edge/bootstrap). LESSON: smoke the actual banked tables (replace→merge), not

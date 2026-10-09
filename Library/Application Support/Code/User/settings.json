@@ -96,7 +96,11 @@
 	"workbench.editorAssociations": {
 		"*.copilotmd": "vscode.markdown.preview.editor",
 		"*.db": "sqlite-viewer.option",
-		"*.duckdb": "dbcode.dataFileViewer"
+		"*.duckdb": "dbcode.dataFileViewer",
+		"*.parquet": "duckdb.dataFileViewer",
+		"*.csv": "csv.editor",
+		"*.tsv": "duckdb.dataFileViewer",
+		"*.xlsx": "duckdb.dataFileViewer"
 	},
 	"workbench.settings.useSplitJSON": true,
 	"workbench.colorTheme": "Quiet Light",
@@ -150,7 +154,7 @@
 	"diffEditor.experimental.showMoves": true,
 	"diffEditor.maxComputationTime": 0,
 	"diffEditor.hideUnchangedRegions.enabled": false,
-	"diffEditor.useInlineViewWhenSpaceIsLimited": true,
+	"diffEditor.useInlineViewWhenSpaceIsLimited": false,
 
 	// ============================================
 	// PERFORMANCE OPTIMIZATIONS
@@ -193,7 +197,7 @@
 	// ============================================
 	// EXTENSION SETTINGS - MISC
 	// ============================================
-	"extensions.autoUpdate": "onlyEnabledExtensions",
+	"extensions.autoUpdate": "on",
 	"security.workspace.trust.untrustedFiles": "open",
 	"security.promptForLocalFileProtocolHandling": false,
 	"json.validate.enable": false,
@@ -963,5 +967,16 @@
 	"window.commandCenter": false,
 	"workbench.browser.showInTitleBar": true,
 	"workbench.layoutControl.enabled": false,
-	"workbench.activityBar.location": "top"
+    "workbench.activityBar.location": "top",
+	"workbench.editor.useModal": "some",
+	"terminal.integrated.commandsToSkipShell": [
+		"kilo-code.new.agentManagerOpen",
+		"kilo-code.new.agentManager.showTerminal",
+		"kilo-code.new.agentManager.runScript",
+		"kilo-code.new.agentManager.previousTerminal",
+		"kilo-code.new.agentManager.nextTerminal"
+	],
+	"kilo-code.new.agentWorkStyle": "autonomous",
+	"kilo-code.new.showTaskTimeline": false,
+	"claudeCode.hideOnboarding": true
 }

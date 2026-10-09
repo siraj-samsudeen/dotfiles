@@ -23,8 +23,23 @@ destructive-on-failure in MotherDuck — a lease-expired `replace` wiped ~60 tab
 - **2 SAP-mirror catches kept under protest** (`sap_payments` → #260 timeline; `sap_data_stn` → Stationery Dive) — merge cleanly, no gold/silver home yet. Repoints filed as follow-ups.
 - **Only TN (`bronze_ptp`) has consumers**; KL/KN feed only the conform union. `report_server` P2P dashboards are csv_upload/baked (no live warehouse dep).
 
-**How to apply:** for any PTP bronze work, treat `config.KEEP_TABLES` as the source of truth; add a
-table + backfill on demand only when a named consumer needs it. Parent **#517 (PTP→Railway) is being
-completed in a separate session** (chip task_3fdfca14) — merge #544 → deploy → wipe → verify merge-only
-cron → fix `docking_transactions.created` NULL-cursor drop. Decision grid:
-`docs/plans/issue_537_ptp_curation_grid.html`. See [[reference_rama_dw_deployment_topology.md]], [[project_stylehr_railway_413.md]].
+**UPDATE 2026-07-10 — #544 merged; #517 COMPLETE and closed; the drop is DONE.** 103 decommissioned
+tables physically dropped; bronze now = the allow-list exactly (`bronze_ptp` 34, `_kerala` 30,
+`_kannammal` 15). Three further curation defects surfaced only against the live source:
+- `KEEP_TABLES` now holds **exact, case-sensitive SOURCE names** — `Users`, `PurchaseOrders`,
+  `LorryReceipts` are CamelCase in the source. Matching on the dlt-normalized name is many-to-one and
+  silently merged the dead `SirEntries` into the live `sir_entries`; an all-snake list silently
+  dropped the CamelCase ones. **Identity is declared, never inferred** (#575). New
+  `config.SHADOW_TABLES = {"SirEntries"}` (remove once the source drops it, #583).
+- Anything comparing config against **bronze** must normalize first — `drop_decommissioned_ptp_tables.py`
+  would otherwise drop the live `users`/`purchase_orders`/`lorry_receipts`.
+- kannammal declares **no PK** on 6 kept tables → `_pick_key` falls back to an `id` column (#564).
+- `docking_transactions.created` is nullable → `on_cursor_value_missing="include"` (#552).
+
+**How to apply:** for any PTP bronze work, treat `config.KEEP_TABLES` as the source of truth (exact
+source names); add a table + backfill on demand only when a named consumer needs it. Decision grid:
+`docs/plans/issue_537_ptp_curation_grid.html`. **`po_table` + `stock_balance_summary` carry SAP field
+names (`matkl`/`werks`/`po_item`) — they are SAP mirrors to repoint & drop, like `sap_payments` /
+`sap_data_stn` (#548/#549); tracked in #584.** Bronze also accumulates hard-deleted rows forever —
+see [[reference_merge_only_never_removes_hard_deletes]]. See [[project_ptp_railway_517]],
+[[reference_rama_dw_deployment_topology]], [[project_stylehr_railway_413]].

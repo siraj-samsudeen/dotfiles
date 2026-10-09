@@ -33,3 +33,10 @@ recording decisions Siraj explicitly made — and when a new decision contradict
 never leave the inconsistency: rewrite it or mark it superseded with a pointer, agent's choice;
 (3) shared-skill edits that encode an explicit instruction. Agent-inferred generalizations in
 any of these stay gated. Encoded in the repo wrap-up skill's approval model.
+
+
+**SUPERSEDED in part, 28-Aug-2026 (#2841).** The auto-execute principle stands, but the *format* changed: `/wrap-up` no longer reports housekeeping at all. A priority test splits DECISION (breaks/costs/blocks/rots if he never sees it — needs his authority or vantage) from HOUSEKEEPING (memory, fact-recording issue comments, criteria-met closes, doc syncs, narrow follow-up filings). Housekeeping executes silently and collapses to ONE count line. Decisions — max 4, severity-first — are asked via the `AskUserQuestion` tool as 2–4-option picks, recommendation first.
+
+**Why:** Siraj ignores most wrap-up content; listing memory writes and issue comments costs attention without earning a decision. "Nothing needs you" is a valid wrap-up.
+
+**How to apply:** if an option would read "yes, do the obvious thing" with no plausible no, it is not a decision — just do it. Headers name the work, never the sink.

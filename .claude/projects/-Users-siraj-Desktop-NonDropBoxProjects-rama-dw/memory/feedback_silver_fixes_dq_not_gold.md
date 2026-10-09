@@ -38,3 +38,5 @@ to canonical DECIMAL with junk→NULL + coercion-failure tests, apply blank/defa
 `__unmapped__` sentinels (ADR 0043), resolve keys. Gold only joins dims and aggregates. Corrects the
 [[project_ptp_conform_386]] D6 stance ("measure-casting deferred to gold" was wrong). Pairs with
 [[feedback_show_dq_details_never_bury]] (surface the DQ, and fix it in silver).
+
+**Restated 22-Sep-2026 (Siraj, #3774 review):** silver is faithful to the source's SCHEMA, not to its data errors — every DQ correction, including cross-source vocabulary mapping (unit_of_measure), lands in silver and gold only passes it through. An agent argued "mapping in the gold union keeps silver source-faithful, precedent section_name_alias" — REJECTED. section_name_alias is not a precedent: it corrects hand-kept seeds with no silver layer, and is itself filed to move below gold (#3896).

@@ -34,3 +34,5 @@ Rill Cloud access control for org **JeyaRama**, project **rama-dw**. Region RLS 
 - SM-email onboarding + Bala director access are now report-server concerns (#455), not Rill org-guest onboarding.
 
 Issues: [#377](https://github.com/JeyaramaGroup/data-warehouse/issues/377) (store-org, DONE+confirmed); [#369](https://github.com/JeyaramaGroup/data-warehouse/issues/369) (category axis, next); #366 (name↔code); #380/sales_wide; ADR 0040/0041. Rill MCP `fb05e2f0…`; MD via `mcp__motherduck-jeyarama`. See [[project_sales_wide_380]], [[project_category_master_261]], [[reference_sap_plant_master_t001w]], [[reference_rama_dw_local_dbt]].
+
+**Teardown executed 28-Aug-2026** — see [[project_rill_cancelled_508]] closing note (#2817).

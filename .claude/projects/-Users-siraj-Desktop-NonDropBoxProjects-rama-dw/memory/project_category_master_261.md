@@ -1,21 +1,41 @@
 ---
 name: project_category_master_261
-description: "silver_core.category_master built from SAP t023t — MATKL 4-level decode, MC=Subdivision, SPART trap"
+description: "Business overlay (category_business_map) is the SOURCE OF TRUTH, not SAP names (ADR 0038). silver_core.category_master = MATKL 4-level decode, MC=Subdivision, SPART trap"
 metadata: 
   node_type: memory
   type: project
   originSessionId: 48334ae9-870f-49e8-8176-6f942a53fd15
 ---
 
+## ⚠️ The BUSINESS tree wins, not SAP (ADR 0038, corrected #366) — Siraj, 2026-07-10
+
+**`silver_core.category_business_map` (RB/CEO-reviewed seed) is the maintained source of truth.**
+SAP is system-of-record for the *material → `material_group`* assignment only. Consume the business
+names (`division_name`, `subdivision_name`, …) from `silver_core.category_hierarchy`, which carries
+**both** trees side-by-side (`*_name` = business, `*_name_sap` = SAP) keyed on `material_group`.
+
+The business tree **re-cuts** the SAP tree — these are *intentional*, recorded in
+`business_action` (`keep` 631, `MERGE-TAIL` 288, `MERGE` 247, `DIVIDE` 53, `MOVE-OUT` 25, `MOVE` 24,
+`RENAME` 23, `DROP`, `DISSOLVE`). Division-level re-cuts are only six: Fashion N Lifestyle → **Fashion**
+(308) + **Lifestyle** (184); **Home → Furniture** (35 leaves, own Division); FOOD COURT, CONSUMABLE →
+Non-Merchandise, Services → out-of-taxonomy. **Do NOT report these as defects** — I did, and was wrong.
+
+**Genuine divergence = the 212 leaves with `has_business_mapping = false`** (all in Services / FOOD
+COURT / CONSUMABLE / junk divisions `80`,`90`). Those, plus SAP's junk division codes, are the only
+issue-worthy set. Policy (Siraj): mismatch → flag → issue → SAP corrects to converge; if uncorrectable,
+record a **documented no-fix** so evidence lives in the repo.
+
+Bed Linen (`020101`) is identical in both trees (only `Bedding N Linen` vs `Bedding & Linen`).
+
 `silver_core.main.category_master` is LIVE (#261, closed 2026-06-27; commits 6054791 model, 6427de7 ADR/CONTEXT). Decodes SAP `MATKL` (`bronze_sap.master.t023t`, EN only) into a 4-level merch hierarchy. dbt model at `dbt_runner/dbt/models/core/category_master.sql`; `core/` models materialize to `silver_core.main` (table) per dbt_project.yml.
 
-**Hierarchy (ADR 0033):** `Division (2-dig) → Subdivision (4) → Category (6) → Subcategory (9-dig leaf)`. Grain = one row per 9-digit leaf; codes are cumulative prefixes; `material_group` PK = full 9-digit = subcategory code. Filter `matkl similar to '[0-9]{9}'` → 1,514 clean. 8 divisions (01 Fashion N Lifestyle, 02 Home, 03 Grocery, 04 Food Court, 06 Services, 07 Consumable, 80/90 internal).
+**Hierarchy (ADR 261):** `Division (2-dig) → Subdivision (4) → Category (6) → Subcategory (9-dig leaf)`. Grain = one row per 9-digit leaf; codes are cumulative prefixes; `material_group` PK = full 9-digit = subcategory code. Filter `matkl similar to '[0-9]{9}'` → 1,514 clean. 8 divisions (01 Fashion N Lifestyle, 02 Home, 03 Grocery, 04 Food Court, 06 Services, 07 Consumable, 80/90 internal).
 
 **#366 UPDATE (2026-07-02, LANDED to main — commits 08b4308 bronze, 667e4f2 silver):** the old "only the leaf is named; intermediate `*_label` cols are code-fallback" claim is **FALSE and gone**. SAP names **all four levels** in the classification layer (class type **026**, tables `bronze_sap.master.klah` = nodes / `swor` = names, read by MCH view t-code `ZVK11` → FM `MERCHANDISE_GROUP_HIER_ART_SEL`). category_master now sources `division_name_sap`/`subdivision_name_sap`/`category_name_sap` from KLAH/SWOR (join `klah.clint=swor.clint AND swor.spras='E' AND swor.klpos='01'`, `klah.klart='026'`; code-fallback for 5 orphan leaves); `subcategory_name`=`wgbez` still. `*_label` cols REMOVED → downstream repointed to `*_code`/`*_name_sap` (replenishment_base, both saree models). `KSSK` (edges) deliberately NOT loaded (mixes characteristic classes; structure = prefix decode). klah/swor added to `sap_bronze/config.py` (weekly full_reload), synced to box + loaded (2,579 rows client-200 each).
 
 **NEW model `silver_core.category_hierarchy` (#366/#277):** business-facing view = category_master (SAP-pure) + `category_business_map` seed (1,235 leaf-grain rows keyed on `material_group`, derived from `docs/taxonomy/*_crosswalk.csv` by `discovery/issue_366_mch/build_category_business_map.py`). The CEO's #277 taxonomy **RE-CUTS** the SAP tree (div 01→Fashion+Lifestyle, 02→Home+Furniture, 6 subdivisions split e.g. Furniture→5 rooms) → single-valued only at the leaf → overlay is leaf-grain, NOT per-level. 279 unmapped leaves (zero-sales/internal) pass through SAP name; 1 exception (cattle feed) in `docs/taxonomy/taxonomy_map_exceptions.csv`. **Dashboards/gold slice by category_hierarchy `business_*` names; category_master is SAP verbatim.** Regenerate the seed after crosswalk edits via the discovery script.
 
-**Load-bearing terminology:** business/CEO calls the L2 Subdivision level **"Main Category" (MC)** — MC = Main Category = Subdivision. Recorded in ADR 0033 + CONTEXT.md "Material group" + #261 comment.
+**Load-bearing terminology (CORRECTED 2026-08-14, ADR 2205):** SAP levels 1-2 are **LOB** and **Main Category**; the CEO re-cut (#277) names ITS levels 1-2 **Division** and **Subdivision**. These are DIFFERENT namespaces with different values (SAP `Men` -> business `Menswear`), NOT aliases. Recorded in ADR 261 + CONTEXT.md "Material group" + #261 comment.
 
 **Traps:** (1) SAP `PRDHA` is NOT the hierarchy (<1% populated) — use MATKL. (2) SAP `SPART` (surfaced as `core/item.division`) is a degenerate near-constant `'10'`, NOT the merch Division — `item.division` is misnamed (→ #267 rename to `sales_division`). (3) GoFrugal POS `category_l1/l2/l3` is a SEPARATE classification system; SAP owns the unqualified Category/Subcategory words (SoR).
 

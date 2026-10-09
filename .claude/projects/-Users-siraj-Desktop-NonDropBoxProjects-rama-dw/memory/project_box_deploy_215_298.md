@@ -27,9 +27,13 @@ neither is a box service now. `sap_bronze` is the only remaining on-prem *load*.
   NON-container** via the interim skeleton (RB approved 2026-07-09). Builder's real audit logic
   (already sending test emails) should be committed into `src/` to replace the stub. Containerize
   later under #298.
-- **`sap_bronze`** — old box `rmail@192.168.2.76` → new VM `analytics@192.168.2.60` (alias `etl-box`,
-  #297). The old→new cutover is the remaining SAP prod move; do it as a **container cutover on the
-  #298 track** (NOT `deploy/box/sync.sh`), supervised, in a fresh session. SAP edge still paused (#295).
+- **`sap_bronze`** — **CUTOVER DONE 2026-07-16 (#297): live on `etl-box` (`analytics@192.168.2.60`).**
+  It happened on the **git-clone track, NOT as a container cutover** — a *monorepo* clone
+  (`~/data-warehouse` + a `~/sap_bronze` symlink), which is also why `deploy/box/sync.sh` (per-service
+  clone) does not fit it. That ADR 0036 divergence was flagged on #297 and is still unreconciled;
+  #215's Pillar 1 owns it. **Deploy stays manual and `git push` does nothing** — the clone drifted 4
+  weeks before anyone noticed (#2107); drift detection is #2115.
+  See [[reference_sap_bronze_deploy_box]].
 
 The `sap-drain-guard` pgrep-relaunch watchdog + spent giant-drain layer were **deleted** (#215) — that
 relaunch-on-lease-lapse was the nightly duplicate-writer root cause. Related: [[project_stylehr_railway_413]],

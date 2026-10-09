@@ -5,6 +5,7 @@ metadata:
   node_type: memory
   type: feedback
   originSessionId: 1521391f-829c-465a-8f00-ff8e44122bcd
+  modified: 2026-09-19T07:16:38.334Z
 ---
 
 Don't ask about obvious things you can decide without much consequence — just decide and proceed.
@@ -15,6 +16,14 @@ it's "could Siraj's different vantage point change the answer, and does getting 
 
 **Why:** during the StyleHR silver walkthrough (#385) I over-gated — asking to lock obvious low-stakes
 calls and offering multi-choice menus for things I should just decide. Siraj corrected this twice.
+
+**Third correction (#3809 AX backfill grill, 19-Sep-2026):** I grilled him on chunk keys, timer
+cadence and walk order, and he said: "For most technical options I agree with your recommended choice
+because I do not have the ability to take decisions. If something is faster, cheaper, or better, you
+take that decision. Only if I would decide differently as a human, ask me." In a grill, **technical
+questions (walk design, pacing, index choice, chunking, schema layout) are NOT grill questions**:
+decide them, record the rationale in the plan, and spend the grill only on business rules, scope,
+naming that users see, and facts only he or the business owners hold.
 
 **How to apply:** settle obvious/mechanical/low-consequence calls silently with a one-line rationale
 and move on. Reserve questions for forks where (a) the downside of a wrong call is real AND (b) his

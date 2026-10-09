@@ -5,11 +5,17 @@ metadata:
   node_type: memory
   type: project
   originSessionId: 97ab642c-1e32-4e36-8d66-bffa7d22a754
+  modified: 2026-08-06T12:26:21.255Z
 ---
 
 Epic #436 (serve RB's HTML dashboards live). **Shape 1 settled and fully proven 2026-07-07**:
 template-ify RB's HTML (skeleton verbatim, rows regenerated on OUR canonical hierarchy),
 daily 06:00 IST render + boot render per deploy, rendered file IS the cache, 0 MD reads/view.
+
+**2026-08-06 (#1674): renderers now read a LOCAL DuckDB replica, not `md:` directly** — one
+MotherDuck session/day total (replica_sync at 06:00; 430s in prod), Railway volume
+`/data/replica`, dual data-as-of/rendered stamps, registry+test gate. 5th report: cashier
+(#1664, PR #1673). See [[project-report-server-replica-1674]].
 Full design + alternatives in `docs/plans/issue_436_report_server.md` (kept current).
 
 **Live** on Railway `report-server` (Jeyarama-ETL), branch `issue-436-dashboard-serving`,
