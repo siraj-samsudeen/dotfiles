@@ -40,11 +40,7 @@
 !.claude/skill-audit/**
 !.claude/siraj-experiments/
 !.claude/siraj-experiments/**
-!.claude/projects/
-!.claude/projects/*/
-!.claude/projects/*/memory/
-!.claude/projects/*/memory/**
-.claude/projects/*/memory/.consolidate-lock
+# Claude memory notes are NOT tracked: this repo is public and memory holds client/vendor detail (Siraj, 09-Oct-2026).
 !.claude/scripts/
 !.claude/scripts/**
 !.claude/scheduled-tasks/
